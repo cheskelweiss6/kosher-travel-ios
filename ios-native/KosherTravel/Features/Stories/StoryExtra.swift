@@ -46,12 +46,20 @@ struct TaggedPlaceInfo: Hashable {
     var openURL: URL? {
         if let u = StoryExtra.httpsURL(link) { return u }
         if let u = StoryExtra.httpsURL(website) { return u }
+        if let u = StoryExtra.googlePlaceURL(name: name, key: key) { return u }
         if let lat, let lng {
             var c = URLComponents(string: "https://maps.apple.com/")
             c?.queryItems = [URLQueryItem(name: "ll", value: "\(lat),\(lng)"), URLQueryItem(name: "q", value: name)]
             return c?.url
         }
-        return nil
+        // no link and no spot: the map searches its name and town (the web's postPlaces() Google Maps search)
+        let n = name.trimmingCharacters(in: .whitespaces)
+        guard !n.isEmpty else { return nil }
+        let town = (area.isEmpty ? cityName : area).trimmingCharacters(in: .whitespaces)
+        let q = !town.isEmpty && !n.lowercased().contains((town.split(separator: ",").first.map(String.init) ?? town).lowercased()) ? "\(n), \(town)" : n
+        var c = URLComponents(string: "https://maps.apple.com/")
+        c?.queryItems = [URLQueryItem(name: "q", value: q)]
+        return c?.url
     }
 }
 
@@ -238,6 +246,15 @@ struct StoryExtra: Hashable {
         f.timeZone = TimeZone(identifier: "UTC")
         f.dateFormat = "EEEE, MMM d"
         return f.string(from: d)
+    }
+
+    /// A place picked from Google (key "gp:<place id>") opens its Google page (web placeLinkOf / googlePlaceUrl).
+    static func googlePlaceURL(name: String, key: String) -> URL? {
+        guard key.hasPrefix("gp:"), key.count > 3 else { return nil }
+        var c = URLComponents(string: "https://www.google.com/maps/search/")
+        c?.queryItems = [URLQueryItem(name: "api", value: "1"), URLQueryItem(name: "query", value: name),
+                         URLQueryItem(name: "query_place_id", value: String(key.dropFirst(3)))]
+        return c?.url
     }
 
     static func httpsURL(_ s: String) -> URL? {
