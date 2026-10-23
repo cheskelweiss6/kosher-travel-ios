@@ -101,9 +101,11 @@ struct TravelerArticlesSection: View {
         VStack(alignment: .leading, spacing: 8) {
             // Web PlaceStories (Oct 21 2026): small 72pt rows, photo left and title beside it, a "Share yours" tile last.
             HStack {
-                Label("Articles from travelers", systemImage: "photo.on.rectangle")
-                    .font(.subheadline.weight(.heavy))
-                    .foregroundStyle(Color.navy)
+                // Web h3: the app's serif heading face, near-black words, the navy outline icon.
+                Label { Text("Articles from travelers").foregroundStyle(Color.primary) } icon: {
+                    Image(systemName: "photo.on.rectangle").foregroundStyle(Color.navy)
+                }
+                .font(.system(.subheadline, design: .serif).weight(.black))
                 Spacer()
                 if !list.isEmpty { Text("\(list.count)").font(.caption.weight(.bold)).foregroundStyle(Color.textSecondary) }
             }
@@ -143,7 +145,7 @@ struct TravelerArticlesSection: View {
                         }
                         Button { compose = shareRoute } label: {
                             VStack(spacing: 4) {
-                                Image(systemName: "plus").font(.system(size: 16, weight: .semibold))
+                                Image(systemName: "camera").font(.system(size: 16, weight: .regular))  // web: the Camera icon
                                 Text("Share yours").font(.caption.weight(.bold))
                             }
                             .foregroundStyle(Color.navy)
