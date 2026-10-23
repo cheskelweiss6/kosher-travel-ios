@@ -4,6 +4,7 @@ import GoogleSignIn
 
 enum ProfileRoute: Hashable {
     case settings, contact, name, story(String)
+    case notifications   // the bell: its own page with its own top bar (Cheskel, Oct 23 2026)
     case people(following: Bool)   // the Followers / Following lists (tap a count)
     case web(WebRoute)   // a live-app screen inside the native shell
 }
@@ -20,7 +21,6 @@ struct ProfileTab: View {
     var presented = false
     @State private var path: [ProfileRoute] = []
     @State private var signIn: SignInSheet.Mode?
-    @State private var showBell = false
     @State private var photoItem: PhotosPickerItem?
     @State private var photoBusy = false
     @State private var photoError: String?
@@ -51,16 +51,12 @@ struct ProfileTab: View {
                 case .story(let id): StoryDetailView(postId: id)
                 case .web(let r): WebScreen(route: r)
                 case .people(let following): ProfileFollowList(showFollowing: following)
+                case .notifications: NotificationsView(store: store)
                 }
             }
         }
         .sheet(item: $signIn) { mode in
             SignInSheet(mode: mode)
-        }
-        .sheet(isPresented: $showBell) {
-            NotificationsSheet(store: store)
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
         }
         .task(id: auth.uid) {
             await store.bind(uid: auth.uid)
@@ -82,10 +78,10 @@ struct ProfileTab: View {
             Button("Cancel", role: .cancel) { pendingUnsave = nil }
         }
         .onAppear {
-            // The header's bell opens the Profile page with the notifications list on top.
+            // An older caller may still ask Profile to open the bell: push the Notifications page.
             if ShellRouter.shared.profileOpensBell {
                 ShellRouter.shared.profileOpensBell = false
-                if auth.isSignedIn { showBell = true }
+                if auth.isSignedIn, path.last != .notifications { path.append(.notifications) }
             }
         }
         // the Google sign-in callback is handled app-wide (RootTabView → DeepLinks.handle)
@@ -112,7 +108,7 @@ struct ProfileTab: View {
         }
         if auth.isSignedIn {
             ToolbarItem(placement: .topBarTrailing) {
-                Button { showBell = true } label: {
+                NavigationLink(value: ProfileRoute.notifications) {
                     Image(systemName: "bell")
                         .overlay(alignment: .topTrailing) {
                             if store.unreadCount > 0 {
@@ -562,7 +558,7 @@ struct ProfileTab: View {
             case "reset": signIn = .reset
             case "settings": path = [.settings]
             case "contact": path = [.contact]
-            case "bell": if auth.isSignedIn { showBell = true }
+            case "bell": if auth.isSignedIn { path = [.notifications] }
             default: break
             }
         }

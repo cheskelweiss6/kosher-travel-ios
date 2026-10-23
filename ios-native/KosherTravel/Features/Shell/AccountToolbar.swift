@@ -2,7 +2,7 @@ import SwiftUI
 
 /// The web header's account corner, on every tab (Cheskel's parity rule; App.tsx "User Auth Profile / Sign In"):
 /// signed out, a settings button that opens the Profile page; signed in, the notifications bell (with its unread
-/// count) and an avatar button that opens the Profile page. The web's tab bar has no Profile tab.
+/// count; pushes the Notifications page) and an avatar button that opens the Profile page. The web's tab bar has no Profile tab.
 struct AccountToolbarButtons: View {
     @Environment(AuthStore.self) private var auth
     private let store = ProfileStore.shared
@@ -10,9 +10,10 @@ struct AccountToolbarButtons: View {
     var body: some View {
         HStack(spacing: 14) {
             if auth.isSignedIn {
-                Button {
-                    ShellRouter.shared.profileOpensBell = true
-                    ShellRouter.shared.showProfile = true
+                // Cheskel (Oct 23 2026, 1:19 PM): the bell stays where it is; Notifications is its own page with its own
+                // top bar, pushed here, instead of a see-through sheet on top of the Profile sheet.
+                NavigationLink {
+                    NotificationsView(store: store)
                 } label: {
                     Image(systemName: "bell")
                         .overlay(alignment: .topTrailing) {
