@@ -21,6 +21,7 @@ struct ProfileFollowList: View {
     @State private var loaded = false
     @State private var failed = false
     @State private var busy: Set<String> = []
+    @State private var pendingUnfollow: Person?
 
     var body: some View {
         Group {
@@ -63,6 +64,17 @@ struct ProfileFollowList: View {
                 }
                 .listStyle(.plain)
                 .refreshable { await load() }
+                .confirmationDialog(pendingUnfollow.map { "Unfollow \($0.name)?" } ?? "Unfollow?",
+                                    isPresented: Binding(get: { pendingUnfollow != nil },
+                                                         set: { if !$0 { pendingUnfollow = nil } }),
+                                    titleVisibility: .visible,
+                                    presenting: pendingUnfollow) { p in
+                    Button("Unfollow", role: .destructive) {
+                        if stories.following.contains(p.uid) { toggle(p) }
+                        pendingUnfollow = nil
+                    }
+                    Button("Cancel", role: .cancel) { pendingUnfollow = nil }
+                }
             }
         }
         .background(Color.white)
@@ -79,7 +91,10 @@ struct ProfileFollowList: View {
     private func followButton(_ p: Person) -> some View {
         if p.uid != auth.uid {
             let on = stories.following.contains(p.uid)
-            Button { toggle(p) } label: {
+            Button {
+                // "Following" asks first (red Unfollow + Cancel); "Follow" / "Follow back" acts at once.
+                if on { pendingUnfollow = p } else { toggle(p) }
+            } label: {
                 Text(on ? "Following" : (showFollowing ? "Follow" : "Follow back"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(on ? Color.navy : .white)
