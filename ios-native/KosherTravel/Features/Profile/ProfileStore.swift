@@ -526,6 +526,9 @@ final class ProfileStore {
         for id in ["kosherPrefs", "preferences", "authoredArticles", "writtenReviews"] {
             try? await userRef(uid).collection("userData").document(id).delete()
         }
+        // free the username claims (website accountService.deleteAccountData), best effort, before the user doc
+        let claims = try? await Firestore.firestore().collection("usernames").whereField("uid", isEqualTo: uid).limit(to: 20).getDocuments()
+        for d in claims?.documents ?? [] { try? await d.reference.delete() }
         try await userRef(uid).delete()
 
         onStep("Deleting your account")
