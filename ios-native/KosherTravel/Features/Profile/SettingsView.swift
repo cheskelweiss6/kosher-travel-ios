@@ -17,6 +17,7 @@ struct ProfileSettingsView: View {
     @Environment(\.openURL) private var openURL
     let store: ProfileStore
     var onSignIn: () -> Void = {}
+    @State private var mapsApp = ""
 
     private var version: String {
         let v = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
@@ -79,6 +80,15 @@ struct ProfileSettingsView: View {
                     let n = store.kosherPrefs?.needs.count ?? 0
                     SettingsRow(icon: "slider.horizontal.3", label: "My kosher preferences", value: n > 0 ? "\(n) saved" : "Not set")
                 }
+                // Web: SettingsSheet "Open maps in" (same stored choice as the map sheet's "Remember my choice").
+                Picker(selection: Binding(get: { mapsApp }, set: { mapsApp = $0; MapApp.preferred = MapApp(rawValue: $0) })) {
+                    Text("Ask every time").tag("")
+                    ForEach(MapApp.allCases) { Text($0.label).tag($0.rawValue) }
+                } label: {
+                    Label("Open maps in", systemImage: "map")
+                }
+                .tint(Color.navy)
+                .onAppear { mapsApp = MapApp.preferred?.rawValue ?? "" }
             }
 
             Section("Privacy and safety") {

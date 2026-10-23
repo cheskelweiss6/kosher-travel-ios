@@ -2,17 +2,23 @@ import SwiftUI
 
 /// A short message at the top of the screen (the web's success / error toasts), shown by RootTabView.
 struct ShellToast: Identifiable, Equatable {
+    struct Action {
+        let label: String
+        let run: @MainActor () -> Void
+    }
     let id = UUID()
     let text: String
+    var action: Action? = nil
+    static func == (a: ShellToast, b: ShellToast) -> Bool { a.id == b.id }
 }
 
 extension ShellRouter {
     @MainActor
-    func showToast(_ text: String) {
-        let t = ShellToast(text: text)
+    func showToast(_ text: String, seconds: Double = 2.6, action: ShellToast.Action? = nil) {
+        let t = ShellToast(text: text, action: action)
         toast = t
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 2_600_000_000)
+            try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
             if self.toast?.id == t.id { self.toast = nil }
         }
     }
@@ -21,10 +27,19 @@ extension ShellRouter {
 struct ShellToastView: View {
     let toast: ShellToast
     var body: some View {
-        Text(toast.text)
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(Color.navy)
-            .multilineTextAlignment(.center)
+        HStack(spacing: 6) {
+            Text(toast.text)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.navy)
+                .multilineTextAlignment(.center)
+            if let action = toast.action {
+                Text("·").foregroundStyle(Color.textTertiary)
+                Button(action.label) { action.run() }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.navy)
+                    .underline()
+            }
+        }
             .padding(.horizontal, 18)
             .padding(.vertical, 11)
             .glassCapsule()
