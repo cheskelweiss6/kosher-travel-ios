@@ -14,11 +14,15 @@ struct CityExperience: Identifiable, Hashable {
     var item: PlaceItem?
     /// A place travelers tagged in their posts (shown first under Top Attractions).
     var sight: SharedSight? = nil
+    /// The photo gallery's fallbackPhoto (website: verifiedFallbackPhoto || photo).
+    var fallbackPhoto: String = ""
 }
 
 /// The city's Things to Do page (DeepExperiencesView.tsx): category chips, the cards, and the website's loading,
-/// error and empty words. Top Attractions come from the app's own attractions; other categories ask the website's
-/// discover-experiences endpoint, exactly as the website does.
+/// error and empty words. Top Attractions are the website's own list for this city (getEnrichedAttractions:
+/// CURATED_ATTRACTIONS + NEW_THINGS_TO_DO, precomputed into Resources/citytodo.json by CityTodoStore), with the
+/// destination's travel tips box under the chips; other categories ask the website's discover-experiences endpoint,
+/// exactly as the website does.
 struct CityThingsToDoView: View {
     let page: CityPage
     let attractions: [PlaceItem]
@@ -41,22 +45,48 @@ struct CityThingsToDoView: View {
     @State private var fetched: [CityExperience] = []
     @State private var loading = false
     @State private var error = ""
+    /// The website's Top Attractions + travelTips for this city (nil until read, or when the file has no entry).
+    @State private var todo: CityTodoEntry?
+    @State private var todoLoaded = false
     @Environment(\.openURL) private var openURL
 
     private var isCaribbean: Bool { page.area == "Caribbean" || page.area == "Central America" }
     private var categories: [String] { isCaribbean ? ["Top Attractions", "Family-Friendly Activities"] : Self.categoryList }
 
     private var top: [CityExperience] {
-        attractions.map { a in
+        guard todoLoaded else { return [] }
+        if let list = todo?.attractions, !list.isEmpty {
+            // The city's own listing with the same name keeps the place sheet's extra details (phone, hours, map).
+            var own: [String: PlaceItem] = [:]
+            for a in attractions { own[Self.simplify(a.venue.name)] = own[Self.simplify(a.venue.name)] ?? a }
+            return list.map { t in
+                var item: PlaceItem? = nil
+                if let m = own[Self.simplify(t.name)] {
+                    var v = m.venue
+                    if !t.photo.isEmpty { v.photo = t.photo; v.photos = nil }
+                    item = PlaceItem(id: m.id, category: m.category, venue: v, destId: m.destId, cityName: m.cityName)
+                }
+                return CityExperience(name: t.name, shortDescription: t.description, exactLocation: t.location,
+                                      photo: t.photo, bookingLink: t.website, gpsDirections: "", aiTips: "", item: item,
+                                      fallbackPhoto: t.fallbackPhoto)
+            }
+        }
+        return attractions.map { a in
             CityExperience(name: a.venue.name, shortDescription: a.venue.description, exactLocation: a.venue.address,
                            photo: a.photos.first ?? "", bookingLink: a.venue.website, gpsDirections: "", aiTips: "", item: a)
         }
     }
+    /// Website getEnrichedAttractions' name match: lowercased, accents and anything not a letter or digit removed.
+    static func simplify(_ s: String) -> String {
+        s.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil).lowercased()
+            .filter { $0.isASCII && ($0.isLetter || $0.isNumber) }
+    }
+    private var travelTips: [String] { todo?.travelTips ?? [] }
     /// Website: travelers' sights and parks for this city join Top Attractions first.
     private var citySights: [CityExperience] {
         let region = page.stateName.isEmpty ? page.country : page.stateName
         let list = sights.forCity(page.name, region: region).filter { $0.section == .todo || $0.section == .park }
-        return TravelerFilters.dedupe(list, existingNames: listedNames + attractions.map(\.venue.name)).map { s in
+        return TravelerFilters.dedupe(list, existingNames: top.map(\.name) + listedNames + attractions.map(\.venue.name)).map { s in
             CityExperience(name: s.name, shortDescription: "", exactLocation: s.area, photo: s.photo ?? "",
                            bookingLink: "", gpsDirections: "", aiTips: "", item: nil, sight: s)
         }
@@ -83,6 +113,8 @@ struct CityThingsToDoView: View {
                 .contentMargins(.horizontal, Theme.pagePadding, for: .scrollContent)
                 .padding(.horizontal, -Theme.pagePadding)
 
+                if !travelTips.isEmpty { CityTodoAdvisories(tips: travelTips) }
+
                 if loading {
                     VStack(spacing: 14) {
                         ProgressView().controlSize(.large).tint(Color.navy)
@@ -96,6 +128,8 @@ struct CityThingsToDoView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(14)
                         .background(Color.alert.opacity(0.06), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                } else if active == "Top Attractions" && !todoLoaded {
+                    Color.clear.frame(height: 1)
                 } else if shown.isEmpty {
                     VStack(spacing: 8) {
                         Image(systemName: "leaf").font(.system(size: 28)).foregroundStyle(Color.textTertiary)
@@ -121,6 +155,11 @@ struct CityThingsToDoView: View {
         }
         .background(Color.white)
         .task(id: active) { await load() }
+        .task(id: page.key) {
+            let e = await CityTodoStore.shared.entry(for: page.key)
+            todo = e
+            todoLoaded = true
+        }
         .onAppear { sights.ensureLoaded() }
     }
 
@@ -134,7 +173,7 @@ struct CityThingsToDoView: View {
 
     private func card(_ exp: CityExperience) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            RemoteImage(url: exp.photo, maxPixel: 900, venue: true)
+            RemoteImage(url: exp.photo.isEmpty ? exp.fallbackPhoto : exp.photo, maxPixel: 900, venue: true)
                 .frame(maxWidth: .infinity).frame(height: 192)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             HStack(alignment: .top, spacing: 10) {
