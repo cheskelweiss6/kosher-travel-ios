@@ -41,8 +41,8 @@ struct PlannerHistoryView: View {
                             Section(g.label) {
                                 ForEach(g.items) { s in row(s) }
                                     .onDelete { offsets in
-                                        for i in offsets where g.items.indices.contains(i) { store.delete(g.items[i]) }
-                                        deleted += 1
+                                        // every delete asks first (Cheskel, Oct 23 9:20)
+                                        if let i = offsets.first, g.items.indices.contains(i) { pendingDelete = g.items[i] }
                                     }
                             }
                         }

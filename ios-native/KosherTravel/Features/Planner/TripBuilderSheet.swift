@@ -37,7 +37,7 @@ struct TripBuilderSheet: View {
 
     private var edit: Bool { initial != nil }
 
-    init(places: [PlannerPlace], initial: TripFilters? = nil,
+    init(places: [PlannerPlace], initial: TripFilters? = nil, prefill: String? = nil,
          onCreate: @escaping (String, TripFilters) -> Void, onApply: ((TripFilters) -> Void)? = nil) {
         self.places = places
         self.initial = initial
@@ -49,7 +49,7 @@ struct TripBuilderSheet: View {
         let span = Self.daysBetween(f.startDate, f.endDate)
         let n = span ?? f.days ?? 5
         let defaultStart = Calendar.current.startOfDay(for: Date().addingTimeInterval(86400 * 14))
-        _destination = State(initialValue: f.destination ?? "")
+        _destination = State(initialValue: f.destination ?? prefill ?? "")
         _picked = State(initialValue: nil)
         _useDates = State(initialValue: s != nil)
         _start = State(initialValue: s ?? defaultStart)

@@ -15,6 +15,7 @@ struct PlannerTab: View {
     @State private var editing: ChatMessage?
     @State private var safari: IdentifiedURL?
     @State private var placeSheet: PlaceItem?
+    @State private var builderCity: String?
     @State private var routeApplied = false
 
     static let demoQuestion = "Kosher restaurants in Miami Beach"
@@ -54,8 +55,8 @@ struct PlannerTab: View {
             PlannerHistoryView(store: store, signedIn: auth.isSignedIn)
         }
         .sheet(isPresented: $showBuilder) {
-            let hasTrip = store.messages.contains { $0.isUser }
-            TripBuilderSheet(places: places, initial: hasTrip ? PlannerText.filters(from: store.messages) : nil,
+            let hasTrip = store.messages.contains { $0.isUser } && builderCity == nil
+            TripBuilderSheet(places: places, initial: hasTrip ? PlannerText.filters(from: store.messages) : nil, prefill: builderCity,
                              onCreate: { text, filters in store.send(text, filters: filters) },
                              onApply: { next in store.applyFilters(next) })
         }
@@ -76,7 +77,10 @@ struct PlannerTab: View {
             store.setAccount(uid: auth.uid)
             // after the account's chats are in place, so a question from Ask AI is not wiped by the account switch
             takeShellPrompt()
+            takeTripCity()
         }
+        .onChange(of: ShellRouter.shared.plannerTripCity) { _, _ in takeTripCity() }
+        .onChange(of: showBuilder) { _, on in if !on { builderCity = nil } }
         .task { await feed.loadIfNeeded() }
         .onAppear(perform: applyLaunchRoute)
         .onChange(of: ShellRouter.shared.plannerPrompt) { _, _ in takeShellPrompt() }
@@ -91,6 +95,15 @@ struct PlannerTab: View {
         ShellRouter.shared.plannerPrompt = nil
         path = []
         store.send(q)
+    }
+
+    /// A city page's "Plan Trip" (web: setWizardCity + planner tab): Plan a trip opens with that city filled in.
+    private func takeTripCity() {
+        guard let c = ShellRouter.shared.plannerTripCity, !c.isEmpty else { return }
+        ShellRouter.shared.plannerTripCity = nil
+        path = []
+        builderCity = c
+        showBuilder = true
     }
 
     // MARK: toolbar
