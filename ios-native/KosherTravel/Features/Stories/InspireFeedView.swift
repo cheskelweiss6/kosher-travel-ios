@@ -13,6 +13,9 @@ struct InspireFeedView: View {
 
     @State private var ids: [String] = []
     @State private var activeId: String?
+    /// posts deleted from this feed by their poster or the admin
+    @State private var gone: Set<String> = []
+    @Environment(\.dismiss) private var dismiss
 
     init(startId: String) {
         self.startId = startId
@@ -30,15 +33,28 @@ struct InspireFeedView: View {
         return list
     }
 
+    /// A deleted post leaves the feed; the next one shows, or the feed closes when it was the last.
+    private func removePage(_ id: String) {
+        let left = ids.filter { !gone.contains($0) && $0 != id }
+        if activeId == id {
+            let i = ids.firstIndex(of: id) ?? 0
+            activeId = ids[(i + 1)...].first { left.contains($0) } ?? left.last
+        }
+        gone.insert(id)
+        if left.isEmpty { dismiss() }
+    }
+
     var body: some View {
         GeometryReader { geo in
             let top = geo.safeAreaInsets.top
             let bottom = geo.safeAreaInsets.bottom
-            let pages = ids.compactMap { postFor($0) }
+            let pages = ids.filter { !gone.contains($0) }.compactMap { postFor($0) }
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0) {
                     ForEach(pages) { p in
-                        InspirePostPage(post: p, active: activeId == p.id, topInset: top, bottomInset: bottom)
+                        InspirePostPage(post: p, active: activeId == p.id, topInset: top, bottomInset: bottom) { id in
+                            removePage(id)
+                        }
                             .containerRelativeFrame([.horizontal, .vertical])
                     }
                 }
@@ -91,6 +107,8 @@ struct InspirePostPage: View {
     let active: Bool
     let topInset: CGFloat
     let bottomInset: CGFloat
+    /// Called once the post was deleted (the feed drops its page).
+    var onDeleted: (String) -> Void = { _ in }
 
     @Environment(AuthStore.self) private var auth
     @Environment(\.openURL) private var openURL
@@ -103,6 +121,9 @@ struct InspirePostPage: View {
     @State private var showShop = false
     @State private var showReport = false
     @State private var confirmBlock = false
+    @State private var confirmDelete = false
+    @State private var deleting = false
+    @State private var editRoute: WebRoute?
     /// Every photo / video opens whole (fit) over a blurred copy; the Fit button fills the screen (web InspireFeed).
     @State private var fill = false
     @State private var ratios: [Int: Double] = [:]
@@ -113,6 +134,16 @@ struct InspirePostPage: View {
     private var extra: StoryExtra? { store.extra(post.id) }
     private var ownerUid: String { extra?.userId ?? "" }
     private var mine: Bool { !ownerUid.isEmpty && ownerUid == auth.uid }
+    /// the poster or the admin: Edit and Delete in the ••• menu (web canEdit / canDelete)
+    private var canManage: Bool { StoryOwnerTools.canManage(ownerUid: ownerUid, auth: auth) }
+    /// The post's article ("Read the full article"), when it has one: its links and places show here too.
+    private var articleId: String {
+        let a = extra?.linkedArticleId ?? ""
+        return a == post.id ? "" : a
+    }
+    private var article: StoryExtra? { articleId.isEmpty ? nil : store.extra(articleId) }
+    private var linkGroups: [StoryLinkGroup] { StoryLinkGroup.groups(post: extra, article: article) }
+    private var placeRows: [StoryPlaceRow] { StoryPlaceRow.rows(post: post, extra: extra) }
 
     private var media: [StoryMediaInfo] {
         if let ex = extra, !ex.media.isEmpty { return ex.media }
@@ -164,6 +195,7 @@ struct InspirePostPage: View {
         .onChange(of: active) { _, _ in fill = false }
         .onChange(of: page) { _, _ in fill = false }
         .task { await store.ensure(post.id) }
+        .task(id: articleId) { if !articleId.isEmpty { await store.ensure(articleId) } }
         .task(id: active) {
             guard active else { return }
             if commentCount == nil { commentCount = await CommentsService.count(post.id) }
@@ -180,7 +212,7 @@ struct InspirePostPage: View {
             .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showLinks) {
-            InspireLinksSheet(links: extra?.links ?? [])
+            InspireLinksSheet(groups: linkGroups, places: placeRows)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
@@ -194,6 +226,14 @@ struct InspirePostPage: View {
         }
         .storyBlockConfirm(isPresented: $confirmBlock, name: post.authorName.isEmpty ? "this traveler" : post.authorName) {
             await blockOwner()
+        }
+        .storyDeleteConfirm(isPresented: $confirmDelete, article: false) { deletePost() }
+        // Edit: the post editor every post is written in, opened on this post; its X or Save closes it
+        .fullScreenCover(item: $editRoute, onDismiss: {
+            let id = post.id
+            Task { await store.reload(id) }
+        }) { r in
+            NavigationStack { WebScreen(route: r, fullScreen: true) }
         }
     }
 
@@ -432,7 +472,7 @@ struct InspirePostPage: View {
     private func rail(compact: Bool) -> some View {
         let liked = auth.uid.map { extra?.likedUserIds.contains($0) ?? false } ?? false
         let likes = extra?.likesCount ?? post.likesCount
-        let links = extra?.links ?? []
+        let linkCount = linkGroups.reduce(0) { $0 + $1.links.count } + placeRows.count
         let products = extra?.products ?? []
         return VStack(spacing: compact ? 2 : 8) {
             railButton(label: likes > 0 ? "\(likes)" : "Like", a11y: liked ? "Unlike" : "Like", compact: compact) {
@@ -461,8 +501,8 @@ struct InspirePostPage: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Share")
 
-            if !links.isEmpty {
-                railButton(label: "Links", a11y: "Links: \(links.count) \(links.count == 1 ? "link" : "links") in this post", compact: compact) {
+            if linkCount > 0 {
+                railButton(label: "Links", a11y: "Links: \(linkCount) \(linkCount == 1 ? "link or place" : "links and places") in this post", compact: compact) {
                     showLinks = true
                 } icon: {
                     Image(systemName: "link").foregroundStyle(.white)
@@ -486,12 +526,21 @@ struct InspirePostPage: View {
         .shadow(color: .black.opacity(0.6), radius: 2, y: 1)
     }
 
-    /// ••• : a menu right at the button (not a sheet at the top of the screen). Report for anyone else's post,
-    /// Block its poster when signed in (web InspireFeed "more" sheet + SafetyUI).
+    /// ••• : a menu right at the button (not a sheet at the top of the screen). The poster and the admin get Edit and
+    /// Delete (red, asks first); anyone else's post gets Report and Block (web InspireFeed "more" sheet + SafetyUI).
     @ViewBuilder
     private var moreMenu: some View {
-        if !mine {
+        if !mine || canManage {
             Menu {
+                if canManage {
+                    StoryOwnerMenuItems(article: false) {
+                        StoryVideoCenter.shared.stopAll()
+                        editRoute = StoryOwnerTools.editRoute(post.id, article: false)
+                    } onDelete: {
+                        confirmDelete = true
+                    }
+                }
+                if !mine {
                 Button {
                     if auth.isSignedIn { showReport = true } else {
                         ShellRouter.shared.requireSignIn("Sign in to report a post.") { showReport = true }
@@ -507,6 +556,7 @@ struct InspirePostPage: View {
                     } label: {
                         Label("Block \(post.authorName.isEmpty ? "this traveler" : post.authorName)", systemImage: "person.crop.circle.badge.xmark")
                     }
+                }
                 }
             } label: {
                 Image(systemName: "ellipsis")
@@ -598,6 +648,26 @@ struct InspirePostPage: View {
     }
 
     @MainActor
+    private func deletePost() {
+        guard !deleting else { return }
+        deleting = true
+        StoryVideoCenter.shared.stopAll()
+        let id = post.id
+        let ex = extra
+        Task {
+            let ok = await StoryOwnerTools.delete(postId: id, extra: ex)
+            deleting = false
+            if ok {
+                store.remove(id)
+                onDeleted(id)
+                ShellRouter.shared.showToast("Post deleted")
+            } else {
+                ShellRouter.shared.showToast("Couldn't delete it. Check your connection and try again.")
+            }
+        }
+    }
+
+    @MainActor
     private func blockOwner() async {
         guard let actor = StoryActor.from(auth) else { return }
         let name = post.authorName.isEmpty ? "this traveler" : post.authorName
@@ -605,45 +675,6 @@ struct InspirePostPage: View {
             ShellRouter.shared.showToast("\(name) is blocked.")
         } else {
             ShellRouter.shared.showToast("Couldn't block. Try again.")
-        }
-    }
-}
-
-/// The post's links (rail "Links").
-struct InspireLinksSheet: View {
-    let links: [StoryLinkInfo]
-    @Environment(\.openURL) private var openURL
-    var body: some View {
-        NavigationStack {
-            List(Array(links.enumerated()), id: \.offset) { _, l in
-                Button {
-                    if let u = URL(string: l.url) { openURL(u) }
-                } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "link")
-                            .foregroundStyle(Color.navy)
-                            .frame(width: 32, height: 32)
-                            .hairline(radius: 8)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(l.label.isEmpty ? l.host : l.label)
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(Color.navy)
-                                .lineLimit(2)
-                            if !l.host.isEmpty {
-                                Text(l.host).font(.footnote).foregroundStyle(Color.textSecondary).lineLimit(1)
-                            }
-                        }
-                        Spacer(minLength: 0)
-                        Image(systemName: "arrow.up.right").font(.footnote.weight(.semibold)).foregroundStyle(Color.textTertiary)
-                    }
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-            }
-            .listStyle(.plain)
-            .navigationTitle("Links")
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
