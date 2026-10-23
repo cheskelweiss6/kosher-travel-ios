@@ -26,6 +26,9 @@ final class StoriesStore {
     /// profiles/{uid}.photoURL (the traveler's current photo; "" = removed it). Missing key = not read yet / no doc.
     private(set) var livePhotos: [String: String] = [:]
     @ObservationIgnored private var photoRequested: Set<String> = []
+    /// profiles/{uid}.username (Oct 23 2026, Cheskel: "apply new user names the old posts"): the traveler's current
+    /// username, so old posts, comments and reviews show it. Missing key or "" = the name stored with the post.
+    private(set) var liveNames: [String: String] = [:]
 
     static let hideAtReports = 3
 
@@ -41,6 +44,21 @@ final class StoriesStore {
     func photo(uid: String, stored: String) -> String {
         if !uid.isEmpty, let live = livePhotos[uid] { return live }
         return stored
+    }
+
+    /// The name to show for a traveler: their current username when they set one, else the stored name.
+    /// Reads profiles/{uid} once per traveler (shared with the live photo).
+    func name(uid: String, stored: String) -> String {
+        guard !uid.isEmpty else { return stored }
+        if let live = liveNames[uid], !live.isEmpty { return live }
+        if Thread.isMainThread { requestPhoto(uid) }
+        return stored
+    }
+
+    /// The person's own new username ("" = removed) shows at once everywhere on this phone.
+    func setLiveName(_ uid: String, _ name: String) {
+        guard !uid.isEmpty else { return }
+        liveNames[uid] = name.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     // MARK: feed
@@ -162,15 +180,18 @@ final class StoriesStore {
         followingLoaded = true
     }
 
-    // MARK: live profile photos (profiles/{uid}, public read)
+    // MARK: live profile photos and usernames (profiles/{uid}, public read)
 
     func requestPhoto(_ uid: String) {
         guard !uid.isEmpty, FirebaseBoot.isConfigured, !photoRequested.contains(uid) else { return }
         photoRequested.insert(uid)
         Task { @MainActor in
             guard let snap = try? await Firestore.firestore().collection("profiles").document(uid).getDocument(),
-                  snap.exists, let v = snap.data()?["photoURL"] as? String else { return }
-            self.livePhotos[uid] = v
+                  snap.exists, let d = snap.data() else { return }
+            if let v = d["photoURL"] as? String { self.livePhotos[uid] = v }
+            if let n = d["username"] as? String, self.liveNames[uid] == nil {
+                self.liveNames[uid] = n.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
         }
     }
 }

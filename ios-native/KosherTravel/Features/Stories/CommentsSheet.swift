@@ -113,10 +113,12 @@ struct CommentsSheet: View {
 
     private func row(_ c: StoryComment) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            TravelerAvatar(uid: c.userId, stored: c.authorPhoto, name: c.authorName, size: 34)
+            // Oct 23 2026: the commenter's current username (profiles/{uid}), else the name saved with the comment
+            let shownName = StoriesStore.shared.name(uid: c.userId, stored: c.authorName)
+            TravelerAvatar(uid: c.userId, stored: c.authorPhoto, name: shownName, size: 34)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
-                    Text(c.authorName).font(.footnote.weight(.semibold)).foregroundStyle(Color.navy)
+                    Text(shownName).font(.footnote.weight(.semibold)).foregroundStyle(Color.navy)
                     Text(TimeAgo.string(c.createdAtMs)).font(.caption).foregroundStyle(Color.textSecondary)
                     if c.editedAtMs != nil {
                         Text("edited").font(.caption).foregroundStyle(Color.textTertiary)
