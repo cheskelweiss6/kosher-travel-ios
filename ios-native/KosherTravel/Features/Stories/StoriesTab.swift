@@ -5,7 +5,7 @@ struct StoriesTab: View {
     @Environment(AuthStore.self) private var auth
     private var store: StoriesStore { .shared }
     @State private var path: [StoriesRoute] = []
-    @State private var showArticles = true
+    @State private var showArticles = false   // web: "Get Inspired" is the first, selected segment
     @State private var followingOnly = false
     @State private var tag = "All"
     @State private var appliedRoute = false
@@ -19,8 +19,8 @@ struct StoriesTab: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     Picker("Show", selection: $showArticles) {
+                        Text("Get Inspired").tag(false)
                         Text("Articles").tag(true)
-                        Text("Inspiration").tag(false)
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal, Theme.pagePadding)
@@ -35,16 +35,12 @@ struct StoriesTab: View {
             .background(Color.white)
             .navigationTitle("Stories")
             .toolbar {
+                // Cheskel (Oct 23 2026): "the top left button should be to add posts" (the web's Share: new story composer)
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { path.append(.web(.inspire)) } label: {
-                        Label("Get Inspired", systemImage: "play.rectangle.on.rectangle")
-                    }
-                    .accessibilityIdentifier("stories-inspire")
-                }
-                ToolbarItem(placement: .topBarTrailing) {
                     Button { webCover = .compose() } label: {
-                        Label("Share", systemImage: "camera").labelStyle(.titleAndIcon)
+                        Label("Share", systemImage: "plus")
                     }
+                    .accessibilityLabel("Share your story")
                     .accessibilityIdentifier("stories-share")
                 }
                 ToolbarItem(placement: .topBarTrailing) { AccountToolbarButtons() }
@@ -171,7 +167,7 @@ struct StoriesTab: View {
         }
     }
 
-    // MARK: QA deep links: tab:stories[/inspiration|/following|/post:<id>[/comments]|/traveler:<uid>]
+    // MARK: QA deep links: tab:stories[/inspiration|/articles|/following|/post:<id>[/comments]|/traveler:<uid>]
 
     private func applyLaunchRoute() {
         guard !appliedRoute else { return }
@@ -179,6 +175,7 @@ struct StoriesTab: View {
         guard let r = LaunchRoute.current, r.hasPrefix("tab:stories/") else { return }
         let rest = String(r.dropFirst("tab:stories/".count))
         if rest == "inspiration" { showArticles = false }
+        else if rest == "articles" { showArticles = true }
         else if rest == "following" { followingOnly = true }
         else if rest.hasPrefix("post:") {
             let id = rest.dropFirst(5).split(separator: "/").first.map(String.init) ?? ""
