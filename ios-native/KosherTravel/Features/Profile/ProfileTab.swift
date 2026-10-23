@@ -13,7 +13,10 @@ struct ProfileTab: View {
     @Environment(AuthStore.self) private var auth
     @Environment(StoryFeed.self) private var feed
     @Environment(\.openURL) private var openURL
-    @State private var store = ProfileStore()
+    @State private var store = ProfileStore.shared
+    @Environment(\.dismiss) private var dismiss
+    /// Shown as a sheet from the header's account button (the web has no Profile tab).
+    var presented = false
     @State private var path: [ProfileRoute] = []
     @State private var signIn: SignInSheet.Mode?
     @State private var showBell = false
@@ -61,6 +64,13 @@ struct ProfileTab: View {
             await feed.loadIfNeeded()
         }
         .onAppear(perform: openLaunchRoute)
+        .onAppear {
+            // The header's bell opens the Profile page with the notifications list on top.
+            if ShellRouter.shared.profileOpensBell {
+                ShellRouter.shared.profileOpensBell = false
+                if auth.isSignedIn { showBell = true }
+            }
+        }
         // the Google sign-in callback is handled app-wide (RootTabView → DeepLinks.handle)
         .onChange(of: photoItem) { _, item in
             guard let item else { return }
@@ -76,6 +86,13 @@ struct ProfileTab: View {
     // MARK: toolbar
 
     @ToolbarContentBuilder private var profileToolbar: some ToolbarContent {
+        if presented {
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Done") { dismiss() }
+                    .fontWeight(.semibold)
+                    .accessibilityIdentifier("profile-done")
+            }
+        }
         if auth.isSignedIn {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { showBell = true } label: {

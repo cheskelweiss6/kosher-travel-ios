@@ -20,13 +20,18 @@ final class ShellRouter {
     var notice: ShellNotice?
     /// A shared link to open over the current tab.
     var deepLink: DeepLinkTarget?
+    /// The Profile page, opened from the header's avatar / settings button (web: the header button, not a tab;
+    /// the web's tab bar has 4 tabs: Explore, AI Planner, My Travel, Stories).
+    var showProfile = false
+    /// Open the notifications list as soon as the Profile page appears (the header's bell).
+    var profileOpensBell = false
 
     func open(tab name: String, prompt: String? = nil) {
         switch name {
         case "planner": selectedTab = .planner
         case "mytravel", "travelmap": selectedTab = .myTravel
         case "stories": selectedTab = .stories
-        case "profile": selectedTab = .profile
+        case "profile": showProfile = true
         default: selectedTab = .explore
         }
         if let prompt, !prompt.isEmpty { plannerPrompt = prompt }

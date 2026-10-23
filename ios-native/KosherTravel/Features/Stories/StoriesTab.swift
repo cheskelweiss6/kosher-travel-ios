@@ -47,6 +47,7 @@ struct StoriesTab: View {
                     }
                     .accessibilityIdentifier("stories-share")
                 }
+                ToolbarItem(placement: .topBarTrailing) { AccountToolbarButtons() }
             }
             .navigationDestination(for: StoriesRoute.self) { route in
                 switch route {

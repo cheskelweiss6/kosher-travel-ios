@@ -101,6 +101,8 @@ struct PlannerTab: View {
             .disabled(store.messages.isEmpty)
             .accessibilityLabel("New chat")
         }
+        // Web: the planner's own header carries the account button.
+        ToolbarItem(placement: .topBarTrailing) { AccountToolbarButtons() }
     }
 
     // MARK: chat

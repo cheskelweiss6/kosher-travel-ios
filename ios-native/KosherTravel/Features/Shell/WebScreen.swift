@@ -126,6 +126,10 @@ struct WebTabRoot: View {
     var body: some View {
         NavigationStack {
             WebScreen(route: route)
+                .toolbar {
+                    // Web: the header's account corner sits on every tab.
+                    ToolbarItem(placement: .topBarTrailing) { AccountToolbarButtons() }
+                }
         }
     }
 }

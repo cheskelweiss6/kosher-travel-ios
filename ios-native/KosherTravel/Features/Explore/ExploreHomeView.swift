@@ -3,6 +3,7 @@ import SwiftUI
 struct ExploreHomeView: View {
     @Environment(StoryFeed.self) private var feed
     @Environment(AuthStore.self) private var auth
+    @State private var webCover: WebRoute?
 
     var body: some View {
         ScrollView {
@@ -19,6 +20,14 @@ struct ExploreHomeView: View {
         .navigationTitle("Explore")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
+            // Web: "Share" (share your story) sits top-left on the Explore home only.
+            ToolbarItem(placement: .topBarLeading) {
+                Button { webCover = .compose() } label: {
+                    Label("Share", systemImage: "photo.badge.plus").labelStyle(.titleAndIcon)
+                }
+                .accessibilityLabel("Share your story")
+                .accessibilityIdentifier("explore-share")
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink(value: ExploreRoute.web(.exploreSearch)) {
                     Image(systemName: "magnifyingglass")
@@ -26,9 +35,13 @@ struct ExploreHomeView: View {
                 .accessibilityLabel("Search destinations")
                 .accessibilityIdentifier("explore-search")
             }
+            ToolbarItem(placement: .topBarTrailing) { AccountToolbarButtons() }
         }
         .refreshable { await feed.refresh() }
         .task { await feed.loadIfNeeded() }
+        .fullScreenCover(item: $webCover) { r in
+            NavigationStack { WebScreen(route: r, fullScreen: true) }
+        }
     }
 
     // MARK: More (live screens inside the shell until they are native)

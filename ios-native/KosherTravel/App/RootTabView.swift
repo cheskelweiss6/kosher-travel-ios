@@ -1,7 +1,9 @@
 import SwiftUI
 
+/// The web's 4 tabs (Cheskel's parity rule): Explore, AI Planner, My Travel, Stories. Profile opens from the header
+/// button on each tab (ShellRouter.showProfile), as on the website.
 enum AppTab: Hashable {
-    case explore, planner, myTravel, stories, profile
+    case explore, planner, myTravel, stories
 }
 
 struct RootTabView: View {
@@ -22,9 +24,6 @@ struct RootTabView: View {
             StoriesTab()
                 .tabItem { Label("Stories", systemImage: "camera").environment(\.symbolVariants, .none) }
                 .tag(AppTab.stories)
-            ProfileTab()
-                .tabItem { Label("Profile", systemImage: "person.crop.circle").environment(\.symbolVariants, .none) }
-                .tag(AppTab.profile)
         }
         // Brand: outline icons, also for the selected tab.
         .environment(\.symbolVariants, .none)
@@ -34,6 +33,10 @@ struct RootTabView: View {
         }
         .sheet(item: $router.deepLink) { target in
             DeepLinkSheet(target: target)
+        }
+        .sheet(isPresented: $router.showProfile) {
+            ProfileTab(presented: true)
+                .presentationDragIndicator(.visible)
         }
         // Shared links (universal links) and the Google sign-in callback.
         .onOpenURL { url in _ = DeepLinks.handle(url) }
@@ -49,7 +52,7 @@ struct RootTabView: View {
                 case "planner": router.selectedTab = .planner
                 case "mytravel": router.selectedTab = .myTravel
                 case "stories": router.selectedTab = .stories
-                case "profile": router.selectedTab = .profile
+                case "profile": router.showProfile = true
                 default: router.selectedTab = .explore
                 }
             }
