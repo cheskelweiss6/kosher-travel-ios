@@ -4,6 +4,7 @@ import SwiftUI
 enum StoriesRoute: Hashable {
     case post(String)
     case traveler(uid: String, name: String, photo: String)
+    case web(WebRoute)   // a live-app screen inside the native shell (Get Inspired)
 }
 
 /// A traveler's round photo: their current profile photo when they set one, else the stored one, else their initial.

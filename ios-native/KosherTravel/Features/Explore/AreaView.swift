@@ -395,7 +395,9 @@ struct CityPlaceRow: View {
         HStack(alignment: .center, spacing: 12) {
             Group {
                 if let p = item.photos.first {
-                    RemoteImage(url: p, maxPixel: 240)
+                    RemoteImage(url: p, maxPixel: 240, venue: true, category: item.photoCategory)
+                } else if PhotoFallback.category(item.photoCategory) != nil {
+                    RemoteImage(url: "", maxPixel: 240, venue: true, category: item.photoCategory)
                 } else {
                     Image(systemName: item.systemImage)
                         .font(.system(size: 18, weight: .regular))
@@ -455,11 +457,11 @@ struct CityPlaceCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            RemoteImage(url: item.photos.first ?? "", maxPixel: 700)
+            RemoteImage(url: item.photos.first ?? "", maxPixel: 700, venue: true, category: item.photoCategory)
                 .aspectRatio(4 / 3, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .overlay(alignment: .topLeading) {
-                    if item.photos.isEmpty {
+                    if item.photos.isEmpty && PhotoFallback.category(item.photoCategory) == nil {
                         Image(systemName: item.systemImage)
                             .font(.system(size: 14, weight: .regular))
                             .foregroundStyle(Color.navy)

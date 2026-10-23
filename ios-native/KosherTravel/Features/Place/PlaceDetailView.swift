@@ -84,14 +84,18 @@ struct PlaceDetailView: View {
         if list.count > 1 {
             TabView {
                 ForEach(list, id: \.self) { url in
-                    RemoteImage(url: url, maxPixel: 1400)
+                    RemoteImage(url: url, maxPixel: 1400, venue: true, category: item.photoCategory)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
             .aspectRatio(16 / 10, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         } else if let one = list.first {
-            RemoteImage(url: one, maxPixel: 1400)
+            RemoteImage(url: one, maxPixel: 1400, venue: true, category: item.photoCategory)
+                .aspectRatio(16 / 10, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        } else if PhotoFallback.category(item.photoCategory) != nil {
+            RemoteImage(url: "", maxPixel: 1400, venue: true, category: item.photoCategory)
                 .aspectRatio(16 / 10, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         }

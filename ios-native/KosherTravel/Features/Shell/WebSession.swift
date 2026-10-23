@@ -92,7 +92,8 @@ enum WebSession {
         (function(){try{
           window.__KT_SHELL__=\(route.shellJSON);
           window.__KT_SHELL__.layout=\(fullScreen ? "'full'" : "'bar'");
-          var c=document.documentElement.classList; c.add('kt-shell'); c.add(\(fullScreen ? "'kt-shell-full'" : "'kt-shell-bar'"));
+          var c=document.documentElement&&document.documentElement.classList; if(!c)return;
+          c.add('kt-shell'); c.add('native-app'); c.add('native-ios'); c.add(\(fullScreen ? "'kt-shell-full'" : "'kt-shell-bar'"));
         }catch(e){}})();
         """
     }

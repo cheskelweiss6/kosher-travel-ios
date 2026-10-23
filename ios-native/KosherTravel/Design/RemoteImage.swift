@@ -61,12 +61,66 @@ final class ImagePipeline: @unchecked Sendable {
     }
 }
 
+/// The website's photo rules (src/categoryDefaults.ts, src/photoPlaceholder.ts): a real photo of the place always wins;
+/// a Chabad / shul / grocery venue without one (or whose photo fails) shows the owner's default artwork for that category;
+/// anything else shows the neutral navy "no verified photo yet" tile. Never a stock photo of somewhere else.
+enum PhotoFallback {
+    static let defaultsBase = "https://www.yourkoshertravel.com/defaults/"
+
+    /// "chabad", "synagogue" or "grocery" for a venue category / type word, else nil (web: defaultPhotoCategory).
+    static func category(_ word: String?) -> String? {
+        let c = (word ?? "").lowercased().trimmingCharacters(in: .whitespaces)
+        if c.isEmpty { return nil }
+        if c.contains("chabad") { return "chabad" }
+        if c.contains("synagogue") || c.contains("shul") { return "shul" }
+        if c.contains("grocer") || c.contains("supermarket") { return "grocery" }
+        return nil
+    }
+
+    /// True for an empty value or one of the website's built-in placeholders (inline SVG): web isPlaceholderPhoto.
+    static func isPlaceholder(_ url: String) -> Bool {
+        let u = url.trimmingCharacters(in: .whitespaces)
+        return u.isEmpty || u.hasPrefix("data:image/svg")
+    }
+
+    /// The sources to try, in order.
+    static func chain(_ url: String, category word: String?) -> [String] {
+        var out: [String] = []
+        if !isPlaceholder(url) { out.append(url) }
+        if let c = category(word) { out.append(defaultsBase + c + ".webp") }
+        return out
+    }
+}
+
+/// The neutral "no verified photo yet" tile: navy with a faint outline map pin (the website's placeholder; solid navy
+/// because the native brand has no gradients).
+struct NoPhotoTile: View {
+    var body: some View {
+        Rectangle()
+            .fill(Color.navy)
+            .overlay {
+                Image(systemName: "mappin")
+                    .font(.system(size: 26, weight: .light))
+                    .foregroundStyle(Color.white.opacity(0.28))
+            }
+            .accessibilityHidden(true)
+    }
+}
+
 /// A photo that fills the frame its parent gives it. Quiet grey with an outline icon while loading or when there is no photo.
+/// `venue: true` (listing cards and place sheets) follows the website's venue photo rules instead: the category default
+/// (Chabad / shul / grocery) when the place has no photo or it fails, else the navy no-photo tile.
 struct RemoteImage: View {
     let url: String
     var maxPixel: CGFloat = 900
+    var venue = false
+    var category: String? = nil
     @State private var image: UIImage?
     @State private var failed = false
+
+    private var sources: [String] {
+        venue ? PhotoFallback.chain(url, category: category) : (url.isEmpty ? [] : [url])
+    }
 
     var body: some View {
         Rectangle()
@@ -77,21 +131,30 @@ struct RemoteImage: View {
                         .resizable()
                         .scaledToFill()
                         .transition(.opacity)
-                } else if failed || url.isEmpty {
-                    Image(systemName: "photo")
-                        .font(.system(size: 22, weight: .light))
-                        .foregroundStyle(Color.textTertiary)
+                } else if failed || sources.isEmpty {
+                    if venue {
+                        NoPhotoTile()
+                    } else {
+                        Image(systemName: "photo")
+                            .font(.system(size: 22, weight: .light))
+                            .foregroundStyle(Color.textTertiary)
+                    }
                 }
             }
             .clipped()
-            .task(id: url) {
-                if url.isEmpty { failed = true; return }
-                if let hit = ImagePipeline.shared.cached(url, maxPixel: maxPixel) { image = hit; return }
-                let loaded = await ImagePipeline.shared.load(url, maxPixel: maxPixel)
-                withAnimation(.easeOut(duration: 0.2)) {
-                    image = loaded
-                    failed = loaded == nil
+            .task(id: url + "|" + (category ?? "") + (venue ? "|v" : "")) {
+                image = nil
+                failed = false
+                let list = sources
+                if list.isEmpty { failed = true; return }
+                for source in list {
+                    if let hit = ImagePipeline.shared.cached(source, maxPixel: maxPixel) { image = hit; return }
+                    if let loaded = await ImagePipeline.shared.load(source, maxPixel: maxPixel) {
+                        withAnimation(.easeOut(duration: 0.2)) { image = loaded }
+                        return
+                    }
                 }
+                withAnimation(.easeOut(duration: 0.2)) { failed = true }
             }
     }
 }

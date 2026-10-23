@@ -9,7 +9,7 @@ struct StoriesTab: View {
     @State private var followingOnly = false
     @State private var tag = "All"
     @State private var appliedRoute = false
-    /// Get Inspired (full-screen feed) and the composer are still the live screens, full screen with their own X.
+    /// The composer is still the live screen, full screen with its own X (Get Inspired is pushed: StoriesRoute.web).
     @State private var webCover: WebRoute?
 
     private static let tags = ["Shabbos", "Food", "Shul", "Family", "Nature", "Beach", "Hotels", "Yom Tov", "Cruise", "Tips"]
@@ -36,7 +36,7 @@ struct StoriesTab: View {
             .navigationTitle("Stories")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { webCover = .inspire } label: {
+                    Button { path.append(.web(.inspire)) } label: {
                         Label("Get Inspired", systemImage: "play.rectangle.on.rectangle")
                     }
                     .accessibilityIdentifier("stories-inspire")
@@ -52,6 +52,7 @@ struct StoriesTab: View {
                 switch route {
                 case .post(let id): StoryDetailView(postId: id)
                 case .traveler(let uid, let name, let photo): TravelerView(uid: uid, name: name, photo: photo)
+                case .web(let r): WebScreen(route: r)
                 }
             }
             .refreshable { await store.refresh() }

@@ -152,6 +152,9 @@ struct PlaceItem: Identifiable, Hashable {
         return out
     }
 
+    /// The words the website's default-photo rule reads (Chabad / shul / grocery): the section and the venue's type.
+    var photoCategory: String { "\(category.rawValue) \(venue.kind)" }
+
     /// The second line under the name: hechsher, else type, else a short address.
     var subtitle: String {
         if !venue.kashrus.isEmpty { return venue.kashrus }
