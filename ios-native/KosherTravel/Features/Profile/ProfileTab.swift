@@ -25,6 +25,9 @@ struct ProfileTab: View {
     @State private var photoBusy = false
     @State private var photoError: String?
     @State private var routed = false
+    /// Cheskel (Oct 23 2026): every delete is red and asks first.
+    @State private var confirmRemovePhoto = false
+    @State private var pendingUnsave: SavedPostItem?
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -66,6 +69,18 @@ struct ProfileTab: View {
             await feed.loadIfNeeded()
         }
         .onAppear(perform: openLaunchRoute)
+        .confirmationDialog("Remove your profile photo?", isPresented: $confirmRemovePhoto, titleVisibility: .visible) {
+            Button("Remove photo", role: .destructive) { Task { await removePhoto() } }
+            Button("Cancel", role: .cancel) {}
+        }
+        .confirmationDialog("Remove this post from saved?", isPresented: Binding(get: { pendingUnsave != nil }, set: { if !$0 { pendingUnsave = nil } }),
+                            titleVisibility: .visible, presenting: pendingUnsave) { item in
+            Button("Remove", role: .destructive) {
+                pendingUnsave = nil
+                Task { _ = await store.unsave(item) }
+            }
+            Button("Cancel", role: .cancel) { pendingUnsave = nil }
+        }
         .onAppear {
             // The header's bell opens the Profile page with the notifications list on top.
             if ShellRouter.shared.profileOpensBell {
@@ -211,7 +226,7 @@ struct ProfileTab: View {
                 }
                 if !auth.photoURL.isEmpty {
                     Button(role: .destructive) {
-                        Task { await removePhoto() }
+                        confirmRemovePhoto = true
                     } label: { Label("Remove photo", systemImage: "trash") }
                 }
             } label: {
@@ -444,7 +459,7 @@ struct ProfileTab: View {
         .buttonStyle(.plain)
         .contextMenu {
             Button(role: .destructive) {
-                Task { _ = await store.unsave(item) }
+                pendingUnsave = item
             } label: { Label("Remove from saved", systemImage: "bookmark.slash") }
         }
     }

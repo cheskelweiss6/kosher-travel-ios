@@ -6,6 +6,7 @@ struct NotificationsSheet: View {
     @Environment(StoryFeed.self) private var feed
     let store: ProfileStore
     @State private var openPost: String?
+    @State private var pendingDelete: BellNote?
 
     var body: some View {
         NavigationStack {
@@ -25,7 +26,7 @@ struct NotificationsSheet: View {
                                     .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                                     .swipeActions(edge: .trailing) {
                                         Button(role: .destructive) {
-                                            Task { await store.deleteNotification(n) }
+                                            pendingDelete = n
                                         } label: { Label("Delete", systemImage: "trash") }
                                     }
                                     .accessibilityIdentifier("notif-row")
@@ -52,6 +53,15 @@ struct NotificationsSheet: View {
             }
             .navigationDestination(item: $openPost) { id in
                 StoryDetailView(postId: id)
+            }
+            // every delete asks first (Cheskel, Oct 23 2026)
+            .confirmationDialog("Delete this notification?", isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } }),
+                                titleVisibility: .visible, presenting: pendingDelete) { n in
+                Button("Delete", role: .destructive) {
+                    pendingDelete = nil
+                    Task { await store.deleteNotification(n) }
+                }
+                Button("Cancel", role: .cancel) { pendingDelete = nil }
             }
         }
     }
