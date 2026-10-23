@@ -133,6 +133,7 @@ struct TourGuideCardView: View {
     let guide: TourGuide
     @Environment(\.openURL) private var openURL
     @State private var summary: PlaceReviewSummary?
+    @State private var showReviews = false
 
     var body: some View { card(guide) }
 
@@ -169,6 +170,17 @@ struct TourGuideCardView: View {
                 }
             }
             Divider().overlay(Color.hairline)
+            // Website (TourGuideCard.tsx): "Reviews (N)" toggles the shared reviews section open under the card.
+            Button { withAnimation(.snappy) { showReviews.toggle() } } label: {
+                Label((summary?.count ?? 0) > 0 ? "Reviews (\(summary?.count ?? 0))" : "Reviews", systemImage: "text.bubble")
+                    .font(.caption.weight(.bold))
+            }
+            .buttonStyle(.plain).foregroundStyle(Color.navy).frame(minHeight: 36)
+            .accessibilityValue(showReviews ? "Open" : "Closed")
+            if showReviews {
+                ParkReviewsSection(placeId: "guide-\(g.id)", placeName: g.guideName, placeKind: "guide",
+                                   onCount: { _ in Task { await loadSummary(g) } })
+            }
             HStack {
                 Text("Shared by \(g.submittedBy.isEmpty ? "Community Traveler" : g.submittedBy)")
                 Spacer(minLength: 8)
@@ -178,10 +190,12 @@ struct TourGuideCardView: View {
         }
         .padding(16)
         .hairline(radius: 16)
-        .task(id: g.id) {
-            // Website: the count and average show before the reviews are opened (placeId "guide-<id>").
-            if let list = try? await PlaceReviewService.reviews(placeId: "guide-\(g.id)") { summary = PlaceReviewSummary(list) }
-        }
+        .task(id: g.id) { await loadSummary(g) }
+    }
+
+    /// Website: the count and average show before the reviews are opened (placeId "guide-<id>").
+    private func loadSummary(_ g: TourGuide) async {
+        if let list = try? await PlaceReviewService.reviews(placeId: "guide-\(g.id)") { summary = PlaceReviewSummary(list) }
     }
 }
 

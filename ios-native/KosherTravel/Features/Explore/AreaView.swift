@@ -24,6 +24,7 @@ struct AreaView: View {
     @State private var webSection: WebRoute?
     @State private var scrollToGuides = false
     @State private var addingGuide = false
+    @State private var confirmUnsave = false
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(AuthStore.self) private var auth
     private let bucket = BucketList.shared
@@ -103,6 +104,10 @@ struct AreaView: View {
         }
         }
         .background(Color.white)
+        .confirmationDialog("Remove \(page.name) from your saved places?", isPresented: $confirmUnsave, titleVisibility: .visible) {
+            Button("Remove", role: .destructive) { bucket.toggle(page.destId) }
+            Button("Cancel", role: .cancel) {}
+        }
         .sheet(isPresented: $addingGuide) {
             AddTourGuideSheet(page: page) { g in
                 TourGuideStore.shared.add(g)
@@ -115,7 +120,8 @@ struct AreaView: View {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 // Web: Save / Saved heart (the bucket list shown in My Travel).
                 let saved = bucket.contains(page.destId)
-                Button { bucket.toggle(page.destId) } label: {
+                // Cheskel's rule (Oct 23 9:20): every removal asks first, in red.
+                Button { if saved { confirmUnsave = true } else { bucket.toggle(page.destId) } } label: {
                     Image(systemName: saved ? "heart.fill" : "heart")
                         .foregroundStyle(Color.navy)
                 }
@@ -126,8 +132,9 @@ struct AreaView: View {
                 }
                 .accessibilityLabel("Map of \(page.name)")
                 Button {
-                    // Web: Plan Trip opens the AI Planner for this city.
-                    ShellRouter.shared.open(tab: "planner", prompt: "Plan a kosher trip to \(page.name)")
+                    // Website: setWizardCity(name) + the planner tab, i.e. "Plan a trip" with the city in "Where to?".
+                    ShellRouter.shared.plannerTripCity = page.name
+                    ShellRouter.shared.open(tab: "planner")
                 } label: {
                     // Website: "Plan" on a phone, "Plan Trip" on wider screens.
                     Label(sizeClass == .regular ? "Plan Trip" : "Plan", systemImage: "sparkles")
@@ -328,7 +335,8 @@ struct AreaView: View {
             CityRestaurantsView(items: sections(page).first { $0.category == .restaurant }?.items ?? [],
                                 cityName: page.name,
                                 summary: { summary(for: $0) },
-                                onSelect: { selected = $0 })
+                                onSelect: { selected = $0 },
+                                onReviewsChanged: { updateSummary($0, $1) })
         } else if hub == .guides {
             CityGuidesView(page: page)
         } else if hub == .shabbat {
@@ -340,7 +348,8 @@ struct AreaView: View {
                                listedNames: page.listedNames, onSelect: { selected = $0 })
         } else if CityHub.nativePages.contains(hub) {
             CityHubPage(hub: hub, page: page, sections: sections(page),
-                        summary: { summary(for: $0) }, onSelect: { selected = $0 })
+                        summary: { summary(for: $0) }, onSelect: { selected = $0 },
+                        onReviewsChanged: { updateSummary($0, $1) })
         } else {
             listSubPage(hub, page: page)
         }
