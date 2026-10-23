@@ -12,6 +12,9 @@ struct ExploreHomeView: View {
                 regions
                 inspiration
                 articles
+                // web App.tsx: What's New under Stories & Articles, then the person's upcoming trips
+                ExploreWhatsNew()
+                if let uid = auth.uid { ExploreUpcomingTrips(uid: uid) }
                 moreRows
             }
             .padding(.top, 8)
@@ -31,7 +34,10 @@ struct ExploreHomeView: View {
             }
             ToolbarItem(placement: .topBarTrailing) { AccountToolbarButtons() }
         }
-        .refreshable { await feed.refresh() }
+        .refreshable {
+            await feed.refresh()
+            await ExploreNewsStore.shared.load(force: true)
+        }
         .task { await feed.loadIfNeeded() }
         .fullScreenCover(item: $webCover) { r in
             NavigationStack { WebScreen(route: r, fullScreen: true) }
@@ -68,8 +74,6 @@ struct ExploreHomeView: View {
 
     private var moreRows: some View {
         VStack(spacing: 0) {
-            moreRow("newspaper", "What's New", .news)
-            Divider().overlay(Color.hairline)
             moreRow("building.columns", "Kivrei Tzadikim", .kivrei)
             if auth.isAdmin {
                 Divider().overlay(Color.hairline)
