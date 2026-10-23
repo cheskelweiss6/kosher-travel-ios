@@ -8,6 +8,7 @@ import SwiftUI
 struct InspireFeedView: View {
     let startId: String
     @Environment(StoryFeed.self) private var feed
+    @Environment(AuthStore.self) private var auth
     private var store: StoriesStore { .shared }
 
     @State private var ids: [String] = []
@@ -22,7 +23,8 @@ struct InspireFeedView: View {
 
     /// Every Inspiration post, newest first as the feed has them, with the opened one always in the list.
     private func buildIds() -> [String] {
-        var list = store.inspiration.map(\.id)
+        let safety = StorySafety.shared
+        var list = store.inspiration.filter { !safety.isBlocked(store.extra($0.id)?.userId ?? "") }.map(\.id)
         if list.isEmpty { list = feed.inspiration.map(\.id) }
         if !list.contains(startId) { list.insert(startId, at: 0) }
         return list
@@ -63,6 +65,15 @@ struct InspireFeedView: View {
             if ids.isEmpty { ids = buildIds() }
             if activeId == nil { activeId = startId }
         }
+        // only the post on screen may sound; nothing keeps playing once the feed closes
+        .onDisappear { StoryVideoCenter.shared.stopAll() }
+        .task(id: auth.uid ?? "") { await StorySafety.shared.load(uid: auth.uid) }
+        .onChange(of: StorySafety.shared.blocked.count) { _, _ in
+            // a blocked traveler's posts leave the feed at once (web blockUser)
+            let fresh = buildIds()
+            ids = fresh
+            if let a = activeId, !fresh.contains(a) { activeId = fresh.first }
+        }
         .task {
             await store.loadIfNeeded()
             let fresh = buildIds()
@@ -90,8 +101,11 @@ struct InspirePostPage: View {
     @State private var showComments = false
     @State private var showLinks = false
     @State private var showShop = false
-    @State private var showMore = false
-    @State private var askReport = false
+    @State private var showReport = false
+    @State private var confirmBlock = false
+    /// Every photo / video opens whole (fit) over a blurred copy; the Fit button fills the screen (web InspireFeed).
+    @State private var fill = false
+    @State private var ratios: [Int: Double] = [:]
     @State private var likeBusy = false
     @State private var followBusy = false
     @State private var viewed = false
@@ -121,22 +135,34 @@ struct InspirePostPage: View {
         return [post.cityName, sub].filter { !$0.isEmpty }.joined(separator: ", ")
     }
 
+    /// How far up the right rail sits (Cheskel, Oct 23 2026: "everything on the right side should be more up"):
+    /// a fixed spot clear of the words, like Reels, not riding on the caption's height.
+    private var railLift: CGFloat { bottomInset + 150 }
+
     var body: some View {
         ZStack {
             Color.navy
             mediaPager
-            VStack(spacing: 0) {
-                Spacer(minLength: 0)
-                HStack(alignment: .bottom, spacing: 8) {
-                    words
-                    rail
-                }
+            // words: bottom left, narrower than the screen so they never run under the rail
+            words
                 .padding(.leading, 16)
-                .padding(.trailing, 6)
+                .padding(.trailing, 76)
                 .padding(.bottom, bottomInset + 20)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+            // rail: right side, below the top bar and above the words; compact rather than ever reaching the top bar
+            ViewThatFits(in: .vertical) {
+                rail(compact: false)
+                rail(compact: true)
+                ScrollView { rail(compact: true) }.scrollIndicators(.hidden)
             }
+            .padding(.top, topInset + 104)
+            .padding(.bottom, railLift)
+            .padding(.trailing, 6)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         }
         .clipped()
+        .onChange(of: active) { _, _ in fill = false }
+        .onChange(of: page) { _, _ in fill = false }
         .task { await store.ensure(post.id) }
         .task(id: active) {
             guard active else { return }
@@ -163,50 +189,77 @@ struct InspirePostPage: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
-        .confirmationDialog("", isPresented: $showMore, titleVisibility: .hidden) {
-            if !mine {
-                Button("Report this post") {
-                    if auth.isSignedIn { askReport = true } else {
-                        ShellRouter.shared.requireSignIn("Sign in to report a post.") { askReport = true }
-                    }
-                }
-            }
-            Button("Cancel", role: .cancel) {}
+        .sheet(isPresented: $showReport) {
+            StoryReportSheet(post: post, ownerUid: ownerUid, thumb: extra?.media.first?.thumb ?? "")
         }
-        .confirmationDialog("Report this post?", isPresented: $askReport, titleVisibility: .visible) {
-            ForEach(["Inappropriate photo", "Not kosher / wrong info", "Spam or ads", "Something else"], id: \.self) { reason in
-                Button(reason) { report(reason) }
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("The team checks every report.")
+        .storyBlockConfirm(isPresented: $confirmBlock, name: post.authorName.isEmpty ? "this traveler" : post.authorName) {
+            await blockOwner()
         }
     }
 
     // MARK: media
 
+    private var screenRatio: Double {
+        let s = UIScreen.main.bounds.size
+        return s.height > 0 ? Double(s.width / s.height) : 9.0 / 19.5
+    }
+
+    /// Fit and fill look different only when the media's shape is more than ~10% off the screen's (web differs()).
+    private func differs(_ i: Int) -> Bool {
+        guard let r = ratios[i], r > 0 else { return false }
+        return abs(log(r / screenRatio)) > log(1.1)
+    }
+
+    /// A known shape close to the screen's just fills; otherwise the whole photo shows until Fit is tapped.
+    private func fillsScreen(_ i: Int) -> Bool {
+        guard ratios[i] != nil else { return false }
+        return !differs(i) || fill
+    }
+
+    /// The web's samePlace(): a photo's place that only repeats the post's own place or city adds nothing.
+    private func samePlace(_ name: String) -> Bool {
+        let n = (name.split(separator: ",").first.map(String.init) ?? name).trimmingCharacters(in: .whitespaces).lowercased()
+        return n == placeTitle.trimmingCharacters(in: .whitespaces).lowercased()
+            || n == post.cityName.trimmingCharacters(in: .whitespaces).lowercased()
+    }
+
+    private func knownRatio(_ m: StoryMediaInfo) -> Double? {
+        m.w > 0 && m.h > 0 ? m.w / m.h : nil
+    }
+
     private var mediaPager: some View {
         let list = media
+        let cur = list.indices.contains(page) ? list[page] : nil
         return TabView(selection: $page) {
             ForEach(Array(list.enumerated()), id: \.offset) { i, m in
                 ZStack {
                     if m.isVideo {
-                        StoryVideoView(media: m, autoplay: active && i == page)
+                        StoryVideoView(media: m, autoplay: true, active: active && i == page, fill: fillsScreen(i)) { r in
+                            if ratios[i] == nil { ratios[i] = r }
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture { toggleSound(m) }
+                        .accessibilityLabel("Video \(i + 1)")
                     } else {
-                        RemoteImage(url: m.still, maxPixel: 1600)
-                            .accessibilityLabel(m.placeName.isEmpty ? "Photo \(i + 1)" : m.placeName)
+                        StoryFitImage(url: m.still, maxPixel: 1600, fill: fillsScreen(i)) { r in
+                            if ratios[i] == nil { ratios[i] = r }
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture { if differs(i) { withAnimation(.easeOut(duration: 0.2)) { fill.toggle() } } }
+                        .accessibilityLabel(m.placeName.isEmpty ? "Photo \(i + 1)" : m.placeName)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipped()
                 .tag(i)
+                .onAppear { if ratios[i] == nil, let r = knownRatio(m) { ratios[i] = r } }
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .overlay(alignment: .topTrailing) {
-            // every photo says where it is (its own place), under the top bar
-            if list.indices.contains(page), !list[page].placeName.isEmpty {
-                Label(list[page].placeName, systemImage: "mappin.and.ellipse")
+        .overlay(alignment: .topLeading) {
+            // where this photo was taken, when it says more than the post's own place (web PhotoPlacePill)
+            if let cur, !cur.placeName.isEmpty, !samePlace(cur.placeName) {
+                Label(cur.placeName, systemImage: "mappin.and.ellipse")
                     .font(.caption.weight(.semibold))
                     .labelStyle(StoryTightLabelStyle())
                     .lineLimit(1)
@@ -214,9 +267,9 @@ struct InspirePostPage: View {
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(.black.opacity(0.45), in: Capsule())
-                    .padding(.trailing, 12)
-                    .padding(.top, topInset + 10)
-                    .padding(.leading, 80)
+                    .padding(.leading, 12)
+                    .padding(.trailing, 112)
+                    .padding(.top, topInset + 72)
                     .allowsHitTesting(false)
             }
         }
@@ -229,12 +282,50 @@ struct InspirePostPage: View {
                             .frame(width: i == min(page, 11) ? 18 : 6, height: 6)
                     }
                 }
-                .padding(.top, topInset + 46)
+                .padding(.top, topInset + 52)
                 .shadow(color: .black.opacity(0.4), radius: 2)
                 .accessibilityHidden(true)
                 .allowsHitTesting(false)
             }
         }
+        .overlay(alignment: .topTrailing) {
+            // sound and fit / fill, under the top bar across from Back, away from the rail
+            HStack(spacing: 8) {
+                if let cur, cur.isVideo, !cur.url.isEmpty, !cur.muted {
+                    glassIcon(StoryVideoSound.shared.on ? "speaker.wave.2" : "speaker.slash",
+                              a11y: StoryVideoSound.shared.on ? "Sound off" : "Sound on") { toggleSound(cur) }
+                }
+                if differs(page) {
+                    glassIcon(fill ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right",
+                              a11y: fill ? "Show the whole \(cur?.isVideo == true ? "video" : "photo")" : "Fill the screen") {
+                        withAnimation(.easeOut(duration: 0.2)) { fill.toggle() }
+                    }
+                }
+            }
+            .padding(.trailing, 10)
+            .padding(.top, topInset + 48)
+        }
+    }
+
+    private func glassIcon(_ symbol: String, a11y: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 40, height: 40)
+                .glassRounded(20)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
+        .accessibilityLabel(a11y)
+    }
+
+    /// Tap on a video (or the speaker): sound on / off for every video, like the web; a video the poster muted stays silent.
+    private func toggleSound(_ m: StoryMediaInfo) {
+        guard !m.muted else { return }
+        StoryVideoSound.shared.on.toggle()
     }
 
     // MARK: words (bottom left)
@@ -282,7 +373,9 @@ struct InspirePostPage: View {
                 .accessibilityLabel("Read the full article")
             }
         }
+        // white words straight on the photo, readable on bright sand or snow too (web SHADOW: two soft shadows)
         .shadow(color: .black.opacity(0.6), radius: 3, y: 1)
+        .shadow(color: .black.opacity(0.35), radius: 12)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -336,13 +429,13 @@ struct InspirePostPage: View {
 
     // MARK: rail (right)
 
-    private var rail: some View {
+    private func rail(compact: Bool) -> some View {
         let liked = auth.uid.map { extra?.likedUserIds.contains($0) ?? false } ?? false
         let likes = extra?.likesCount ?? post.likesCount
         let links = extra?.links ?? []
         let products = extra?.products ?? []
-        return VStack(spacing: 8) {
-            railButton(label: likes > 0 ? "\(likes)" : "Like", a11y: liked ? "Unlike" : "Like") {
+        return VStack(spacing: compact ? 2 : 8) {
+            railButton(label: likes > 0 ? "\(likes)" : "Like", a11y: liked ? "Unlike" : "Like", compact: compact) {
                 toggleLike()
             } icon: {
                 Group {
@@ -356,66 +449,93 @@ struct InspirePostPage: View {
             }
             .sensoryFeedback(.impact(weight: .light), trigger: liked)
 
-            railButton(label: (commentCount ?? 0) > 0 ? "\(commentCount ?? 0)" : "Comment", a11y: "Comments") {
+            railButton(label: (commentCount ?? 0) > 0 ? "\(commentCount ?? 0)" : "Comment", a11y: "Comments", compact: compact) {
                 showComments = true
             } icon: {
                 Image(systemName: "bubble.right").foregroundStyle(.white)
             }
 
             ShareLink(item: StoryActions.shareURL(post.id), subject: Text(placeTitle)) {
-                railFace(label: "Share") { Image(systemName: "square.and.arrow.up").foregroundStyle(.white) }
+                railFace(label: "Share", compact: compact) { Image(systemName: "square.and.arrow.up").foregroundStyle(.white) }
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Share")
 
             if !links.isEmpty {
-                railButton(label: "Links", a11y: "Links: \(links.count) \(links.count == 1 ? "link" : "links") in this post") {
+                railButton(label: "Links", a11y: "Links: \(links.count) \(links.count == 1 ? "link" : "links") in this post", compact: compact) {
                     showLinks = true
                 } icon: {
                     Image(systemName: "link").foregroundStyle(.white)
                 }
             }
             if !products.isEmpty {
-                railButton(label: "Shop", a11y: "Shop \(products.count) \(products.count == 1 ? "product" : "products")") {
+                railButton(label: "Shop", a11y: "Shop \(products.count) \(products.count == 1 ? "product" : "products")", compact: compact) {
                     showShop = true
                 } icon: {
                     Image(systemName: "bag").foregroundStyle(.white)
                 }
             }
-            railButton(label: "Ask AI", a11y: "Ask AI about this place") {
+            railButton(label: "Ask AI", a11y: "Ask AI about this place", compact: compact) {
+                StoryVideoCenter.shared.stopAll()
                 ShellRouter.shared.open(tab: "planner", prompt: askPrompt)
             } icon: {
                 Image(systemName: "sparkles").foregroundStyle(.white)
             }
-            Button { showMore = true } label: {
+            moreMenu
+        }
+        .shadow(color: .black.opacity(0.6), radius: 2, y: 1)
+    }
+
+    /// ••• : a menu right at the button (not a sheet at the top of the screen). Report for anyone else's post,
+    /// Block its poster when signed in (web InspireFeed "more" sheet + SafetyUI).
+    @ViewBuilder
+    private var moreMenu: some View {
+        if !mine {
+            Menu {
+                Button {
+                    if auth.isSignedIn { showReport = true } else {
+                        ShellRouter.shared.requireSignIn("Sign in to report a post.") { showReport = true }
+                    }
+                } label: {
+                    Label("Report this post", systemImage: "flag")
+                }
+                if !ownerUid.isEmpty {
+                    Button {
+                        if auth.isSignedIn { confirmBlock = true } else {
+                            ShellRouter.shared.requireSignIn("Sign in to block a traveler.") { confirmBlock = true }
+                        }
+                    } label: {
+                        Label("Block \(post.authorName.isEmpty ? "this traveler" : post.authorName)", systemImage: "person.crop.circle.badge.xmark")
+                    }
+                }
+            } label: {
                 Image(systemName: "ellipsis")
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(.white)
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .menuOrder(.fixed)
             .accessibilityLabel("More")
         }
-        .shadow(color: .black.opacity(0.6), radius: 2, y: 1)
     }
 
-    private func railFace<I: View>(label: String, @ViewBuilder icon: () -> I) -> some View {
-        VStack(spacing: 3) {
+    private func railFace<I: View>(label: String, compact: Bool, @ViewBuilder icon: () -> I) -> some View {
+        VStack(spacing: compact ? 1 : 3) {
             icon()
-                .font(.system(size: 26, weight: .regular))
-                .frame(width: 44, height: 40)
+                .font(.system(size: compact ? 23 : 26, weight: .regular))
+                .frame(width: 44, height: compact ? 34 : 40)
             Text(label)
-                .font(.system(size: 12, weight: .semibold))
+                .font(.system(size: compact ? 10.5 : 12, weight: .semibold))
                 .foregroundStyle(.white)
                 .lineLimit(1)
         }
-        .frame(minWidth: 52)
+        .frame(minWidth: 52, minHeight: 44)
         .contentShape(Rectangle())
     }
 
-    private func railButton<I: View>(label: String, a11y: String, action: @escaping () -> Void, @ViewBuilder icon: () -> I) -> some View {
-        let face = railFace(label: label, icon: icon)
+    private func railButton<I: View>(label: String, a11y: String, compact: Bool, action: @escaping () -> Void, @ViewBuilder icon: () -> I) -> some View {
+        let face = railFace(label: label, compact: compact, icon: icon)
         return Button(action: action) {
             face
         }
@@ -478,15 +598,13 @@ struct InspirePostPage: View {
     }
 
     @MainActor
-    private func report(_ reason: String) {
-        guard let uid = auth.uid else { ShellRouter.shared.requireSignIn("Sign in to report a post.") { report(reason) }; return }
-        let id = post.id
-        Task {
-            switch await StoryActions.reportPost(id, reason: reason, uid: uid) {
-            case .ok: ShellRouter.shared.showToast("Thanks. The team will check it.")
-            case .already: ShellRouter.shared.showToast("You already reported this post.")
-            case .failed: ShellRouter.shared.showToast("The report wasn't sent. Try again.")
-            }
+    private func blockOwner() async {
+        guard let actor = StoryActor.from(auth) else { return }
+        let name = post.authorName.isEmpty ? "this traveler" : post.authorName
+        if await StorySafety.shared.block(me: actor, uid: ownerUid, name: post.authorName, photo: post.authorPhoto) {
+            ShellRouter.shared.showToast("\(name) is blocked.")
+        } else {
+            ShellRouter.shared.showToast("Couldn't block. Try again.")
         }
     }
 }

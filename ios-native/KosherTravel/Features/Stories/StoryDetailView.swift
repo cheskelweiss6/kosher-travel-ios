@@ -20,6 +20,7 @@ struct StoryDetailView: View {
     @State private var signInPrompt: String?
     @State private var note: String?
     @State private var askReport = false
+    @State private var confirmBlock = false
     @State private var loading = true
 
     struct ViewerStart: Identifiable {
@@ -89,14 +90,16 @@ struct StoryDetailView: View {
         } message: {
             Text(signInPrompt ?? "")
         }
-        .confirmationDialog("Report this post?", isPresented: $askReport, titleVisibility: .visible) {
-            ForEach(["Inappropriate photo", "Not kosher / wrong info", "Spam or ads", "Something else"], id: \.self) { reason in
-                Button(reason) { report(reason) }
+        // the web's report sheet (reasons, note, Block) and block confirmation (src/components/safety)
+        .sheet(isPresented: $askReport) {
+            if let p = post {
+                StoryReportSheet(post: p, ownerUid: extra?.userId ?? "", thumb: extra?.media.first?.thumb ?? "")
             }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("The team checks every report.")
         }
+        .storyBlockConfirm(isPresented: $confirmBlock, name: (post?.authorName ?? "").isEmpty ? "this traveler" : (post?.authorName ?? "")) {
+            await blockOwner()
+        }
+        .onDisappear { StoryVideoCenter.shared.stopAll() }
         .overlay(alignment: .bottom) {
             if let note {
                 Text(note)
@@ -157,7 +160,8 @@ struct StoryDetailView: View {
                 ForEach(Array(media.enumerated()), id: \.offset) { i, m in
                     Group {
                         if m.isVideo {
-                            StoryVideoView(media: m)
+                            // only the slide on screen may play; swiping on stops it at once
+                            StoryVideoView(media: m, active: i == page)
                         } else {
                             RemoteImage(url: m.still, maxPixel: 1600)
                                 .onTapGesture { viewer = ViewerStart(index: i) }
@@ -370,7 +374,12 @@ struct StoryDetailView: View {
 
             if auth.isSignedIn && uid != auth.uid {
                 Menu {
-                    Button { askReport = true } label: { Label("Report post", systemImage: "flag") }
+                    Button { askReport = true } label: { Label("Report this \(post?.isGuide == true ? "article" : "post")", systemImage: "flag") }
+                    if !uid.isEmpty {
+                        Button { confirmBlock = true } label: {
+                            Label("Block \((post?.authorName ?? "").isEmpty ? "this traveler" : (post?.authorName ?? ""))", systemImage: "person.crop.circle.badge.xmark")
+                        }
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.title3)
@@ -698,16 +707,16 @@ struct StoryDetailView: View {
         }
     }
 
-    private func report(_ reason: String) {
-        guard let uid = auth.uid else { ShellRouter.shared.requireSignIn("Sign in to report a post.") { report(reason) }; return }
-        Task {
-            switch await StoryActions.reportPost(postId, reason: reason, uid: uid) {
-            case .ok: note = "Thanks. The team will check it."
-            case .already: note = "You already reported this post."
-            case .failed: note = "The report wasn't sent. Try again."
-            }
+    @MainActor
+    private func blockOwner() async {
+        guard let p = post, let owner = extra?.userId, !owner.isEmpty, let actor = StoryActor.from(auth) else { return }
+        if await StorySafety.shared.block(me: actor, uid: owner, name: p.authorName, photo: p.authorPhoto) {
+            note = "\(p.authorName.isEmpty ? "This traveler" : p.authorName) is blocked."
+        } else {
+            note = "Couldn't block. Try again."
         }
     }
+
 }
 
 /// Body text that keeps the poster's paragraphs.

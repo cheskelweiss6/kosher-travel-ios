@@ -54,7 +54,10 @@ struct StoriesTab: View {
             }
             .refreshable { await store.refresh() }
             .task { await store.loadIfNeeded() }
-            .task(id: auth.uid) { await store.syncAccount(uid: auth.uid) }
+            .task(id: auth.uid) {
+                await store.syncAccount(uid: auth.uid)
+                await StorySafety.shared.load(uid: auth.uid)
+            }
         }
         .fullScreenCover(item: $webCover) { r in
             NavigationStack { WebScreen(route: r, fullScreen: true) }
@@ -98,6 +101,8 @@ struct StoriesTab: View {
         let base = showArticles ? store.articles : store.inspiration
         return base.filter { p in
             let ex = store.extra(p.id)
+            // a blocked traveler's posts stay hidden (web blockUser)
+            if StorySafety.shared.isBlocked(ex?.userId ?? "") { return false }
             if tag != "All" && !(ex?.tags.contains(tag) ?? false) { return false }
             if followingOnly {
                 guard let author = ex?.userId, !author.isEmpty else { return false }
