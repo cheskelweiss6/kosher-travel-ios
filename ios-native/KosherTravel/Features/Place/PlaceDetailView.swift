@@ -29,6 +29,8 @@ struct PlaceDetailView: View {
     @State private var composing = false
     @State private var confirmDelete = false
     @State private var deleteError: String?
+    /// Report / Block on someone else's review (web ReviewSection "…"); blocked travelers' reviews are left out.
+    @State private var reportReview: PlaceReview?
 
     @State private var photoIndex = 0
     @State private var isSaved = false
@@ -970,9 +972,12 @@ struct PlaceDetailView: View {
                     Text("No reviews yet.").font(.subheadline).foregroundStyle(Color.textSecondary)
                 } else {
                     PlaceReviewSummaryCard(reviews: reviews)
-                    ForEach(reviews) { r in
-                        PlaceReviewRow(review: r, isMine: r.userId == auth.uid)
-                        if r.id != reviews.last?.id { Divider().overlay(Color.hairline) }
+                    let shown = reviews.filter { !StorySafety.shared.isBlocked($0.userId) }
+                    ForEach(shown) { r in
+                        PlaceReviewRow(review: r, isMine: r.userId == auth.uid, onReport: r.userId == auth.uid ? nil : {
+                            if auth.isSignedIn { reportReview = r } else { ShellRouter.shared.requireSignIn("Sign in to report a review") }
+                        })
+                        if r.id != shown.last?.id { Divider().overlay(Color.hairline) }
                     }
                 }
             }
@@ -985,6 +990,10 @@ struct PlaceDetailView: View {
         .alert("Could not delete", isPresented: Binding(get: { deleteError != nil }, set: { if !$0 { deleteError = nil } })) {
             Button("OK", role: .cancel) {}
         } message: { Text(deleteError ?? "") }
+        .sheet(item: $reportReview) { r in
+            ReviewReportSheet(review: r, placeName: item.venue.name)
+        }
+        .task(id: auth.uid ?? "-") { await StorySafety.shared.load(uid: auth.uid) }
     }
 
     @ViewBuilder
@@ -1184,6 +1193,8 @@ private struct PlaceReviewSummaryCard: View {
 private struct PlaceReviewRow: View {
     let review: PlaceReview
     let isMine: Bool
+    /// Someone else's review: the "…" button opens Report, with Block underneath (web ReviewSection).
+    var onReport: (() -> Void)? = nil
     @ScaledMetric(relativeTo: .subheadline) private var face: CGFloat = 34
 
     var body: some View {
@@ -1212,6 +1223,18 @@ private struct PlaceReviewRow: View {
                     }
                 }
                 Spacer(minLength: 0)
+                if let onReport {
+                    Button(action: onReport) {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 17, weight: .regular))
+                            .foregroundStyle(Color.textSecondary)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, -8)
+                    .accessibilityLabel("Report or block \(review.userName)")
+                }
             }
             if !review.text.isEmpty {
                 Text(review.text).font(.subheadline).foregroundStyle(Color.primary)
@@ -1247,6 +1270,7 @@ struct PlaceReviewComposer: View {
     @State private var saving = false
     @State private var error: String?
     @State private var saved = 0
+    @State private var askTerms = false
     @FocusState private var focused: Bool
 
     var body: some View {
@@ -1306,11 +1330,22 @@ struct PlaceReviewComposer: View {
             if let e = existing { rating = e.rating; text = e.text }
         }
         .interactiveDismissDisabled(saving)
+        .sheet(isPresented: $askTerms) {
+            TermsAgreementSheet { agreed in
+                guard agreed, let uid = auth.uid else { return }
+                Task {
+                    await TermsAgreement.accept(uid)
+                    await save()
+                }
+            }
+        }
     }
 
     private func save() async {
         guard let uid = auth.uid else { error = "Sign in on the Profile tab to write a review."; return }
         guard rating >= 1 else { error = "Choose 1 to 5 stars."; return }
+        // Web: the store app asks once for the Terms of Use before a first post, comment or review (Apple 1.2).
+        if !(await TermsAgreement.hasAccepted(uid)) { askTerms = true; return }
         saving = true
         error = nil
         defer { saving = false }
