@@ -274,6 +274,8 @@ struct SPCityCardView: View {
     var onOpenWide: (() -> Void)? = nil
     private let bucket = BucketList.shared
     @ScaledMetric(relativeTo: .title3) private var height: CGFloat = 256
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var appeared = false
 
     private var base: some View {
         ZStack(alignment: .topLeading) {
@@ -344,6 +346,10 @@ struct SPCityCardView: View {
             }
         }
         .frame(height: height)
+        // web: the cards fade in as they appear
+        .opacity(appeared || reduceMotion ? 1 : 0)
+        .offset(y: appeared || reduceMotion ? 0 : 10)
+        .onAppear { withAnimation(.easeOut(duration: 0.35)) { appeared = true } }
     }
 
     private func badge(_ text: String, hub: String) -> some View {
