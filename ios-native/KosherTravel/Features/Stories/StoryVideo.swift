@@ -73,7 +73,21 @@ struct StoryVideoView: View {
     @State private var statusObserver: NSKeyValueObservation?
     @State private var ready = false
     @State private var wanted = false
+    /// at least half of the video is on the screen (Cheskel, Oct 23 2026: "inspiration video, even I scroll to the next post")
+    @State private var onScreen = true
+    @Environment(\.scenePhase) private var scenePhase
     private var sound: StoryVideoSound { .shared }
+
+    /// Only the video that is on screen, on the current page or slide, with the app in front, may play.
+    private var live: Bool { active && onScreen && scenePhase == .active }
+
+    /// More than half of `frame` lies inside the screen.
+    nonisolated static func halfVisible(_ frame: CGRect, in screen: CGRect) -> Bool {
+        guard frame.width > 1, frame.height > 1 else { return false }
+        let cut = frame.intersection(screen)
+        guard !cut.isNull else { return false }
+        return cut.width * cut.height >= 0.5 * frame.width * frame.height
+    }
 
     init(media: StoryMediaInfo, autoplay: Bool = false, active: Bool = true, fill: Bool = true,
          onRatio: ((Double) -> Void)? = nil) {
@@ -114,9 +128,14 @@ struct StoryVideoView: View {
             }
         }
         .clipped()
-        .onAppear { if autoplay && active { start() } }
+        .onGeometryChange(for: Bool.self) { proxy in
+            StoryVideoView.halfVisible(proxy.frame(in: .global), in: CGRect(origin: .zero, size: UIScreen.main.bounds.size))
+        } action: { visible in
+            onScreen = visible
+        }
+        .onAppear { if autoplay && live { start() } }
         .onDisappear { stop() }
-        .onChange(of: active) { _, now in
+        .onChange(of: live) { _, now in
             if now {
                 if autoplay || wanted { start() }
             } else {
@@ -133,7 +152,7 @@ struct StoryVideoView: View {
     }
 
     private func start() {
-        guard player == nil, active, let url = URL(string: media.url), !media.url.isEmpty else { return }
+        guard player == nil, live, let url = URL(string: media.url), !media.url.isEmpty else { return }
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback)
         try? AVAudioSession.sharedInstance().setActive(true)
         let item = AVPlayerItem(url: url)

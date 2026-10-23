@@ -250,7 +250,7 @@ struct StoryFollowingFaces: View {
         VStack(spacing: 0) {
             if !list.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .top, spacing: 14) {
+                    HStack(alignment: .top, spacing: 12) {
                         ForEach(list) { p in
                             Button {
                                 markSeen(p.uid)
@@ -271,19 +271,21 @@ struct StoryFollowingFaces: View {
         .task(id: myUid + "|\(store.following.count)") { await load() }
     }
 
+    /// compact, Instagram-size (Cheskel, Oct 23 2026: "Make it smaller, please"): 52pt circle, thin ring, 11pt name
     private func face(_ p: Person, fresh: Bool) -> some View {
-        VStack(spacing: 6) {
-            TravelerAvatar(uid: p.uid, stored: p.photo, name: p.name, size: 58)
+        VStack(spacing: 4) {
+            TravelerAvatar(uid: p.uid, stored: p.photo, name: p.name, size: 46)
                 .padding(3)
-                .overlay(Circle().strokeBorder(fresh ? Color.navy : Color.hairline, lineWidth: fresh ? 2.5 : 1))
+                .overlay(Circle().strokeBorder(fresh ? Color.navy : Color.hairline, lineWidth: fresh ? 1.5 : 1))
+                .frame(width: 52, height: 52)
             Text(p.name)
-                .font(.caption)
+                .font(.system(size: 11, weight: fresh ? .semibold : .regular))
                 .foregroundStyle(fresh ? Color.navy : Color.textSecondary)
-                .fontWeight(fresh ? .semibold : .regular)
                 .lineLimit(1)
-                .frame(width: 70)
+                .truncationMode(.tail)
+                .frame(width: 56)
         }
-        .frame(width: 72)
+        .frame(width: 56)
         .contentShape(Rectangle())
     }
 
