@@ -1,0 +1,104 @@
+name: iOS SwiftUI (simulator build + screenshots)
+
+on:
+  push:
+    branches: [main, 'ios-feature/**']
+    paths:
+      - 'ios-native/**'
+      - '.github/workflows/ios-swiftui.yml'
+  workflow_dispatch:
+    inputs:
+      devices:
+        description: "Simulators to screenshot (iphone-se, iphone-16, iphone-16-pro-max, ipad); empty = all"
+        required: false
+        default: "iphone-se,iphone-16-pro-max"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ios-swiftui-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simulator:
+    runs-on: macos-26
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$X" ]; then sudo xcode-select -s "$X"; fi
+          xcodebuild -version
+
+      - name: Firebase config (from secret, never printed)
+        env:
+          GSI: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}
+        run: |
+          if [ -n "$GSI" ]; then
+            printf '%s' "$GSI" | base64 --decode > ios-native/KosherTravel/Resources/GoogleService-Info.plist
+            plutil -lint ios-native/KosherTravel/Resources/GoogleService-Info.plist > /dev/null && echo "Firebase config: present"
+          else
+            echo "Firebase config: missing (the app reads the public feed over HTTPS)"
+          fi
+
+      - name: Generate Xcode project
+        run: |
+          # the release zip is much faster than brew (brew update alone costs a minute of macOS time)
+          if curl -fsSL -o /tmp/xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/latest/download/xcodegen.zip \
+             && unzip -q /tmp/xcodegen.zip -d /tmp/xcodegen; then XG=/tmp/xcodegen/xcodegen/bin/xcodegen; else brew install xcodegen; XG=xcodegen; fi
+          cd ios-native && "$XG" generate
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: ios-native/build/SourcePackages
+          key: spm-${{ runner.os }}-${{ hashFiles('ios-native/project.yml') }}
+
+      - name: Build for the iOS Simulator (no signing)
+        run: |
+          cd ios-native
+          set -o pipefail
+          xcodebuild -project KosherTravel.xcodeproj -scheme KosherTravel -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build -clonedSourcePackagesDirPath build/SourcePackages \
+            CODE_SIGNING_ALLOWED=NO TARGETED_DEVICE_FAMILY=1,2 build > build.log 2>&1 || true
+          grep -E "error:|BUILD (SUCCEEDED|FAILED)" build.log | head -100
+          test -d build/Build/Products/Debug-iphonesimulator/KosherTravel.app
+
+      # Screenshots cost macOS minutes: only with [shots] in the commit message, or a manual run.
+      - name: Screenshots (iPhone SE, iPhone 16, iPhone 16 Pro Max, iPad)
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[shots]')
+        env:
+          KT_ONLY_EXTRA_ROUTES: ${{ github.ref != 'refs/heads/main' && '1' || '' }}
+          KT_DEVICES: ${{ github.event.inputs.devices }}
+        run: bash ios-native/scripts/ci-screens.sh ios-native/build/Build/Products/Debug-iphonesimulator/KosherTravel.app screenshots
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swiftui-screenshots
+          path: screenshots
+          if-no-files-found: ignore
+
+      - name: Publish screenshots and build notes to branch ios-qa/<branch>
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/qa
+          cp -R screenshots/jpg/. /tmp/qa/ 2>/dev/null || true
+          cp -R screenshots/logs /tmp/qa/logs 2>/dev/null || true
+          grep -E -B3 -A8 "error:" ios-native/build.log | head -400 > /tmp/qa/build-errors.txt 2>/dev/null || true
+          tail -60 ios-native/build.log > /tmp/qa/build-tail.txt 2>/dev/null || true
+          echo "${GITHUB_SHA}" > /tmp/qa/SOURCE_SHA
+          echo '{"git":{"deploymentEnabled":false}}' > /tmp/qa/vercel.json
+          cd /tmp/qa
+          git init -q
+          git checkout -q -b "ios-qa/${GITHUB_REF_NAME}"
+          git add -A
+          git -c user.name="ios-ci" -c user.email="ios-ci@users.noreply.github.com" commit -qm "SwiftUI QA for ${GITHUB_SHA}"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "ios-qa/${GITHUB_REF_NAME}"

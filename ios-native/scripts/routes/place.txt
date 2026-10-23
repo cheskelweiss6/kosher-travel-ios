@@ -1,0 +1,5 @@
+c1-denver:area:us:denver
+c2-nyc:area:us:new-york-city
+c3-place:area:us:denver/place:2
+c4-map:area:us:new-york-city/map
+c5-mexico:area:dest:mexico-city

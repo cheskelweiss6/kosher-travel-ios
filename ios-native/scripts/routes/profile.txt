@@ -1,0 +1,4 @@
+p1-profile:tab:profile
+p2-signin:tab:profile/signin
+p3-signup:tab:profile/signup
+p4-settings:tab:profile/settings

@@ -1,0 +1,6 @@
+s1-feed:tab:stories
+s2-inspiration:tab:stories/inspiration
+s3-article:tab:stories/post:bhBmKIlbVDskdjVcYsRW
+s4-post-video:tab:stories/post:2ZoBguOlOWWseLUOqzdz
+s5-comments:tab:stories/post:YTkhuCjwPL68oAfVoyai/comments
+s6-traveler:tab:stories/traveler:ZilNixJYqChwhgBopF7OHFcyIX13

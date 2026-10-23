@@ -1,0 +1,13 @@
+# never commit Firebase config or signing material
+GoogleService-Info.plist
+*.p8
+*.p12
+*.pem
+*.key
+*.cer
+*.mobileprovision
+.env*
+# build output
+ios-native/build/
+ios-native/*.xcodeproj/
+.DS_Store
