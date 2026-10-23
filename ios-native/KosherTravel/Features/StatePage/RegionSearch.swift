@@ -91,14 +91,28 @@ enum SPSearchText {
         return out
     }
 
-    static func tokens(_ q: String) -> [String] {
+    static func tokens(_ q: String, expand: Bool = true, fold: Bool = true) -> [String] {
         let ws = normalize(q).split(separator: " ").map(String.init)
         var out: [String] = []
         for w in ws {
-            if let e = phraseExpand[w], w != "la" || ws.count > 1 { out += e } else { out.append(canon(w)) }
+            if expand, let e = phraseExpand[w], w != "la" || ws.count > 1 { out += e } else { out.append(fold ? canon(w) : w) }
         }
         let kept = out.filter { !filler.contains($0) }
         return kept.isEmpty ? out : kept
+    }
+
+    /// The query's forms, each row keeping its best score: expanded, and unfolded ("la fort" -> La Fortuna: a half-typed
+    /// "fort" is not "ft"). A shortcut word followed by more words ("la fortuna", "la jolla") may start a name, so the
+    /// query as typed is tried too; at the end ("pizza la") it stays the shortcut. (Cheskel's 9:34 AM video, Oct 23 2026.)
+    static func tokenForms(_ q: String) -> [[String]] {
+        let ws = normalize(q).split(separator: " ").map(String.init)
+        var forms = [tokens(q), tokens(q, fold: false)]
+        if ws.dropLast().contains(where: { phraseExpand[$0] != nil }) {
+            forms += [tokens(q, expand: false), tokens(q, expand: false, fold: false)]
+        }
+        var out: [[String]] = []
+        for f in forms where !out.contains(f) { out.append(f) }
+        return out
     }
 
     static func within1(_ a: [Character], _ b: [Character]) -> Bool {
@@ -131,10 +145,10 @@ enum SPSearchText {
     }
 
     static func matchesAllWords(_ q: String, _ fields: String?...) -> Bool {
-        let t = tokens(q)
-        if t.isEmpty { return true }
+        let forms = tokenForms(q)
+        if forms[0].isEmpty { return true }
         let w = words(fields)
-        return t.allSatisfy { wordScore($0, w, false) > 0 }
+        return forms.contains { t in t.allSatisfy { wordScore($0, w, false) > 0 } }
     }
 }
 
@@ -528,16 +542,19 @@ enum SPSearchRows {
 
     /// web searchIndex + RegionSearch `grouped`
     static func search(_ rows: [SPSearchRow], _ query: String) -> SPSearchOutcome {
-        let tokens = SPSearchText.tokens(query)
-        if tokens.isEmpty { return SPSearchOutcome() }
+        let forms = SPSearchText.tokenForms(query)
+        if forms[0].isEmpty { return SPSearchOutcome() }
         let qNorm = SPSearchText.normalize(query)
         func run(_ fuzzy: Bool) -> [(SPSearchRow, Double)] {
-            rows.compactMap { r in let s = r.score(tokens, qNorm, fuzzy: fuzzy); return s > 0 ? (r, s) : nil }
+            rows.compactMap { r in
+                let s = forms.map { r.score($0, qNorm, fuzzy: fuzzy) }.max() ?? 0
+                return s > 0 ? (r, s) : nil
+            }
         }
         var exact = true
         var scored = run(false)
         if scored.isEmpty { scored = run(true) }
-        if scored.isEmpty && tokens.count > 1 {
+        for tokens in forms where scored.isEmpty && tokens.count > 1 {
             exact = false
             let placeTokens = tokens.filter { t in rows.contains { $0.kind == .destination && SPSearchText.wordScore(t, $0.placeWords, false) >= 2 } }
             for e in rows {
