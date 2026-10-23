@@ -1,105 +1,118 @@
 import SwiftUI
 
-/// United States: traveler articles, then every state.
+/// United States, as the website shows it (App.tsx, United States page): the travelers' articles row, "Travel times
+/// from …", then every state as a round photo with its city count, name and the first ten words of its description on
+/// the photo, and a travel-time chip under it. A search field searches the whole page and everything under it.
 struct UnitedStatesView: View {
-    @Environment(ExploreStore.self) private var store
+    @Environment(ExploreStore.self) private var explore
     @Environment(StoryFeed.self) private var feed
+    @State private var query = ""
+    private var store: StatePageStore { StatePageStore.shared }
+
+    /// web PREMIUM_STATES with getCitiesForState's count; the bundled list stands in for the first instant.
+    private var tiles: [SPRegionTile] {
+        if !store.usStates.isEmpty { return store.usStates }
+        return explore.states.map { SPRegionTile(id: $0.id, name: $0.name, image: $0.image, description: $0.description, cityCount: $0.cities.count) }
+    }
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 20) {
                 TravelerArticlesSection(kind: .country, placeName: "United States")
-                VStack(alignment: .leading, spacing: 4) {
-                    SectionHeader(title: "States", count: store.states.count)
-                    // Web: "Travel times from …" above the state grid, and a travel-time chip on each state.
-                    TravelOriginBar().padding(.bottom, 4)
-                    ForEach(Array(store.states.enumerated()), id: \.element.id) { i, state in
-                        NavigationLink(value: ExploreRoute.state(state.id)) {
-                            PlaceRow(title: state.name, detail: state.description, image: state.image,
-                                     tag: "\(state.cities.count) \(state.cities.count == 1 ? "city" : "cities")",
-                                     chip: AnyView(TravelChip(usState: state.name)))
+                VStack(alignment: .leading, spacing: 16) {
+                    TravelOriginBar()
+                    LazyVGrid(columns: SPRegionGrid.columns, alignment: .center, spacing: 24) {
+                        ForEach(tiles) { t in
+                            VStack(spacing: 8) {
+                                NavigationLink(value: ExploreRoute.state(t.id)) {
+                                    SPRegionCircle(tile: t, tenWords: true, caribbean: false)
+                                }
+                                .buttonStyle(.plain)
+                                TravelChip(usState: t.name)
+                            }
                         }
-                        .buttonStyle(.plain)
-                        if i < store.states.count - 1 { Divider().overlay(Color.hairline).padding(.leading, 88) }
                     }
                 }
                 .padding(.horizontal, Theme.pagePadding)
             }
             .padding(.vertical, 12)
+        }
+        .overlay {
+            if !query.trimmingCharacters(in: .whitespaces).isEmpty {
+                RegionSearchResults(scope: .unitedStates, query: $query)
+            }
         }
         .background(Color.white)
         .navigationTitle("United States")
         .navigationBarTitleDisplayMode(.large)
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search United States")
         .refreshable { await feed.refresh() }
         .task { await feed.loadIfNeeded() }
+        .task { await store.load() }
     }
 }
 
-/// Caribbean: every island / country.
+/// The Caribbean, as the website shows it (App.tsx, Caribbean page): "Explore Featured Islands & Countries", "Travel
+/// times from …", then every island and country (Central America included) as a round photo with its city count, name
+/// and description, and a travel-time chip under it.
 struct CaribbeanView: View {
-    @Environment(ExploreStore.self) private var store
+    @Environment(ExploreStore.self) private var explore
     @Environment(StoryFeed.self) private var feed
+    @State private var query = ""
+    private var store: StatePageStore { StatePageStore.shared }
+
+    private var tiles: [SPRegionTile] {
+        if !store.caribbean.isEmpty { return store.caribbean }
+        return explore.caribbean.map { SPRegionTile(id: $0.id, name: $0.name, image: $0.image, description: $0.description,
+                                                   cityCount: $0.cities.count, lat: $0.lat, lng: $0.lng) }
+    }
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 4) {
-                    SectionHeader(title: "Islands & Countries", count: store.caribbean.count)
-                    TravelOriginBar().padding(.bottom, 4)
-                    ForEach(Array(store.caribbean.enumerated()), id: \.element.id) { i, c in
-                        NavigationLink(value: ExploreRoute.country(c.id)) {
-                            PlaceRow(title: c.name, detail: c.description, image: c.image,
-                                     tag: c.cities.isEmpty ? nil : "\(c.cities.count) \(c.cities.count == 1 ? "area" : "areas")",
-                                     chip: AnyView(TravelChip(country: c)))
+            VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Explore Featured Islands & Countries")
+                        .font(.headline)
+                        .foregroundStyle(Color.navy)
+                        .accessibilityAddTraits(.isHeader)
+                    Text("Verified kosher-friendly tropical getaways with active Jewish life.")
+                        .font(.footnote)
+                        .foregroundStyle(Color.textSecondary)
+                }
+                TravelOriginBar()
+                LazyVGrid(columns: SPRegionGrid.columns, alignment: .center, spacing: 24) {
+                    ForEach(tiles) { t in
+                        VStack(spacing: 8) {
+                            NavigationLink(value: ExploreRoute.country(t.id)) {
+                                SPRegionCircle(tile: t, tenWords: false, caribbean: true)
+                            }
+                            .buttonStyle(.plain)
+                            if let lat = t.lat, let lng = t.lng {
+                                TravelChip(at: lat, lng, us: false)
+                            }
                         }
-                        .buttonStyle(.plain)
-                        if i < store.caribbean.count - 1 { Divider().overlay(Color.hairline).padding(.leading, 88) }
                     }
                 }
-                .padding(.horizontal, Theme.pagePadding)
             }
+            .padding(.horizontal, Theme.pagePadding)
             .padding(.vertical, 12)
+        }
+        .overlay {
+            if !query.trimmingCharacters(in: .whitespaces).isEmpty {
+                RegionSearchResults(scope: .caribbean, query: $query)
+            }
         }
         .background(Color.white)
         .navigationTitle("Caribbean")
         .navigationBarTitleDisplayMode(.large)
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Caribbean")
         .refreshable { await feed.refresh() }
         .task { await feed.loadIfNeeded() }
+        .task { await store.load() }
     }
 }
 
-/// A list row with a square photo: states, countries.
-struct PlaceRow: View {
-    let title: String
-    let detail: String
-    let image: String
-    var tag: String? = nil
-    var chip: AnyView? = nil
-    @ScaledMetric(relativeTo: .headline) private var thumb: CGFloat = 74
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 14) {
-            RemoteImage(url: image, maxPixel: 300)
-                .frame(width: thumb, height: thumb)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            VStack(alignment: .leading, spacing: 3) {
-                if let tag { TagLabel(text: tag) }
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(Color.navy)
-                Text(detail)
-                    .font(.footnote)
-                    .foregroundStyle(Color.textSecondary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                if let chip { chip.padding(.top, 2) }
-            }
-            Spacer(minLength: 0)
-            Image(systemName: "chevron.right")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(Color.textTertiary)
-        }
-        .padding(.vertical, 10)
-        .contentShape(Rectangle())
-    }
+/// The circles' grid: 2 across on a phone, 3 when there is room (web grid-cols-2 sm:grid-cols-3).
+enum SPRegionGrid {
+    static let columns = [GridItem(.adaptive(minimum: 140, maximum: 240), spacing: 16, alignment: .top)]
 }
