@@ -274,6 +274,9 @@ struct SPCityCardView: View {
     var onOpenWide: (() -> Void)? = nil
     private let bucket = BucketList.shared
     @ScaledMetric(relativeTo: .title3) private var height: CGFloat = 256
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var appeared = false
+    @State private var confirmRemove = false
 
     private var base: some View {
         ZStack(alignment: .topLeading) {
@@ -313,7 +316,8 @@ struct SPCityCardView: View {
                 NavigationLink(value: ExploreRoute.area(card.key)) { base }.buttonStyle(.plain)
             }
             Button {
-                bucket.toggle(card.id)
+                // Cheskel, Oct 23 2026: every delete is red and asks first.
+                if saved { confirmRemove = true } else { bucket.toggle(card.id) }
             } label: {
                 Image(systemName: saved ? "heart.fill" : "heart")
                     .font(.system(size: 14, weight: .semibold))
@@ -329,6 +333,10 @@ struct SPCityCardView: View {
             .buttonStyle(.plain)
             .sensoryFeedback(.success, trigger: saved)
             .accessibilityLabel(saved ? "Saved: \(card.name)" : "Save \(card.name)")
+            .confirmationDialog("Remove \(card.name) from your saved places?", isPresented: $confirmRemove, titleVisibility: .visible) {
+                Button("Remove", role: .destructive) { if bucket.contains(card.id) { bucket.toggle(card.id) } }
+                Button("Cancel", role: .cancel) {}
+            }
             .padding(12)
             if !card.key.isEmpty && (card.groc || card.chab) {
                 VStack {
@@ -344,6 +352,10 @@ struct SPCityCardView: View {
             }
         }
         .frame(height: height)
+        // web: the cards fade in as they appear
+        .opacity(appeared || reduceMotion ? 1 : 0)
+        .offset(y: appeared || reduceMotion ? 0 : 10)
+        .onAppear { withAnimation(.easeOut(duration: 0.35)) { appeared = true } }
     }
 
     private func badge(_ text: String, hub: String) -> some View {
