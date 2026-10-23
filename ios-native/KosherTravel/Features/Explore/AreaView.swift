@@ -68,6 +68,11 @@ struct AreaView: View {
                 if !traveler.isEmpty {
                     addedByTravelers.padding(.horizontal, Theme.pagePadding).padding(.top, 14)
                 }
+                // Web: Zmanim for this city, computed on the phone (compact card), right after the articles.
+                ZmanimCard(place: ZmanimPlace(id: page.destId, name: page.name,
+                                              state: page.stateName.isEmpty ? page.country : page.stateName),
+                           compact: true)
+                    .padding(.horizontal, Theme.pagePadding).padding(.top, 14)
                 VStack(alignment: .leading, spacing: 14) {
                     facts(page)
                     CityNeedsBlock(page: page, sections: sections(page))
@@ -183,8 +188,6 @@ struct AreaView: View {
         let photo = hubPhoto(hub, page: page)
         return Button {
             switch hub {
-            case .shabbat:
-                webSection = WebRoute.city(page.name, sub: page.subtitle, section: hub.webSection)
             default:
                 openHub = hub
             }
@@ -242,6 +245,8 @@ struct AreaView: View {
                                 onSelect: { selected = $0 })
         } else if hub == .guides {
             CityGuidesView(page: page)
+        } else if hub == .shabbat {
+            CityShabbatView(page: page, hasChabad: !(sections(page).first { $0.category == .chabad }?.items.isEmpty ?? true))
         } else if hub == .experience {
             CityExperienceView(page: page)
         } else if hub == .todo {
@@ -303,6 +308,8 @@ struct AreaView: View {
             Text(page.name)
                 .font(.title2.weight(.black))
                 .foregroundStyle(.white)
+            TravelChip(name: page.name, country: page.country.isEmpty ? nil : page.country,
+                       state: page.stateName.isEmpty ? nil : page.stateName, tone: .dark, words: true)
             if !page.description.isEmpty {
                 Text(page.description)
                     .font(.caption.weight(.semibold))

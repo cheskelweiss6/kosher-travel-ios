@@ -111,6 +111,9 @@ struct AreaCardView: View {
                 .font(.caption)
                 .foregroundStyle(Color.textSecondary)
                 .lineLimit(1)
+            // Web renderDestinationCard: the travel-time chip under the subtitle.
+            let parts = area.subtitle.components(separatedBy: ", ").filter { !$0.isEmpty }
+            TravelChip(name: area.name, country: parts.last, state: parts.count > 1 ? parts.first : nil)
             if area.hasGrocery || area.hasChabad {
                 HStack(spacing: 6) {
                     if area.hasGrocery { TagLabel(text: "Grocery") }

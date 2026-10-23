@@ -11,10 +11,13 @@ struct UnitedStatesView: View {
                 TravelerArticlesSection(kind: .country, placeName: "United States")
                 VStack(alignment: .leading, spacing: 4) {
                     SectionHeader(title: "States", count: store.states.count)
+                    // Web: "Travel times from …" above the state grid, and a travel-time chip on each state.
+                    TravelOriginBar().padding(.bottom, 4)
                     ForEach(Array(store.states.enumerated()), id: \.element.id) { i, state in
                         NavigationLink(value: ExploreRoute.state(state.id)) {
                             PlaceRow(title: state.name, detail: state.description, image: state.image,
-                                     tag: "\(state.cities.count) \(state.cities.count == 1 ? "city" : "cities")")
+                                     tag: "\(state.cities.count) \(state.cities.count == 1 ? "city" : "cities")",
+                                     chip: AnyView(TravelChip(usState: state.name)))
                         }
                         .buttonStyle(.plain)
                         if i < store.states.count - 1 { Divider().overlay(Color.hairline).padding(.leading, 88) }
@@ -42,10 +45,12 @@ struct CaribbeanView: View {
             LazyVStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 4) {
                     SectionHeader(title: "Islands & Countries", count: store.caribbean.count)
+                    TravelOriginBar().padding(.bottom, 4)
                     ForEach(Array(store.caribbean.enumerated()), id: \.element.id) { i, c in
                         NavigationLink(value: ExploreRoute.country(c.id)) {
                             PlaceRow(title: c.name, detail: c.description, image: c.image,
-                                     tag: c.cities.isEmpty ? nil : "\(c.cities.count) \(c.cities.count == 1 ? "area" : "areas")")
+                                     tag: c.cities.isEmpty ? nil : "\(c.cities.count) \(c.cities.count == 1 ? "area" : "areas")",
+                                     chip: AnyView(TravelChip(country: c)))
                         }
                         .buttonStyle(.plain)
                         if i < store.caribbean.count - 1 { Divider().overlay(Color.hairline).padding(.leading, 88) }
@@ -69,6 +74,7 @@ struct PlaceRow: View {
     let detail: String
     let image: String
     var tag: String? = nil
+    var chip: AnyView? = nil
     @ScaledMetric(relativeTo: .headline) private var thumb: CGFloat = 74
 
     var body: some View {
@@ -86,6 +92,7 @@ struct PlaceRow: View {
                     .foregroundStyle(Color.textSecondary)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
+                if let chip { chip.padding(.top, 2) }
             }
             Spacer(minLength: 0)
             Image(systemName: "chevron.right")
