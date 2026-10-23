@@ -4,6 +4,7 @@ import GoogleSignIn
 
 enum ProfileRoute: Hashable {
     case settings, contact, name, story(String)
+    case people(following: Bool)   // the Followers / Following lists (tap a count)
     case web(WebRoute)   // a live-app screen inside the native shell
 }
 
@@ -46,6 +47,7 @@ struct ProfileTab: View {
                 case .name: NameEditView(store: store)
                 case .story(let id): StoryDetailView(postId: id)
                 case .web(let r): WebScreen(route: r)
+                case .people(let following): ProfileFollowList(showFollowing: following)
                 }
             }
         }
@@ -180,11 +182,13 @@ struct ProfileTab: View {
     }
 
     private var signedIn: some View {
+        ScrollViewReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
                 header
-                counts
+                counts(proxy)
                 storiesSection
+                    .id("your-stories")
                 savedSection
                 shellRows
                 linkRows(signedIn: true)
@@ -196,6 +200,7 @@ struct ProfileTab: View {
             .frame(maxWidth: .infinity)
         }
         .refreshable { await store.reload() }
+        }
     }
 
     private var header: some View {
@@ -256,29 +261,41 @@ struct ProfileTab: View {
         }
     }
 
-    private var counts: some View {
+    /// Each count opens its list (Instagram style); Posts scrolls to "Your stories".
+    private func counts(_ proxy: ScrollViewProxy) -> some View {
         HStack(spacing: 0) {
-            countCell(store.followers, store.followers == 1 ? "Follower" : "Followers")
+            countCell(store.followers, store.followers == 1 ? "Follower" : "Followers") {
+                path.append(.people(following: false))
+            }
             Rectangle().fill(Color.hairline).frame(width: 1, height: 32)
-            countCell(store.following, "Following")
+            countCell(store.following, "Following") {
+                path.append(.people(following: true))
+            }
             Rectangle().fill(Color.hairline).frame(width: 1, height: 32)
-            countCell(store.storiesLoaded ? store.stories.count : nil, store.stories.count == 1 ? "Post" : "Posts")
+            countCell(store.storiesLoaded ? store.stories.count : nil, store.stories.count == 1 ? "Post" : "Posts") {
+                withAnimation(.easeInOut(duration: 0.3)) { proxy.scrollTo("your-stories", anchor: .top) }
+            }
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 4)
         .hairline(radius: 14)
-        .accessibilityElement(children: .combine)
     }
 
-    private func countCell(_ n: Int?, _ label: String) -> some View {
-        VStack(spacing: 2) {
-            Text(n.map { "\($0)" } ?? "\u{2013}")
-                .font(.headline.monospacedDigit())
-                .foregroundStyle(Color.navy)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(Color.textSecondary)
+    private func countCell(_ n: Int?, _ label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 2) {
+                Text(n.map { "\($0)" } ?? "\u{2013}")
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(Color.navy)
+                Text(label)
+                    .font(.caption)
+                    .foregroundStyle(Color.textSecondary)
+            }
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .contentShape(Rectangle())
         }
-        .frame(maxWidth: .infinity)
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(n.map { "\($0)" } ?? "") \(label)")
+        .accessibilityHint(label == "Posts" || label == "Post" ? "Shows your stories" : "Shows the list")
     }
 
     // MARK: Your stories
