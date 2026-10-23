@@ -284,12 +284,16 @@ struct CityHubPage: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                content
+            VStack(spacing: 0) {
+                // Web: the city hero stays at the top of every sub-page (full width).
+                CitySubPageHero()
+                VStack(alignment: .leading, spacing: 14) {
+                    content
+                }
+                .padding(.horizontal, Theme.pagePadding)
+                .padding(.top, 12)
+                .padding(.bottom, 36)
             }
-            .padding(.horizontal, Theme.pagePadding)
-            .padding(.top, 12)
-            .padding(.bottom, 36)
         }
         .background(Color.white)
         .sheet(item: $radiusHotel) { h in
