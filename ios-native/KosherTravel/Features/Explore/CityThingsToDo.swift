@@ -118,7 +118,7 @@ struct CityThingsToDoView: View {
 
     private func card(_ exp: CityExperience) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            RemoteImage(url: exp.photo, maxPixel: 900, venue: true, category: .todo)
+            RemoteImage(url: exp.photo, maxPixel: 900, venue: true)
                 .frame(maxWidth: .infinity).frame(height: 192)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             HStack(alignment: .top, spacing: 10) {
