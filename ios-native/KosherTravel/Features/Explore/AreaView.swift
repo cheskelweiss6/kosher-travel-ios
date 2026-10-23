@@ -123,15 +123,13 @@ struct AreaView: View {
                 let saved = bucket.contains(page.destId)
                 // Cheskel's rule (Oct 23 9:20): every removal asks first, in red.
                 Button { if saved { confirmUnsave = true } else { bucket.toggle(page.destId) } } label: {
-                    Image(systemName: saved ? "heart.fill" : "heart")
+                    // Website (App.tsx 10058-10068): a pill with the heart and the words "Save" / "Saved".
+                    Label(saved ? "Saved" : "Save", systemImage: saved ? "heart.fill" : "heart")
+                        .labelStyle(.titleAndIcon)
                         .foregroundStyle(Color.navy)
                 }
                 .sensoryFeedback(.success, trigger: saved)
-                .accessibilityLabel(saved ? "Saved" : "Save")
-                Button { showMap = true } label: {
-                    Image(systemName: "map")
-                }
-                .accessibilityLabel("Map of \(page.name)")
+                // The native-only Map button is gone (the website's city header has none); "<key>/map" links still open it.
                 Button {
                     // Website: setWizardCity(name) + the planner tab, i.e. "Plan a trip" with the city in "Where to?".
                     ShellRouter.shared.plannerTripCity = page.name
