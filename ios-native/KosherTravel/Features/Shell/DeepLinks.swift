@@ -3,7 +3,7 @@ import GoogleSignIn
 
 /// A shared www.yourkoshertravel.com link opened in the app (universal links once the site serves
 /// apple-app-site-association; also any own-site link handed to the app). Web: App.tsx ?story=, ?map=, ?shareKever=,
-/// ?keverSearch=, ?keverCountry=, ?explore=true, ?shareItinerary=, ?contact=1.
+/// ?keverSearch=, ?keverCountry=, ?explore=true, ?shareItinerary=, ?trip=&invite=, ?contact=1.
 enum DeepLinkTarget: Identifiable, Hashable {
     case story(String)
     case traveler(String)
@@ -31,6 +31,9 @@ enum DeepLinks {
             return .web(WebRoute.kivrei.with(query: query))
         }
         if q("shareItinerary") != nil { return .web(WebRoute.myTravel.with(query: query)) }
+        // Shared trips (Oct 23 2026): ?trip=<id>&invite=<token> opens My Travel with the query, so the website's
+        // Join trip sheet shows inside the app.
+        if q("trip") != nil { return .web(WebRoute.myTravel.with(query: query)) }
         if q("contact") != nil { return .web(WebRoute.profileWeb.with(query: query)) }
         return nil
     }
