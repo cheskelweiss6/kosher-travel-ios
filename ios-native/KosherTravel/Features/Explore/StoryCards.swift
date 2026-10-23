@@ -66,6 +66,7 @@ struct ArticleRow: View {
 /// A wide article card for horizontal rows on region / state pages.
 struct ArticleCard: View {
     let post: StoryPost
+    var showAuthor = false   // Explore's row: "place · author"
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 700)
@@ -77,7 +78,7 @@ struct ArticleCard: View {
                     .foregroundStyle(Color.navy)
                     .lineLimit(2, reservesSpace: true)
                     .multilineTextAlignment(.leading)
-                Text(post.regionLine)
+                Text(showAuthor ? [post.regionLine, post.authorName].filter { !$0.isEmpty }.joined(separator: " · ") : post.regionLine)
                     .font(.caption)
                     .foregroundStyle(Color.textSecondary)
                     .lineLimit(1)
