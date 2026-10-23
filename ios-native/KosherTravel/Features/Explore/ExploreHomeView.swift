@@ -167,35 +167,113 @@ struct ExploreHomeView: View {
     }
 
     // MARK: Stories & Articles
+    // Cheskel Oct 23: the long list piled up; now a sideways row of cards (like Browse Regions / Get Inspired)
+    // with "See all" opening the full list.
 
     @ViewBuilder
     private var articles: some View {
         VStack(alignment: .leading, spacing: 4) {
-            SectionHeader(title: "Stories & Articles", count: feed.articles.count)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                SectionHeader(title: "Stories & Articles")
+                if !feed.articles.isEmpty {
+                    NavigationLink {
+                        AllArticlesView()
+                    } label: {
+                        Text("See all").font(.subheadline.weight(.semibold)).foregroundStyle(Color.navy)
+                            .frame(minWidth: 44, minHeight: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("articles-see-all")
+                }
+            }
+            .padding(.horizontal, Theme.pagePadding)
             Text("Trips written by travelers on Kosher Travel")
                 .font(.subheadline)
                 .foregroundStyle(Color.textSecondary)
+                .padding(.horizontal, Theme.pagePadding)
                 .padding(.bottom, 8)
             if !feed.loadedOnce && feed.posts.isEmpty {
-                ForEach(0..<3, id: \.self) { _ in
-                    RoundedRectangle(cornerRadius: 14).fill(Color.surface).frame(height: 84)
-                }
+                LoadingCards(count: 3, minWidth: 150, aspect: 0.75)
             } else if feed.articles.isEmpty {
-                if let msg = feed.errorMessage { FeedStatusLine(message: msg) }
-                else { EmptyNote(title: "No articles yet", detail: "Be the first: write up your trip day by day") }
+                Group {
+                    if let msg = feed.errorMessage { FeedStatusLine(message: msg) }
+                    else { EmptyNote(title: "No articles yet", detail: "Be the first: write up your trip day by day") }
+                }
+                .padding(.horizontal, Theme.pagePadding)
             } else {
-                VStack(spacing: 0) {
-                    ForEach(Array(feed.articles.prefix(8).enumerated()), id: \.element.id) { i, post in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top, spacing: 12) {
+                        ForEach(feed.articles.prefix(12)) { post in
+                            NavigationLink(value: ExploreRoute.story(post.id)) {
+                                ExploreArticleTile(post: post)
+                            }
+                            .buttonStyle(.plain)
+                            .containerRelativeFrame(.horizontal) { len, _ in Layout.peekWidth(len, min: 150, spacing: 12) }
+                        }
+                    }
+                    .scrollTargetLayout()
+                }
+                .contentMargins(.horizontal, Theme.pagePadding, for: .scrollContent)
+                .scrollTargetBehavior(.viewAligned)
+                .accessibilityIdentifier("articles-row")
+            }
+        }
+    }
+}
+
+/// One card in Explore's sideways Stories & Articles row; the same tile the website shows there
+/// (TravelArticles.tsx: tall cover photo, two-line title, "place · author").
+struct ExploreArticleTile: View {
+    let post: StoryPost
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 600)
+                .aspectRatio(3 / 4, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .hairline(radius: 14)
+            Text(post.title.isEmpty ? post.cityName : post.title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.navy)
+                .lineLimit(2, reservesSpace: true)
+                .multilineTextAlignment(.leading)
+            Text([post.regionLine, post.authorName].filter { !$0.isEmpty }.joined(separator: " · "))
+                .font(.caption)
+                .foregroundStyle(Color.textSecondary)
+                .lineLimit(1)
+        }
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// Explore → Stories & Articles → See all: every article, newest first, as the rows the home used to show.
+struct AllArticlesView: View {
+    @Environment(StoryFeed.self) private var feed
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                if feed.articles.isEmpty {
+                    EmptyNote(title: "No articles yet", detail: "Be the first: write up your trip day by day")
+                        .padding(.top, 24)
+                } else {
+                    ForEach(Array(feed.articles.enumerated()), id: \.element.id) { i, post in
                         NavigationLink(value: ExploreRoute.story(post.id)) {
                             ArticleRow(post: post)
                         }
                         .buttonStyle(.plain)
-                        if i < min(feed.articles.count, 8) - 1 { Divider().overlay(Color.hairline) }
+                        if i < feed.articles.count - 1 { Divider().overlay(Color.hairline) }
                     }
                 }
             }
+            .padding(.horizontal, Theme.pagePadding)
+            .padding(.bottom, 32)
         }
-        .padding(.horizontal, Theme.pagePadding)
+        .background(Color.white)
+        .navigationTitle("Stories & Articles")
+        .navigationBarTitleDisplayMode(.inline)
+        .refreshable { await feed.refresh() }
     }
 }
 
