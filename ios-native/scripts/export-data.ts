@@ -86,6 +86,15 @@ const community = (c: any) => {
 };
 const attraction = (a: any) => venue({ ...a, photo: attractionPhoto(a) });
 
+// The destination list the app bundles. One record per id, the first one winning, the way the website's
+// buildBaseDestinations drops a database.json copy whose id it already has (Oct 23 2026: Cancun, Mexico City, San Jose
+// and the rest of Mexico & Central America were exported twice, the second copy an empty stub).
+const APP_DESTINATIONS: any[] = (() => {
+  const seen = new Set<string>();
+  return [...CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS, ...DB_DESTINATIONS.filter((d: any) => d.region === 'North America' || d.region === 'Caribbean' || d.region === 'Central America')]
+    .filter((d: any) => { const id = str(d?.id); if (!id || seen.has(id)) return false; seen.add(id); return true; });
+})();
+
 const out = {
   generatedAt: new Date().toISOString(),
   states: PREMIUM_STATES.map((s: any) => ({
@@ -104,7 +113,7 @@ const out = {
     id: str(c.id), name: str(c.name), image: photo(c.image), description: str(c.description),
     lat: nums(c.lat), lng: nums(c.lng), cities: (c.cities || []).map(str),
   })),
-  destinations: [...CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS, ...DB_DESTINATIONS.filter((d: any) => d.region === 'North America' || d.region === 'Caribbean' || d.region === 'Central America')]
+  destinations: APP_DESTINATIONS
     .map((d: any) => {
       const lat = coord(d.lat ?? d.coordinates?.lat), lng = coord(d.lng ?? d.coordinates?.lng);
       return {
