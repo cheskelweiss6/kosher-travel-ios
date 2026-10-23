@@ -9,7 +9,9 @@ enum ShellRoutes {
     /// Caribbean / Central America country pages: native lacks the tabs and the travel-time chips.
     static let nativeCountryPage = false
     /// City pages: the web is a hub with sub-pages (Restaurants Meat/Dairy/Parve, Shabbat, Kivrei, Tour Guides…).
-    static let nativeCityPage = false
+    static var nativeCityPage: Bool { previewNative }
+    /// QA: a launch route ending in "#native" shows the native rebuild of a still-embedded screen.
+    static var previewNative: Bool { LaunchRoute.current?.hasSuffix("#native") == true }
 }
 
 /// Every Explore / Planner push goes through here, so a screen flips from embedded to native in one place.

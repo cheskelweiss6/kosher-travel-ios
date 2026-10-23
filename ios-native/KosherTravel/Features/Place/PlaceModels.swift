@@ -234,6 +234,10 @@ struct CityPage: Hashable {
     var sections: [CitySection]
     let eruv: EruvInfo?
     let hasidic: String
+    /// The website's region ("North America", "Caribbean"…), state and country, for the hero pills.
+    var area: String = ""
+    var stateName: String = ""
+    var country: String = ""
 
     static func == (a: CityPage, b: CityPage) -> Bool { a.key == b.key && a.sections == b.sections }
     func hash(into h: inout Hasher) { h.combine(key) }
@@ -248,25 +252,29 @@ struct CityPage: Hashable {
     static func build(key: String, data: ExploreData) -> CityPage? {
         if key.hasPrefix("us:"), let c = data.cities.first(where: { "us:\($0.id)" == key }) {
             let center = (c.lat != 0 || c.lng != 0) ? CLLocationCoordinate2D(latitude: c.lat, longitude: c.lng) : nil
-            return make(key: key, destId: c.id, name: c.name, region: c.state, subtitle: "\(c.state), United States",
+            var p = make(key: key, destId: c.id, name: c.name, region: c.state, subtitle: "\(c.state), United States",
                         photo: c.photo, description: c.description, airport: c.airport, airportDistance: c.airportDistance,
                         weather: c.weather, center: center,
                         restaurants: c.restaurants, groceries: c.groceries, chabad: c.chabad, shuls: c.shuls,
                         mikvah: c.mikvah, attractions: c.attractions, hotels: c.hotels, rentals: c.rentals ?? [],
                         catering: c.catering ?? [], businesses: c.businesses ?? [], resources: c.resources ?? [],
                         eruv: c.eruv, hasidic: c.hasidic ?? "")
+            p.area = "North America"; p.stateName = c.state; p.country = "United States"
+            return p
         }
         if key.hasPrefix("dest:"), let d = data.destinations.first(where: { "dest:\($0.id)" == key }) {
             let sub = d.state.isEmpty ? d.country : "\(d.state), \(d.country)"
             var center: CLLocationCoordinate2D? = nil
             if let lat = d.lat, let lng = d.lng { center = CLLocationCoordinate2D(latitude: lat, longitude: lng) }
-            return make(key: key, destId: d.id, name: d.name, region: d.state.isEmpty ? d.country : d.state, subtitle: sub,
+            var p = make(key: key, destId: d.id, name: d.name, region: d.state.isEmpty ? d.country : d.state, subtitle: sub,
                         photo: d.image, description: d.description, airport: d.airport, airportDistance: d.airportDistance,
                         weather: d.weather, center: center,
                         restaurants: d.restaurants, groceries: d.groceries, chabad: d.chabad, shuls: d.shuls,
                         mikvah: d.mikvah, attractions: d.attractions, hotels: d.hotels, rentals: d.rentals ?? [],
                         catering: d.catering ?? [], businesses: d.businesses ?? [], resources: d.resources ?? [],
                         eruv: d.eruv, hasidic: d.hasidic ?? "")
+            p.area = d.region; p.stateName = d.state; p.country = d.country
+            return p
         }
         return nil
     }

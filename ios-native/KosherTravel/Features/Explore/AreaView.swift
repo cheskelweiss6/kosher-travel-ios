@@ -20,6 +20,8 @@ struct AreaView: View {
     @State private var expanded = Set<PlaceCategory>()
     @State private var routed = false
     @State private var activeChip: PlaceCategory?
+    @State private var openHub: CityHub?
+    @State private var webSection: WebRoute?
 
     init(areaKey: String) {
         self.areaKey = areaKey
@@ -54,42 +56,44 @@ struct AreaView: View {
 
     @ViewBuilder
     private func content(_ page: CityPage) -> some View {
-        let secs = sections(page)
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 0, pinnedViews: [.sectionHeaders]) {
-                    hero(page)
-                        .padding(.horizontal, Theme.pagePadding)
-                        .padding(.bottom, 14)
-                    Section {
-                        if secs.isEmpty {
-                            EmptyNote(title: "No listings for \(page.name) yet", detail: "Know a kosher place here? Share it in a story.",
-                                      systemImage: "mappin.and.ellipse")
-                                .padding(.horizontal, Theme.pagePadding)
-                                .padding(.top, 16)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                heroBlock(page)
+                VStack(alignment: .leading, spacing: 14) {
+                    facts(page)
+                    if hubs(page).isEmpty == false {
+                        LazyVStack(spacing: 12) {
+                            ForEach(hubs(page)) { hub in hubCard(hub, page: page) }
                         }
-                        ForEach(secs) { section in
-                            sectionView(section, page: page)
-                        }
-                        if !page.hasidic.isEmpty { hasidicCard(page.hasidic) }
-                        TravelerArticlesSection(kind: .city, placeName: page.name)
-                            .padding(.top, 32)
-                    } header: {
-                        if !secs.isEmpty { chipBar(secs, proxy: proxy) }
                     }
+                    TravelerArticlesSection(kind: .city, placeName: page.name)
+                        .padding(.top, 18)
                 }
-                .padding(.bottom, 36)
+                .padding(.horizontal, Theme.pagePadding)
+                .padding(.top, 14)
             }
+            .padding(.bottom, 36)
         }
         .background(Color.white)
         .navigationTitle(page.name)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 Button { showMap = true } label: {
-                    Label("Map", systemImage: "map")
+                    Image(systemName: "map")
                 }
                 .accessibilityLabel("Map of \(page.name)")
+                Button {
+                    // Web: Plan Trip opens the AI Planner for this city.
+                    ShellRouter.shared.open(tab: "planner", prompt: "Plan a kosher trip to \(page.name)")
+                } label: {
+                    Label("Plan Trip", systemImage: "sparkles")
+                        .labelStyle(.titleAndIcon)
+                        .font(.subheadline.weight(.bold))
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color.navy)
+                .accessibilityLabel("Plan a trip to \(page.name)")
             }
         }
         .refreshable { await loadLive(page, force: true) }
@@ -105,35 +109,174 @@ struct AreaView: View {
             .presentationDragIndicator(.visible)
         }
         .navigationDestination(isPresented: $showMap) {
-            CityMapView(page: page, items: secs.flatMap(\.items), onOpenStory: { id in openStoryLater(id) })
+            CityMapView(page: page, items: sections(page).flatMap(\.items), onOpenStory: { id in openStoryLater(id) })
         }
         .navigationDestination(item: $openStory) { id in
             StoryDetailView(postId: id)
         }
-    }
-
-    // MARK: hero, facts
-
-    private func hero(_ page: CityPage) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            RemoteImage(url: page.photo, maxPixel: 1400)
-                .aspectRatio(16 / 9, contentMode: .fit)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .accessibilityHidden(true)
-            Text(page.subtitle)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Color.textSecondary)
-            if !page.description.isEmpty {
-                Text(page.description)
-                    .font(.body)
-                    .foregroundStyle(Color.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            facts(page)
+        .navigationDestination(item: $openHub) { hub in
+            subPage(hub, page: page)
+        }
+        .navigationDestination(item: $webSection) { route in
+            WebScreen(route: route)
         }
     }
 
+    // MARK: hub (web: the city page's photo cards, each opening its own page)
+
+    private func hubs(_ page: CityPage) -> [CityHub] {
+        let secs = sections(page)
+        func has(_ c: PlaceCategory) -> Bool { secs.contains { $0.category == c && !$0.items.isEmpty } }
+        var out: [CityHub] = []
+        if has(.restaurant) || has(.takeout) { out.append(.restaurants) }
+        if has(.grocery) { out.append(.grocery) }
+        if has(.chabad) { out.append(.chabad) }
+        if has(.shul) { out.append(.shuls) }
+        out.append(.todo)
+        out.append(.hotels)
+        out.append(.shabbat)
+        if !page.hasidic.isEmpty { out.append(.hasidic) }
+        if has(.rental) { out.append(.rentals) }
+        if has(.business) || has(.catering) { out.append(.businesses) }
+        if has(.resource) { out.append(.resources) }
+        out.append(.guides)
+        if page.area == "Caribbean" || page.area == "Europe" { out.append(.experience) }
+        if has(.traveler) { out.append(.traveler) }
+        return out
+    }
+
+    private func hubPhoto(_ hub: CityHub, page: CityPage) -> (url: String, category: String?) {
+        let secs = sections(page)
+        func first(_ c: PlaceCategory) -> String? {
+            secs.first { $0.category == c }?.items.lazy.compactMap { $0.photos.first }.first { !PhotoFallback.isPlaceholder($0) }
+        }
+        switch hub {
+        case .restaurants: return (page.photo, nil)
+        case .grocery: return (first(.grocery) ?? "", "grocery")
+        case .chabad: return ("", "chabad")
+        case .shuls: return ("", "shul")
+        case .todo: return (first(.todo) ?? page.photo, nil)
+        case .hotels: return (first(.hotel) ?? page.photo, nil)
+        case .shabbat: return ("https://kosher-travel-img.sites.tab.bot/wm/f88a9d27526e390c.webp", nil)
+        default: return (page.photo, nil)
+        }
+    }
+
+    private func hubCard(_ hub: CityHub, page: CityPage) -> some View {
+        let photo = hubPhoto(hub, page: page)
+        return Button {
+            switch hub {
+            case .shabbat, .guides, .experience:
+                webSection = WebRoute.city(page.name, sub: page.subtitle, section: hub.webSection)
+            default:
+                openHub = hub
+            }
+        } label: {
+            VStack(alignment: .leading, spacing: 0) {
+                RemoteImage(url: photo.url, maxPixel: 900, venue: true, category: photo.category)
+                    .frame(height: 128)
+                    .frame(maxWidth: .infinity)
+                    .overlay(alignment: .bottomLeading) {
+                        ZStack(alignment: .bottomLeading) {
+                            LinearGradient(colors: [.black.opacity(0.85), .black.opacity(0.3), .clear], startPoint: .bottom, endPoint: .top)
+                            Text(hub.title)
+                                .font(.footnote.weight(.heavy))
+                                .foregroundStyle(.white)
+                                .padding(12)
+                        }
+                    }
+                    .clipped()
+                HStack(alignment: .center, spacing: 8) {
+                    Text(hub.text(page))
+                        .font(.caption)
+                        .foregroundStyle(Color.textSecondary)
+                        .lineLimit(3)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.textTertiary)
+                }
+                .padding(12)
+            }
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color.hairline, lineWidth: 1))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(hub.title)
+    }
+
     @ViewBuilder
+    private func subPage(_ hub: CityHub, page: CityPage) -> some View {
+        let secs = sections(page).filter { hub.categories.contains($0.category) }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                if hub == .hasidic {
+                    hasidicCard(page.hasidic)
+                } else if secs.isEmpty {
+                    EmptyNote(title: "Nothing listed in \(page.name) yet", detail: "Know a kosher place here? Share it in a story.",
+                              systemImage: "mappin.and.ellipse")
+                        .padding(.horizontal, Theme.pagePadding)
+                        .padding(.top, 16)
+                }
+                ForEach(secs) { section in
+                    sectionView(section, page: page)
+                }
+                if hub == .shuls, let e = page.eruv { eruvCard(e) }
+            }
+            .padding(.bottom, 36)
+        }
+        .background(Color.white)
+        .navigationTitle(hub.title)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: hero (web: full-width photo, region / state / country pills, the name and the description over it)
+
+    private func heroBlock(_ page: CityPage) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                if !page.area.isEmpty {
+                    Text(page.area.uppercased())
+                        .font(.system(size: 10, weight: .heavy))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 3)
+                        .background(Color.white.opacity(0.2), in: Capsule())
+                        .overlay(Capsule().strokeBorder(Color.white.opacity(0.2), lineWidth: 1))
+                }
+                if !page.stateName.isEmpty {
+                    Text(page.stateName).font(.caption.weight(.heavy)).foregroundStyle(.white)
+                }
+                if !page.country.isEmpty {
+                    Text("• \(page.country)").font(.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.85))
+                }
+            }
+            Text(page.name)
+                .font(.title2.weight(.black))
+                .foregroundStyle(.white)
+            if !page.description.isEmpty {
+                Text(page.description)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.92))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 280, alignment: .bottomLeading)
+        .background {
+            RemoteImage(url: page.photo, maxPixel: 1600, venue: true)
+                .overlay {
+                    LinearGradient(colors: [.black.opacity(0.75), .black.opacity(0.6), .black.opacity(0.95)],
+                                   startPoint: .top, endPoint: .bottom)
+                }
+        }
+        .clipped()
+        .accessibilityElement(children: .combine)
+    }
+
     private func facts(_ page: CityPage) -> some View {
         let airport = [page.airport, page.airportDistance].filter { !$0.isEmpty }.joined(separator: " · ")
         let rows: [FactRow] = [
@@ -526,5 +669,76 @@ struct VenueRow: View {
             Spacer(minLength: 0)
         }
         .padding(.vertical, 10)
+    }
+}
+
+/// The city page's photo cards (web App.tsx city hub), in the website's order.
+enum CityHub: String, Identifiable, Hashable {
+    case restaurants, grocery, chabad, shuls, todo, hotels, shabbat, hasidic, rentals, businesses, resources, guides, experience, traveler
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .restaurants: return "Kosher Restaurants"
+        case .grocery: return "Kosher Grocery"
+        case .chabad: return "Chabad Directory"
+        case .shuls: return "Shuls"
+        case .todo: return "Things to Do"
+        case .hotels: return "Hotels"
+        case .shabbat: return "Shabbat Info"
+        case .hasidic: return "Hasidic Community"
+        case .rentals: return "Vacation Rentals"
+        case .businesses: return "Businesses & Services"
+        case .resources: return "Community Resources"
+        case .guides: return "Travel Guides"
+        case .experience: return "Travel Experience"
+        case .traveler: return "Places Travelers Added"
+        }
+    }
+
+    func text(_ page: CityPage) -> String {
+        switch self {
+        case .restaurants: return "Browse local certified kosher diners, cafes, and grill houses."
+        case .grocery: return "Supermarkets and specialty stores stocked with kosher foods."
+        case .chabad: return "Chabad house contacts, rabbi details, and Shabbat meals."
+        case .shuls: return "Minyan schedules, local community centers, Mikvah and Eruv info."
+        case .todo: return "Discover what makes \(page.name) truly unforgettable. Top attractions, activities, and local heritage."
+        case .hotels: return "Recommended accommodations near kosher amenities."
+        case .shabbat: return "Zmanim, candle lighting, Eruv map status and walking guidelines."
+        case .hasidic: return page.hasidic
+        case .rentals: return "Luxury homes with private pool barriers, kosher kitchens, and Shabbat setups."
+        case .businesses: return "Scribes, Judaica book stores, and state-of-the-art Mikvaot."
+        case .resources: return "Local community directories, WhatsApp forums, and visitor chats."
+        case .guides: return "Verified kosher travel guides, walking tours, and excursions in \(page.name)."
+        case .experience: return "Travel stories and community experiences in \(page.name)."
+        case .traveler: return "Places travelers tagged in \(page.name)."
+        }
+    }
+
+    /// The listing sections a native sub-page shows.
+    var categories: [PlaceCategory] {
+        switch self {
+        case .restaurants: return [.restaurant, .takeout]
+        case .grocery: return [.grocery]
+        case .chabad: return [.chabad]
+        case .shuls: return [.shul, .mikvah]
+        case .todo: return [.todo]
+        case .hotels: return [.hotel]
+        case .rentals: return [.rental]
+        case .businesses: return [.business, .catering]
+        case .resources: return [.resource]
+        case .traveler: return [.traveler]
+        default: return []
+        }
+    }
+
+    /// Hubs the app still shows as the live page (web activeCitySubCategory names).
+    var webSection: String {
+        switch self {
+        case .shabbat: return "shabbat"
+        case .guides: return "guides"
+        case .experience: return "experience"
+        default: return rawValue
+        }
     }
 }

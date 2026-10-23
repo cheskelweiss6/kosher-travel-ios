@@ -15,7 +15,8 @@ struct ExploreTab: View {
 
     /// QA screenshots open a screen directly: usa, caribbean, state:<id>, country:<id>, area:<key>.
     private func applyLaunchRoute() {
-        guard path.isEmpty, let r = LaunchRoute.current else { return }
+        guard path.isEmpty, let full = LaunchRoute.current else { return }
+        let r = full.hasSuffix("#native") ? String(full.dropLast(7)) : full
         if r == "usa" { path = [.unitedStates] }
         else if r == "caribbean" { path = [.caribbean] }
         else if r.hasPrefix("state:") { path = [.unitedStates, .state(String(r.dropFirst(6)))] }

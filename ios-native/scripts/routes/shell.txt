@@ -1,4 +1,3 @@
-s1-colorado:state:colorado
-s2-denver:area:us:denver
-s3-mytravel:tab:mytravel
-s4-jamaica:country:jamaica
+s1-denver-native:area:us:denver#native
+s2-nyc-native:area:us:new-york-city#native
+s3-cancun-native:area:dest:cancun#native
