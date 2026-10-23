@@ -27,6 +27,8 @@ struct RootTabView: View {
         }
         // Brand: outline icons, also for the selected tab.
         .environment(\.symbolVariants, .none)
+        // After sign-in: a new account (or one with no username yet) chooses its username (Features/Auth/UsernameGate).
+        .usernameGate()
         // Any screen (native or embedded) can ask for the native sign-in.
         .sheet(item: $router.signIn) { mode in
             SignInSheet(mode: mode)
