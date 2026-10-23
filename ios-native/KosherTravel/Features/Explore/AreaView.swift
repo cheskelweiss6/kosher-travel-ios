@@ -277,6 +277,7 @@ struct AreaView: View {
         .accessibilityElement(children: .combine)
     }
 
+    @ViewBuilder
     private func facts(_ page: CityPage) -> some View {
         let airport = [page.airport, page.airportDistance].filter { !$0.isEmpty }.joined(separator: " · ")
         let rows: [FactRow] = [
