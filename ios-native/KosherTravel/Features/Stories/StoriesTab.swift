@@ -9,6 +9,8 @@ struct StoriesTab: View {
     @State private var followingOnly = false
     @State private var tag = "All"
     @State private var appliedRoute = false
+    /// Get Inspired (full-screen feed) and the composer are still the live screens, full screen with their own X.
+    @State private var webCover: WebRoute?
 
     private static let tags = ["Shabbos", "Food", "Shul", "Family", "Nature", "Beach", "Hotels", "Yom Tov", "Cruise", "Tips"]
 
@@ -32,6 +34,20 @@ struct StoriesTab: View {
             }
             .background(Color.white)
             .navigationTitle("Stories")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { webCover = .inspire } label: {
+                        Label("Get Inspired", systemImage: "play.rectangle.on.rectangle")
+                    }
+                    .accessibilityIdentifier("stories-inspire")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { webCover = .compose() } label: {
+                        Label("Share", systemImage: "camera").labelStyle(.titleAndIcon)
+                    }
+                    .accessibilityIdentifier("stories-share")
+                }
+            }
             .navigationDestination(for: StoriesRoute.self) { route in
                 switch route {
                 case .post(let id): StoryDetailView(postId: id)
@@ -41,6 +57,9 @@ struct StoriesTab: View {
             .refreshable { await store.refresh() }
             .task { await store.loadIfNeeded() }
             .task(id: auth.uid) { await store.syncAccount(uid: auth.uid) }
+        }
+        .fullScreenCover(item: $webCover) { r in
+            NavigationStack { WebScreen(route: r, fullScreen: true) }
         }
         .onAppear(perform: applyLaunchRoute)
         .onChange(of: auth.isSignedIn) { _, signedIn in if !signedIn { followingOnly = false } }

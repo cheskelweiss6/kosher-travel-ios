@@ -4,6 +4,7 @@ import GoogleSignIn
 
 enum ProfileRoute: Hashable {
     case settings, contact, name, story(String)
+    case web(WebRoute)   // a live-app screen inside the native shell
 }
 
 /// The Profile tab (the web's ProfileView): sign-in call to action when signed out; photo, name, counts, your stories,
@@ -41,6 +42,7 @@ struct ProfileTab: View {
                 case .contact: ContactView()
                 case .name: NameEditView(store: store)
                 case .story(let id): StoryDetailView(postId: id)
+                case .web(let r): WebScreen(route: r)
                 }
             }
         }
@@ -167,6 +169,7 @@ struct ProfileTab: View {
                 counts
                 storiesSection
                 savedSection
+                shellRows
                 linkRows(signedIn: true)
             }
             .padding(.horizontal, Theme.pagePadding)
@@ -413,6 +416,22 @@ struct ProfileTab: View {
     }
 
     // MARK: rows
+
+    /// Profile parts not rebuilt natively yet (your posts, reviews and reminders tabs; the owner's tools): the live
+    /// screens inside the shell, so nothing from the website's profile is missing.
+    private var shellRows: some View {
+        VStack(spacing: 0) {
+            rowButton("square.grid.2x2", "Posts, reviews and reminders") { path.append(.web(.profileWeb)) }
+            if auth.isAdmin {
+                Divider().overlay(Color.hairline)
+                rowButton("checkmark.seal", "Review posts") { path.append(.web(.adminReview)) }
+                Divider().overlay(Color.hairline)
+                rowButton("tray", "Inbox") { path.append(.web(.adminInbox)) }
+            }
+        }
+        .padding(.horizontal, 14)
+        .hairline(radius: 14)
+    }
 
     private func linkRows(signedIn: Bool) -> some View {
         VStack(spacing: 0) {

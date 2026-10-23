@@ -7,14 +7,7 @@ struct ExploreTab: View {
         NavigationStack(path: $path) {
             ExploreHomeView()
                 .navigationDestination(for: ExploreRoute.self) { route in
-                    switch route {
-                    case .unitedStates: UnitedStatesView()
-                    case .caribbean: CaribbeanView()
-                    case .state(let id): StateView(stateId: id)
-                    case .country(let id): CountryView(countryId: id)
-                    case .area(let key): AreaView(areaKey: key)
-                    case .story(let id): StoryDetailView(postId: id)
-                    }
+                    ExploreDestination(route: route)
                 }
         }
         .onAppear(perform: applyLaunchRoute)

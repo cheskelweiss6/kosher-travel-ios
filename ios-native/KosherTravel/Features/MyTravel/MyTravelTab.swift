@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// Placeholder until this tab is rebuilt natively (owned by its own worker; replace this file).
+/// My Travel (upcoming trips, bucket list, saved posts, past trips, Travel Map, badges, shared itineraries) is not
+/// rebuilt natively yet, so the shell shows the live screen inside the native tab (parity checklist phase 7).
 struct MyTravelTab: View {
     var body: some View {
-        ComingNext(title: "My Travel", systemImage: "suitcase",
-                   detail: "Your saved trips, saved posts and travel map. Coming in a next native build.")
+        WebTabRoot(route: .myTravel)
     }
 }

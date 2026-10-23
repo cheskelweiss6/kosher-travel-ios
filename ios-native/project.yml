@@ -52,6 +52,11 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         ITSAppUsesNonExemptEncryption: false
+        # Asked only when a screen needs it (photo upload, "use my location" for zmanim and travel times).
+        NSCameraUsageDescription: Take photos and videos for the trips you share.
+        NSPhotoLibraryUsageDescription: Choose photos and videos from your library to share your trip.
+        NSMicrophoneUsageDescription: Record sound with the videos you share.
+        NSLocationWhenInUseUsageDescription: Show zmanim, nearby kosher places and travel times for where you are.
         CFBundleURLTypes:
           - CFBundleURLName: google-sign-in
             CFBundleURLSchemes:

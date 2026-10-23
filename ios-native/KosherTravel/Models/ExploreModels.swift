@@ -158,4 +158,5 @@ enum ExploreRoute: Hashable {
     case country(String)     // Caribbean country id
     case area(String)        // AreaCard.id
     case story(String)       // story post id
+    case web(WebRoute)       // a screen of the live app inside the native shell (Features/Shell)
 }

@@ -5,10 +5,10 @@ enum AppTab: Hashable {
 }
 
 struct RootTabView: View {
-    @State private var selection: AppTab = .explore
+    @Bindable private var router = ShellRouter.shared
 
     var body: some View {
-        TabView(selection: $selection) {
+        TabView(selection: $router.selectedTab) {
             ExploreTab()
                 .tabItem { Label("Explore", systemImage: "safari").environment(\.symbolVariants, .none) }
                 .tag(AppTab.explore)
@@ -27,15 +27,27 @@ struct RootTabView: View {
         }
         // Brand: outline icons, also for the selected tab.
         .environment(\.symbolVariants, .none)
+        // Any screen (native or embedded) can ask for the native sign-in.
+        .sheet(item: $router.signIn) { mode in
+            SignInSheet(mode: mode)
+        }
+        .overlay(alignment: .top) {
+            if let toast = router.toast {
+                ShellToastView(toast: toast)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .allowsHitTesting(false)
+            }
+        }
+        .animation(.snappy, value: router.toast)
         .onAppear {
             if let route = LaunchRoute.current, route.hasPrefix("tab:") {
                 // "tab:<name>" or "tab:<name>/<screen>" (the tab's own view reads the rest)
                 switch route.dropFirst(4).split(separator: "/").first.map(String.init) ?? "" {
-                case "planner": selection = .planner
-                case "mytravel": selection = .myTravel
-                case "stories": selection = .stories
-                case "profile": selection = .profile
-                default: selection = .explore
+                case "planner": router.selectedTab = .planner
+                case "mytravel": router.selectedTab = .myTravel
+                case "stories": router.selectedTab = .stories
+                case "profile": router.selectedTab = .profile
+                default: router.selectedTab = .explore
                 }
             }
         }

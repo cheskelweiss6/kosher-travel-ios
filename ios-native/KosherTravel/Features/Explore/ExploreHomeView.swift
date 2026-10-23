@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ExploreHomeView: View {
     @Environment(StoryFeed.self) private var feed
+    @Environment(AuthStore.self) private var auth
 
     var body: some View {
         ScrollView {
@@ -9,6 +10,7 @@ struct ExploreHomeView: View {
                 regions
                 inspiration
                 articles
+                moreRows
             }
             .padding(.top, 8)
             .padding(.bottom, 32)
@@ -16,8 +18,48 @@ struct ExploreHomeView: View {
         .background(Color.white)
         .navigationTitle("Explore")
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink(value: ExploreRoute.web(.exploreSearch)) {
+                    Image(systemName: "magnifyingglass")
+                }
+                .accessibilityLabel("Search destinations")
+                .accessibilityIdentifier("explore-search")
+            }
+        }
         .refreshable { await feed.refresh() }
         .task { await feed.loadIfNeeded() }
+    }
+
+    // MARK: More (live screens inside the shell until they are native)
+
+    private var moreRows: some View {
+        VStack(spacing: 0) {
+            moreRow("newspaper", "What's New", .news)
+            Divider().overlay(Color.hairline)
+            moreRow("building.columns", "Kivrei Tzadikim", .kivrei)
+            if auth.isAdmin {
+                Divider().overlay(Color.hairline)
+                moreRow("globe.europe.africa", "Europe", .europe)
+            }
+        }
+        .padding(.horizontal, 14)
+        .hairline(radius: 14)
+        .padding(.horizontal, Theme.pagePadding)
+    }
+
+    private func moreRow(_ icon: String, _ title: String, _ route: WebRoute) -> some View {
+        NavigationLink(value: ExploreRoute.web(route)) {
+            HStack(spacing: 12) {
+                Image(systemName: icon).foregroundStyle(Color.navy).frame(width: 24)
+                Text(title).foregroundStyle(Color.navy)
+                Spacer()
+                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(Color.textTertiary)
+            }
+            .frame(minHeight: 48)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: Browse Regions

@@ -58,7 +58,6 @@ struct CityMapView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) { status }
         .navigationTitle("\(page.name) map")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.visible, for: .navigationBar)
         .onChange(of: selection) { _, id in
             guard let id, let item = items.first(where: { $0.id == id }) else { return }
             sheetItem = item

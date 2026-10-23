@@ -46,14 +46,7 @@ struct PlannerTab: View {
                 .navigationBarTitleDisplayMode(store.messages.isEmpty ? .large : .inline)
                 .toolbar { toolbar }
                 .navigationDestination(for: ExploreRoute.self) { route in
-                    switch route {
-                    case .unitedStates: UnitedStatesView()
-                    case .caribbean: CaribbeanView()
-                    case .state(let id): StateView(stateId: id)
-                    case .country(let id): CountryView(countryId: id)
-                    case .area(let key): AreaView(areaKey: key)
-                    case .story(let id): StoryDetailView(postId: id)
-                    }
+                    ExploreDestination(route: route)
                 }
         }
         .sheet(isPresented: $showHistory) {
@@ -74,9 +67,19 @@ struct PlannerTab: View {
         .task(id: auth.uid ?? "") { store.setAccount(uid: auth.uid) }
         .task { await feed.loadIfNeeded() }
         .onAppear(perform: applyLaunchRoute)
+        .onAppear(perform: takeShellPrompt)
+        .onChange(of: ShellRouter.shared.plannerPrompt) { _, _ in takeShellPrompt() }
         .sensoryFeedback(.impact(weight: .light), trigger: store.sendCount)
         .sensoryFeedback(.success, trigger: store.answerCount)
         .sensoryFeedback(.error, trigger: store.errorText) { _, new in new != nil }
+    }
+
+    /// A question handed over by another screen (an embedded page's "Plan with AI"), sent once.
+    private func takeShellPrompt() {
+        guard let q = ShellRouter.shared.plannerPrompt, !q.isEmpty else { return }
+        ShellRouter.shared.plannerPrompt = nil
+        path = []
+        store.send(q)
     }
 
     // MARK: toolbar
