@@ -22,6 +22,10 @@ struct StoryDetailView: View {
     @State private var askReport = false
     @State private var confirmBlock = false
     @State private var loading = true
+    @State private var confirmDelete = false
+    @State private var deleting = false
+    @State private var editRoute: WebRoute?
+    @Environment(\.dismiss) private var dismiss
 
     struct ViewerStart: Identifiable {
         let id = UUID()
@@ -99,6 +103,14 @@ struct StoryDetailView: View {
         .storyBlockConfirm(isPresented: $confirmBlock, name: (post?.authorName ?? "").isEmpty ? "this traveler" : (post?.authorName ?? "")) {
             await blockOwner()
         }
+        .storyDeleteConfirm(isPresented: $confirmDelete, article: post?.isGuide ?? true) { deletePost() }
+        // Edit: the post editor every post is written in, opened on this post; its X or Save closes it
+        .fullScreenCover(item: $editRoute, onDismiss: {
+            let id = postId
+            Task { await store.reload(id) }
+        }) { r in
+            NavigationStack { WebScreen(route: r, fullScreen: true) }
+        }
         .onDisappear { StoryVideoCenter.shared.stopAll() }
         .overlay(alignment: .bottom) {
             if let note {
@@ -131,6 +143,7 @@ struct StoryDetailView: View {
                 header(p, article: article)
                 authorRow(p)
                 actionBar(p)
+                if article { askAIButton(p) }
                 if !p.intro.isEmpty { StoryReadText(text: p.intro) }
                 if !p.caption.isEmpty && p.caption != p.intro { StoryReadText(text: p.caption) }
                 if let linked = extra?.linkedArticleId, !linked.isEmpty, linked != p.id { fullArticleLink(linked) }
@@ -141,8 +154,8 @@ struct StoryDetailView: View {
             }
             .padding(.bottom, 40)
         }
-        // the web's place line (state or country, never "Wy, Wyoming"); one Share only, the paper plane in the action row
-        .navigationTitle(p.regionLine.isEmpty ? (p.isGuide ? "Article" : "Story") : p.regionLine)
+        // the web's place line (state or country, never "Wy, Wyoming"); one Share only, the iOS share symbol in the action row
+        .navigationTitle(navTitle(p))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -335,7 +348,7 @@ struct StoryDetailView: View {
             .accessibilityLabel("Comments")
 
             ShareLink(item: StoryActions.shareURL(p.id), subject: Text(p.title.isEmpty ? p.cityName : p.title)) {
-                Image(systemName: "paperplane")
+                Image(systemName: "square.and.arrow.up")
                     .font(.title2)
                     .foregroundStyle(Color.navy)
                     .frame(minHeight: 44)
@@ -365,13 +378,24 @@ struct StoryDetailView: View {
             .sensoryFeedback(.selection, trigger: saved)
             .accessibilityLabel(saved ? "Saved" : "Save")
 
-            if auth.isSignedIn && uid != auth.uid {
+            let canManage = StoryOwnerTools.canManage(ownerUid: uid, auth: auth)
+            if (auth.isSignedIn && uid != auth.uid) || canManage {
                 Menu {
+                    if canManage {
+                        StoryOwnerMenuItems(article: p.isGuide) {
+                            StoryVideoCenter.shared.stopAll()
+                            editRoute = StoryOwnerTools.editRoute(p.id, article: p.isGuide)
+                        } onDelete: {
+                            confirmDelete = true
+                        }
+                    }
+                    if uid != auth.uid {
                     Button { askReport = true } label: { Label("Report this \(post?.isGuide == true ? "article" : "post")", systemImage: "flag") }
                     if !uid.isEmpty {
                         Button { confirmBlock = true } label: {
                             Label("Block \((post?.authorName ?? "").isEmpty ? "this traveler" : (post?.authorName ?? ""))", systemImage: "person.crop.circle.badge.xmark")
                         }
+                    }
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -384,6 +408,64 @@ struct StoryDetailView: View {
             }
         }
         .padding(.horizontal, Theme.pagePadding)
+    }
+
+    /// The bar's name: the post's state or country; a trip whose place is a country itself shows that country
+    /// ("Costa Rica"), never a bare "Article" (Cheskel, Oct 23 2026: "change the name, whichever name belongs there").
+    private func navTitle(_ p: StoryPost) -> String {
+        if !p.regionLine.isEmpty { return p.regionLine }
+        let c = p.cityName.trimmingCharacters(in: .whitespaces)
+        if !c.isEmpty && StoryRegion.norm(c) != StoryRegion.norm(p.title) { return c }
+        return p.isGuide ? "Articles" : "Get Inspired"
+    }
+
+    /// "Ask AI to plan this trip": the AI planner opens with this trip (the web article's same button, plan()).
+    private func askAIButton(_ p: StoryPost) -> some View {
+        Button {
+            StoryVideoCenter.shared.stopAll()
+            ShellRouter.shared.open(tab: "planner", prompt: planPrompt(p))
+        } label: {
+            Label("Ask AI to plan this trip", systemImage: "sparkles")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, minHeight: 48)
+                .background(Color.navy, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, Theme.pagePadding)
+        .accessibilityLabel("Ask AI to plan this trip")
+    }
+
+    /// The web's plan(): a trip through several cities asks for the same route; otherwise the city (and its place).
+    private func planPrompt(_ p: StoryPost) -> String {
+        let cities = (extra?.stops ?? []).map(\.cityName).filter { !$0.isEmpty }
+        if p.isGuide && cities.count > 1 {
+            return "Plan a kosher trip like this one: " + cities.joined(separator: " → ")
+        }
+        let place = p.placeName.trimmingCharacters(in: .whitespaces)
+        return "Plan a kosher trip to \(p.cityName)" + (place.isEmpty ? "" : " (I want to see \(place))")
+    }
+
+    @MainActor
+    private func deletePost() {
+        guard !deleting, let p = post else { return }
+        deleting = true
+        StoryVideoCenter.shared.stopAll()
+        let id = p.id
+        let ex = extra
+        let wasArticle = p.isGuide
+        Task {
+            let ok = await StoryOwnerTools.delete(postId: id, extra: ex)
+            deleting = false
+            if ok {
+                store.remove(id)
+                ShellRouter.shared.showToast(wasArticle ? "Article deleted" : "Post deleted")
+                dismiss()
+            } else {
+                ShellRouter.shared.showToast("Couldn't delete it. Check your connection and try again.")
+            }
+        }
     }
 
     private func fullArticleLink(_ id: String) -> some View {
