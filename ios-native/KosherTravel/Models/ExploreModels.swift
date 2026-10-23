@@ -154,6 +154,7 @@ struct AreaSection: Hashable, Identifiable {
 enum ExploreRoute: Hashable {
     case unitedStates
     case caribbean
+    case mexicoCentralAmerica // Oct 23 2026: Mexico and Central America, no longer under the Caribbean
     case state(String)       // state id
     case country(String)     // Caribbean country id
     case area(String)        // AreaCard.id

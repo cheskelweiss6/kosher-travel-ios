@@ -8,7 +8,7 @@ import Observation
 
 /// Where an in-page search looks (web RegionScope).
 enum SPSearchScope: Hashable {
-    case unitedStates, caribbean
+    case unitedStates, caribbean, mexicoCentralAmerica
     case state(String)
     case country(String)
 
@@ -16,6 +16,7 @@ enum SPSearchScope: Hashable {
         switch self {
         case .unitedStates: return "United States"
         case .caribbean: return "Caribbean"
+        case .mexicoCentralAmerica: return TravelRegions.mexicoCentralAmerica
         case .state(let n), .country(let n): return n
         }
     }
@@ -23,14 +24,16 @@ enum SPSearchScope: Hashable {
     var region: String {
         switch self {
         case .unitedStates, .state: return "North America"
-        case .caribbean, .country: return "Caribbean"
+        case .caribbean: return "Caribbean"
+        case .mexicoCentralAmerica: return TravelRegions.mexicoCentralAmerica
+        case .country(let n): return TravelRegions.label(region: "Caribbean", country: n)
         }
     }
     var countryName: String? {
         switch self {
         case .unitedStates, .state: return "United States"
         case .country(let n): return n
-        case .caribbean: return nil
+        case .caribbean, .mexicoCentralAmerica: return nil
         }
     }
     var stateName: String? { if case .state(let n) = self { return n }; return nil }
@@ -393,7 +396,7 @@ enum SPSearchRows {
                 let inScope: Bool = {
                     if !st.isEmpty { return d.region == "North America" && SPSearchText.nn(d.country) == "united states" && stateKey(d.state) == st }
                     if !ctry.isEmpty { return SPSearchText.nn(d.country) == ctry && (isUS ? d.region == "North America" : true) }
-                    return d.region == reg || (reg == "Caribbean" && d.region == "Central America")
+                    return TravelRegions.contains(region: reg, country: d.country, storedRegion: d.region)
                 }()
                 if !inScope { continue }
                 if st.isEmpty && ctry.isEmpty && !d.country.isEmpty && reg != "North America" {
@@ -421,9 +424,10 @@ enum SPSearchRows {
         switch scope {
         case .unitedStates:
             subAreas = pages.usStates.map { SubArea(name: $0.name, image: $0.image, state: true, route: .state($0.id)) }
-        case .caribbean:
+        case .caribbean, .mexicoCentralAmerica:
             var seenC = Set<String>()
-            for d in SPSearchIndex.shared.file?.dests ?? [] where d.region == "Caribbean" || d.region == "Central America" {
+            for d in SPSearchIndex.shared.file?.dests ?? []
+            where TravelRegions.contains(region: scope.region, country: d.country, storedRegion: d.region) {
                 let k = d.country.lowercased()
                 if d.country.isEmpty || !seenC.insert(k).inserted { continue }
                 let tile = pages.caribbean.first { $0.name.lowercased() == k }
@@ -434,9 +438,10 @@ enum SPSearchRows {
         }
         if st.isEmpty && ctry.isEmpty { for a in subAreas where SPSearchText.nn(a.name) != "united states" { regionCountries.insert(SPSearchText.nn(a.name)) } }
         for a in subAreas {
-            let line = a.state ? "State · United States" : "Country · Caribbean"
+            let areaRegion = a.state ? TravelRegions.unitedStates : TravelRegions.label(region: "Caribbean", country: a.name)
+            let line = a.state ? "State · United States" : "Country · \(areaRegion)"
             add(mk(.areas, .destination, "a:\(a.state ? "state" : "country"):\(a.name)", a.name, line, .area(a.route),
-                   type: [a.state ? "state" : "country"], place: [a.state ? "North America" : "Caribbean"], thumb: a.image))
+                   type: [a.state ? "state" : "country"], place: [areaRegion], thumb: a.image))
         }
 
         // parks (US state pages and the United States page)
@@ -640,7 +645,11 @@ struct RegionSearchResults: View {
     private var wider: (label: String, scope: SPSearchScope, route: ExploreRoute)? {
         switch scope {
         case .state: return ("United States", .unitedStates, .unitedStates)
-        case .country: return ("Caribbean", .caribbean, .caribbean)
+        case .country(let n):
+            if TravelRegions.region(country: n) == TravelRegions.mexicoCentralAmerica {
+                return (TravelRegions.mexicoCentralAmerica, .mexicoCentralAmerica, .mexicoCentralAmerica)
+            }
+            return ("Caribbean", .caribbean, .caribbean)
         default: return nil
         }
     }
@@ -699,9 +708,9 @@ struct RegionSearchResults: View {
         var rows = SPSearchRows.build(scope: scope)
         // the region's countries, for the posts filter (web regionCountries)
         var countries = Set<String>()
-        if scope == .caribbean {
+        if scope == .caribbean || scope == .mexicoCentralAmerica {
             for r in rows where r.group == .areas && r.id.hasPrefix("a:country:") { countries.insert(SPSearchText.nn(r.name)) }
-            for d in index.file?.dests ?? [] where d.region == "Caribbean" || d.region == "Central America" {
+            for d in index.file?.dests ?? [] where TravelRegions.contains(region: scope.region, country: d.country, storedRegion: d.region) {
                 if !d.country.isEmpty && SPSearchText.nn(d.country) != "united states" { countries.insert(SPSearchText.nn(d.country)) }
                 if !d.state.isEmpty { countries.insert(SPSearchText.nn(d.state)) }
             }

@@ -23,6 +23,7 @@ struct ExploreDestination: View {
         switch route {
         case .unitedStates: UnitedStatesView()
         case .caribbean: CaribbeanView()
+        case .mexicoCentralAmerica: CaribbeanView(region: TravelRegions.mexicoCentralAmerica)
         case .state(let id):
             if ShellRoutes.nativeStatePage { StateView(stateId: id) }
             else { WebScreen(route: .state(explore.state(id)?.name ?? Self.titled(id))) }
