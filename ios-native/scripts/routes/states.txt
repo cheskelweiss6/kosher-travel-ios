@@ -1,0 +1,7 @@
+st1-usa:usa
+st2-caribbean:caribbean
+st3-newyork:state:new-york#native
+st4-florida:state:florida#native
+st5-wyoming:state:wyoming#native
+st6-aruba:country:aruba#native
+st7-mexico:country:mexico#native
