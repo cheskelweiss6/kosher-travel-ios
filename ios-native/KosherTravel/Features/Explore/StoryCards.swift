@@ -22,7 +22,7 @@ struct InspirationTile: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.navy)
                     .lineLimit(1)
-                Text(post.placeLine)
+                Text(post.regionLine)
                     .font(.caption)
                     .foregroundStyle(Color.textSecondary)
                     .lineLimit(1)
@@ -48,7 +48,7 @@ struct ArticleRow: View {
                     .foregroundStyle(Color.navy)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                Text([post.placeLine, post.authorName].filter { !$0.isEmpty }.joined(separator: " · "))
+                Text([post.regionLine, post.authorName].filter { !$0.isEmpty }.joined(separator: " · "))
                     .font(.footnote)
                     .foregroundStyle(Color.textSecondary)
                     .lineLimit(1)
@@ -77,7 +77,7 @@ struct ArticleCard: View {
                     .foregroundStyle(Color.navy)
                     .lineLimit(2, reservesSpace: true)
                     .multilineTextAlignment(.leading)
-                Text(post.placeLine)
+                Text(post.regionLine)
                     .font(.caption)
                     .foregroundStyle(Color.textSecondary)
                     .lineLimit(1)
@@ -194,8 +194,8 @@ struct CompactArticleCard: View {
                     .foregroundStyle(Color.navy)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                if !post.placeLine.isEmpty {
-                    Label(post.placeLine, systemImage: "mappin").font(.caption2).foregroundStyle(Color.textSecondary).lineLimit(1)
+                if !post.regionLine.isEmpty {
+                    Label(post.regionLine, systemImage: "mappin").font(.caption2).foregroundStyle(Color.textSecondary).lineLimit(1)
                 }
             }
             .padding(.horizontal, 10)
