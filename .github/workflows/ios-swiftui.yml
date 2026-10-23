@@ -8,6 +8,10 @@ on:
       - '.github/workflows/ios-swiftui.yml'
   workflow_dispatch:
     inputs:
+      shots:
+        description: "Also take screenshots"
+        type: boolean
+        default: false
       devices:
         description: "Simulators to screenshot (iphone-se, iphone-16, iphone-16-pro-max, ipad); empty = all"
         required: false
@@ -70,7 +74,7 @@ jobs:
 
       # Screenshots cost macOS minutes: only with [shots] in the commit message, or a manual run.
       - name: Screenshots (iPhone SE, iPhone 16, iPhone 16 Pro Max, iPad)
-        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[shots]')
+        if: (github.event_name == 'workflow_dispatch' && inputs.shots) || contains(github.event.head_commit.message, '[shots]')
         env:
           KT_ONLY_EXTRA_ROUTES: ${{ github.ref != 'refs/heads/main' && '1' || '' }}
           KT_DEVICES: ${{ github.event.inputs.devices }}
