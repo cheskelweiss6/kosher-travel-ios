@@ -119,6 +119,8 @@ struct ParkReviewsSection: View {
     @State private var note: String?
     @State private var askedSignIn = false
     @State private var confirmDelete: PlaceReview?
+    /// every remove asks first (Cheskel, Oct 23 2026)
+    @State private var removePhotoId: UUID?
     @State private var lightbox: ParkPhotoID?
     @FocusState private var focused: Bool
 
@@ -177,6 +179,14 @@ struct ParkReviewsSection: View {
                 if let r = confirmDelete { Task { await remove(r) } }
             }
             Button("Cancel", role: .cancel) {}
+        }
+        .confirmationDialog("Remove this photo?", isPresented: Binding(get: { removePhotoId != nil }, set: { if !$0 { removePhotoId = nil } }),
+                            titleVisibility: .visible) {
+            Button("Remove photo", role: .destructive) {
+                if let id = removePhotoId { photos.removeAll { $0.id == id } }
+                removePhotoId = nil
+            }
+            Button("Cancel", role: .cancel) { removePhotoId = nil }
         }
         .fullScreenCover(item: $lightbox) { ParkLightbox(url: $0.url) }
     }
@@ -278,8 +288,8 @@ struct ParkReviewsSection: View {
                             }
                             .frame(width: 64, height: 64)
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                            Button {
-                                photos.removeAll { $0.id == p.id }
+                            Button(role: .destructive) {
+                                removePhotoId = p.id
                             } label: {
                                 Image(systemName: "xmark")
                                     .font(.system(size: 10, weight: .bold))

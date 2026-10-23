@@ -48,17 +48,34 @@ struct CityCardRating: View {
 
 /// Web PlaceReviewsSheet: "Reviews" over the place's name, an X, and the same ReviewSection the parks use
 /// (ParkReviewsSection: summary, write / edit with stars, words and photos, everyone's reviews, delete your own),
-/// saved with the card's own place id, kind and destination, as the website saves it.
-struct CityCardReviewsSheet: View {
-    let item: PlaceItem
+/// saved with the place's own id, kind and destination, as the website saves it.
+/// `CityReviewsSheet(placeId:name:kind:destId:)` for any place (a tour guide: "guide-<id>", kind "guide");
+/// `CityReviewsSheet(item:)` for a city listing.
+struct CityReviewsSheet: View {
+    let placeId: String
+    let name: String
+    let kind: String
+    var destId: String = ""
     @Environment(\.dismiss) private var dismiss
+
+    init(placeId: String, name: String, kind: String, destId: String = "") {
+        self.placeId = placeId
+        self.name = name
+        self.kind = kind
+        self.destId = destId
+    }
+
+    init(item: PlaceItem) {
+        self.init(placeId: item.reviewPlaceId ?? "", name: item.venue.name,
+                  kind: item.category.reviewKind, destId: item.destId)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Reviews").font(.body.weight(.semibold)).foregroundStyle(Color.navy)
-                    Text(item.venue.name).font(.footnote).foregroundStyle(Color.textSecondary).lineLimit(1)
+                    Text(name).font(.footnote).foregroundStyle(Color.textSecondary).lineLimit(1)
                 }
                 Spacer(minLength: 0)
                 Button { dismiss() } label: {
@@ -74,9 +91,8 @@ struct CityCardReviewsSheet: View {
             .padding(.leading, 16).padding(.trailing, 4).padding(.top, 10).padding(.bottom, 6)
             Divider().overlay(Color.hairline)
             ScrollView {
-                if let pid = item.reviewPlaceId {
-                    ParkReviewsSection(placeId: pid, placeName: item.venue.name,
-                                       placeKind: item.category.reviewKind, destId: item.destId)
+                if !placeId.isEmpty {
+                    ParkReviewsSection(placeId: placeId, placeName: name, placeKind: kind, destId: destId)
                         .padding(.horizontal, 16)
                         .padding(.top, 12)
                         .padding(.bottom, 16)
@@ -106,7 +122,7 @@ private struct CityCardReviewsSheetModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(item: $target, onDismiss: refresh) { item in
-                CityCardReviewsSheet(item: item)
+                CityReviewsSheet(item: item)
                     .onAppear { last = item }
             }
     }

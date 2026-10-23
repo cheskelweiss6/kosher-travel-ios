@@ -155,44 +155,48 @@ struct CityRestaurantsView: View {
         let shown = visible.filter { DietType.of($0.venue) == tab }
 
         ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                // Web: the in-page header above the Meat / Dairy / Parve tabs (App.tsx 11196-11197).
-                HStack(spacing: 8) {
-                    Image(systemName: "fork.knife").font(.system(size: 17)).foregroundStyle(Color.navy)
-                    Text("Kosher Restaurants").font(.subheadline.weight(.black)).foregroundStyle(Color.navy)
-                }
-                .accessibilityElement(children: .combine)
-                .accessibilityAddTraits(.isHeader)
-                Picker("Kind", selection: $tab) {
-                    ForEach(DietType.allCases) { t in
-                        Text("\(t.rawValue) \(visible.filter { DietType.of($0.venue) == t }.count)").tag(t)
+            VStack(spacing: 0) {
+                // Web: the city hero stays at the top of every sub-page (full width).
+                CitySubPageHero()
+                VStack(alignment: .leading, spacing: 14) {
+                    // Web: the in-page header above the Meat / Dairy / Parve tabs (App.tsx 11196-11197).
+                    HStack(spacing: 8) {
+                        Image(systemName: "fork.knife").font(.system(size: 17)).foregroundStyle(Color.navy)
+                        Text("Kosher Restaurants").font(.subheadline.weight(.black)).foregroundStyle(Color.navy)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isHeader)
+                    Picker("Kind", selection: $tab) {
+                        ForEach(DietType.allCases) { t in
+                            Text("\(t.rawValue) \(visible.filter { DietType.of($0.venue) == t }.count)").tag(t)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("restaurants-diet")
+                    Divider().overlay(Color.hairline)
+
+                    if !items.isEmpty {
+                        KosherFilterChip(hidden: hiddenItems.count, noun: "restaurants")
+                    }
+
+                    if items.isEmpty {
+                        note("No certified restaurant listings yet.",
+                             "We are actively gathering certified kosher diners for \(cityName). Please check with the local Chabad center for the newest home catering or delivery recommendations.")
+                    } else if shown.isEmpty {
+                        let lower = tab.rawValue.lowercased()
+                        let filteredOut = hiddenItems.contains { DietType.of($0.venue) == tab }
+                        note(filteredOut ? "No \(lower) restaurant here lists \(needs.joined(separator: " / "))." : "No certified \(lower) restaurants found.",
+                             "Try switching to another category above, or consult the local Chabad center for current catering or delivery services in \(cityName).")
+                    } else {
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 14)], spacing: 14) {
+                            ForEach(shown) { item in card(item) }
+                        }
                     }
                 }
-                .pickerStyle(.segmented)
-                .accessibilityIdentifier("restaurants-diet")
-                Divider().overlay(Color.hairline)
-
-                if !items.isEmpty {
-                    KosherFilterChip(hidden: hiddenItems.count, noun: "restaurants")
-                }
-
-                if items.isEmpty {
-                    note("No certified restaurant listings yet.",
-                         "We are actively gathering certified kosher diners for \(cityName). Please check with the local Chabad center for the newest home catering or delivery recommendations.")
-                } else if shown.isEmpty {
-                    let lower = tab.rawValue.lowercased()
-                    let filteredOut = hiddenItems.contains { DietType.of($0.venue) == tab }
-                    note(filteredOut ? "No \(lower) restaurant here lists \(needs.joined(separator: " / "))." : "No certified \(lower) restaurants found.",
-                         "Try switching to another category above, or consult the local Chabad center for current catering or delivery services in \(cityName).")
-                } else {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 14)], spacing: 14) {
-                        ForEach(shown) { item in card(item) }
-                    }
-                }
+                .padding(.horizontal, Theme.pagePadding)
+                .padding(.top, 12)
+                .padding(.bottom, 36)
             }
-            .padding(.horizontal, Theme.pagePadding)
-            .padding(.top, 12)
-            .padding(.bottom, 36)
         }
         .background(Color.white)
         .sensoryFeedback(.selection, trigger: tab)
