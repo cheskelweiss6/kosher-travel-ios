@@ -191,6 +191,7 @@ struct NameEditView: View {
     @State private var busy = false
     @State private var note: (ok: Bool, text: String)?
     @State private var saved = 0
+    @State private var confirmRemove = false
 
     var body: some View {
         Form {
@@ -216,13 +217,16 @@ struct NameEditView: View {
                 }
                 .disabled(busy)
                 if !store.username.isEmpty {
-                    Button("Remove username") {
-                        Task {
-                            do { try await store.removeUsername(); value = auth.displayName; note = (true, "Username removed. Default name restored.") }
-                            catch { note = (false, AuthFlows.friendly(error)) }
+                    Button("Remove username", role: .destructive) { confirmRemove = true }
+                        .confirmationDialog("Remove your username?", isPresented: $confirmRemove, titleVisibility: .visible) {
+                            Button("Remove username", role: .destructive) {
+                                Task {
+                                    do { try await store.removeUsername(); value = auth.displayName; note = (true, "Username removed. Default name restored.") }
+                                    catch { note = (false, AuthFlows.friendly(error)) }
+                                }
+                            }
+                            Button("Cancel", role: .cancel) {}
                         }
-                    }
-                    .foregroundStyle(Color.textSecondary)
                 }
             }
         }
