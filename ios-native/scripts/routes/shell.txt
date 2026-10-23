@@ -1,0 +1,4 @@
+s1-colorado:state:colorado
+s2-denver:area:us:denver
+s3-mytravel:tab:mytravel
+s4-jamaica:country:jamaica
