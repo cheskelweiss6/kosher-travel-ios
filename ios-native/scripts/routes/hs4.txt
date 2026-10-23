@@ -1,0 +1,3 @@
+h1-denver:area:us:denver
+h2-denver-grocery:area:us:denver/hub:grocery
+h3-cancun:area:dest:cancun

@@ -8,8 +8,8 @@ enum ShellRoutes {
     static var nativeStatePage: Bool { previewNative }
     /// Caribbean / Central America country pages: native lacks the tabs and the travel-time chips.
     static var nativeCountryPage: Bool { previewNative }
-    /// City pages: the web is a hub with sub-pages (Restaurants Meat/Dairy/Parve, Shabbat, Kivrei, Tour Guides…).
-    static var nativeCityPage: Bool { previewNative }
+    /// City pages: native since Oct 23 2026 (HYBRID-SHELL-4): the hub, every sub-page and the website's hero header.
+    static var nativeCityPage: Bool { true }
     /// QA: a launch route ending in "#native" shows the native rebuild of a still-embedded screen.
     static var previewNative: Bool { LaunchRoute.current?.hasSuffix("#native") == true }
 }

@@ -122,6 +122,10 @@ struct ParkReviewsSection: View {
     /// every remove asks first (Cheskel, Oct 23 2026)
     @State private var removePhotoId: UUID?
     @State private var lightbox: ParkPhotoID?
+    /// Report / Block (web ReviewSection's "…" on someone else's review) and the one-time Terms prompt.
+    @State private var reportFor: PlaceReview?
+    @State private var askTerms = false
+    private let safety = StorySafety.shared
     @FocusState private var focused: Bool
 
     init(placeId: String, placeName: String, placeKind: String = "park", destId: String = "",
@@ -145,16 +149,31 @@ struct ParkReviewsSection: View {
                 Text(note).font(.footnote.weight(.semibold)).foregroundStyle(Color.navy)
             }
             if writing { form }
-            if let list, !list.isEmpty {
+            // Web: reviews from people this traveler blocked are left out (isMutedAuthor).
+            let shown = (list ?? []).filter { !safety.isBlocked($0.userId) }
+            if !shown.isEmpty {
                 VStack(alignment: .leading, spacing: 0) {
-                    ForEach(list) { r in
+                    ForEach(shown) { r in
                         row(r)
-                        if r.id != list.last?.id { Rectangle().fill(Color.hairline).frame(height: 1) }
+                        if r.id != shown.last?.id { Rectangle().fill(Color.hairline).frame(height: 1) }
                     }
                 }
             }
         }
         .task(id: placeId) { await load() }
+        .task(id: auth.uid ?? "-") { await safety.load(uid: auth.uid) }
+        .sheet(item: $reportFor) { r in
+            ReviewReportSheet(review: r, placeName: placeName)
+        }
+        .sheet(isPresented: $askTerms) {
+            TermsAgreementSheet { agreed in
+                guard agreed, let uid = auth.uid else { return }
+                Task {
+                    await TermsAgreement.accept(uid)
+                    await post()
+                }
+            }
+        }
         .onChange(of: auth.uid) { _, uid in
             guard uid != nil, askedSignIn else { return }
             askedSignIn = false
@@ -397,6 +416,22 @@ struct ParkReviewsSection: View {
                 }
             }
             Spacer(minLength: 0)
+            if r.userId != auth.uid {
+                // Web (store app): the "…" button on someone else's review opens Report, with Block underneath.
+                Button {
+                    if auth.isSignedIn { reportFor = r } else { ShellRouter.shared.requireSignIn("Sign in to report a review") }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 17, weight: .regular))
+                        .foregroundStyle(Color.textSecondary)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .padding(.top, -10)
+                .padding(.trailing, -8)
+                .accessibilityLabel("Report or block \(r.userName)")
+            }
         }
         .padding(.vertical, 10)
     }
@@ -445,6 +480,11 @@ struct ParkReviewsSection: View {
         guard let uid = auth.uid else {
             askedSignIn = true
             ShellRouter.shared.requireSignIn("Sign in to post your review")
+            return
+        }
+        // Web: the store app asks once for the Terms of Use before a first post, comment or review (Apple 1.2).
+        if !(await TermsAgreement.hasAccepted(uid)) {
+            askTerms = true
             return
         }
         busy = true
