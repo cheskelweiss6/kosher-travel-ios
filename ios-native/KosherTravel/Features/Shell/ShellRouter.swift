@@ -12,6 +12,9 @@ final class ShellRouter {
     var signIn: SignInSheet.Mode?
     /// A question the AI Planner should send when it next appears (set together with selectedTab = .planner).
     var plannerPrompt: String?
+    /// Web setWizardCity (a city page's Plan Trip): the city the planner's trip builder starts with. The planner reads
+    /// it when it appears, opens its trip builder for that city and clears it.
+    var plannerTripCity: String?
     /// The toast on screen (set through showToast).
     var toast: ShellToast?
     /// The app's sign-in state (set by RootTabView), so the sign-in sheet can open over any screen.

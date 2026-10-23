@@ -14,6 +14,7 @@ struct CityShabbatView: View {
 
     var body: some View {
         ScrollView {
+            CitySubPageHero()  // website: the city hero stays on top of every sub-page
             VStack(alignment: .leading, spacing: 14) {
                 Label("Shabbat & Family Information", systemImage: "calendar")
                     .font(.subheadline.weight(.black)).foregroundStyle(Color.navy)

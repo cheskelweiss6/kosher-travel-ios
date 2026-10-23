@@ -9,6 +9,7 @@ struct CityExperienceView: View {
 
     var body: some View {
         ScrollView {
+            CitySubPageHero()  // website: the city hero stays on top of every sub-page
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .top, spacing: 10) {
                     Image(systemName: "suitcase.rolling").font(.title3).foregroundStyle(Color.navy)

@@ -22,6 +22,9 @@ struct AreaView: View {
     @State private var activeChip: PlaceCategory?
     @State private var openHub: CityHub?
     @State private var webSection: WebRoute?
+    @State private var scrollToGuides = false
+    @State private var addingGuide = false
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(AuthStore.self) private var auth
     private let bucket = BucketList.shared
 
@@ -58,6 +61,7 @@ struct AreaView: View {
 
     @ViewBuilder
     private func content(_ page: CityPage) -> some View {
+        ScrollViewReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 heroBlock(page)
@@ -74,20 +78,37 @@ struct AreaView: View {
                            compact: true)
                     .padding(.horizontal, Theme.pagePadding).padding(.top, 14)
                 VStack(alignment: .leading, spacing: 14) {
-                    facts(page)
                     CityNeedsBlock(page: page, sections: sections(page))
                     if hubs(page).isEmpty == false {
                         LazyVStack(spacing: 12) {
-                            ForEach(hubs(page)) { hub in hubCard(hub, page: page) }
+                            ForEach(hubs(page)) { hub in
+                                if hub == .guides { guidesCard(page) } else { hubCard(hub, page: page) }
+                            }
                         }
                     }
+                    // Website: "Tour Guides in {city}" sits on the hub under the cards; the Travel Guides card scrolls here.
+                    CityTourGuidesSection(page: page)
+                        .padding(.top, 10)
+                        .id("city-tour-guides-section")
                 }
                 .padding(.horizontal, Theme.pagePadding)
                 .padding(.top, 14)
             }
             .padding(.bottom, 36)
         }
+        .onChange(of: scrollToGuides) { _, go in
+            guard go else { return }
+            withAnimation(.smooth) { proxy.scrollTo("city-tour-guides-section", anchor: .top) }
+            scrollToGuides = false
+        }
+        }
         .background(Color.white)
+        .sheet(isPresented: $addingGuide) {
+            AddTourGuideSheet(page: page) { g in
+                TourGuideStore.shared.add(g)
+                ShellRouter.shared.showToast("Tour Guide \"\(g.guideName)\" added successfully!")
+            }
+        }
         .navigationTitle(page.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -108,7 +129,8 @@ struct AreaView: View {
                     // Web: Plan Trip opens the AI Planner for this city.
                     ShellRouter.shared.open(tab: "planner", prompt: "Plan a kosher trip to \(page.name)")
                 } label: {
-                    Label("Plan Trip", systemImage: "sparkles")
+                    // Website: "Plan" on a phone, "Plan Trip" on wider screens.
+                    Label(sizeClass == .regular ? "Plan Trip" : "Plan", systemImage: "sparkles")
                         .labelStyle(.titleAndIcon)
                         .font(.subheadline.weight(.bold))
                 }
@@ -160,7 +182,7 @@ struct AreaView: View {
         out.append(.shabbat)
         if !page.hasidic.isEmpty { out.append(.hasidic) }
         if has(.rental) { out.append(.rentals) }
-        if has(.business) || has(.catering) { out.append(.businesses) }
+        if has(.business) { out.append(.businesses) }  // web: businessesAndServicesList only
         if has(.resource) { out.append(.resources) }
         out.append(.guides)
         if page.area == "Caribbean" || page.area == "Europe" { out.append(.experience) }
@@ -169,8 +191,11 @@ struct AreaView: View {
 
     private func hubPhoto(_ hub: CityHub, page: CityPage) -> (url: String, category: String?) {
         let secs = sections(page)
+        // Website: the FIRST listing's photo (allGroceries[0]?.photo || fallback), not the first listing that has one.
         func first(_ c: PlaceCategory) -> String? {
-            secs.first { $0.category == c }?.items.lazy.compactMap { $0.photos.first }.first { !PhotoFallback.isPlaceholder($0) }
+            guard let p = secs.first(where: { $0.category == c })?.items.first?.photos.first,
+                  !p.isEmpty, !PhotoFallback.isPlaceholder(p) else { return nil }
+            return p
         }
         switch hub {
         case .restaurants: return (page.photo, nil)
@@ -182,6 +207,66 @@ struct AreaView: View {
         case .shabbat: return ("https://kosher-travel-img.sites.tab.bot/wm/f88a9d27526e390c.webp", nil)
         default: return (page.photo, nil)
         }
+    }
+
+    /// The Travel Guides card (App.tsx 10714-10776): photo with the title, the text, then "Add Guide" and "View".
+    /// The photo, the text and View scroll down to "Tour Guides in {city}" on this page.
+    private func guidesCard(_ page: CityPage) -> some View {
+        let hub = CityHub.guides
+        let photo = hubPhoto(hub, page: page)
+        return VStack(alignment: .leading, spacing: 0) {
+            Button { scrollToGuides = true } label: {
+                RemoteImage(url: photo.url, maxPixel: 900, venue: true, category: photo.category)
+                    .frame(height: 128)
+                    .frame(maxWidth: .infinity)
+                    .overlay(alignment: .bottomLeading) {
+                        ZStack(alignment: .bottomLeading) {
+                            LinearGradient(colors: [.black.opacity(0.85), .black.opacity(0.3), .clear], startPoint: .bottom, endPoint: .top)
+                            Text(hub.title).font(.footnote.weight(.heavy)).foregroundStyle(.white).padding(12)
+                        }
+                    }
+                    .clipped()
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(hub.title)
+            VStack(alignment: .leading, spacing: 10) {
+                Button { scrollToGuides = true } label: {
+                    Text(hub.text(page))
+                        .font(.caption).foregroundStyle(Color.textSecondary)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .buttonStyle(.plain)
+                Divider().overlay(Color.hairline)
+                // Website: navy "Add Guide" button on the left, a "View ›" text link on the right.
+                HStack(spacing: 8) {
+                    Button { addingGuide = true } label: {
+                        Label("Add Guide", systemImage: "plus")
+                            .font(.caption2.weight(.bold))
+                            .padding(.horizontal, 10).frame(minHeight: 32)
+                            .foregroundStyle(.white)
+                            .background(Color.navy, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    Spacer(minLength: 8)
+                    Button { scrollToGuides = true } label: {
+                        HStack(spacing: 2) {
+                            Text("View")
+                            Image(systemName: "chevron.right").font(.caption2.weight(.bold))
+                        }
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color.navy)
+                        .frame(minWidth: 44, minHeight: 32)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(12)
+        }
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color.hairline, lineWidth: 1))
     }
 
     private func hubCard(_ hub: CityHub, page: CityPage) -> some View {
@@ -231,6 +316,7 @@ struct AreaView: View {
     @ViewBuilder
     private func subPage(_ hub: CityHub, page: CityPage) -> some View {
         subPageBody(hub, page: page)
+            .environment(\.cityHero, AnyView(heroBlock(page)))
             // Web breadcrumb: "Denver / Restaurants" (just the city on pages without a crumb word).
             .navigationTitle(hub.crumb.isEmpty ? page.name : "\(page.name) / \(hub.crumb)")
             .navigationBarTitleDisplayMode(.inline)
@@ -264,6 +350,7 @@ struct AreaView: View {
     private func listSubPage(_ hub: CityHub, page: CityPage) -> some View {
         let secs = sections(page).filter { hub.categories.contains($0.category) }
         ScrollView {
+            CitySubPageHero()
             LazyVStack(alignment: .leading, spacing: 0) {
                 if hub == .hasidic {
                     hasidicCard(page.hasidic)
@@ -580,9 +667,9 @@ struct AreaView: View {
                         .background(Color.navy, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     VStack(alignment: .leading, spacing: 2) {
                         Text(tp.venue.name).font(.subheadline.weight(.bold)).foregroundStyle(Color.navy).lineLimit(1)
-                        Text([tp.venue.kind, tp.venue.kashrus, tp.venue.address].filter { !$0.isEmpty }.joined(separator: " · "))
+                        Text([Self.webCategoryLabel(tp.travelerCategory), tp.venue.kashrus, tp.venue.address].filter { !$0.isEmpty }.joined(separator: " · "))
                             .font(.caption).foregroundStyle(Color.textSecondary).lineLimit(1)
-                        Text("ADDED BY A TRAVELER").font(.system(size: 10, weight: .bold)).tracking(0.5)
+                        Text("Added by a traveler").font(.system(size: 10, weight: .bold))
                             .foregroundStyle(Color.navy)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(Color.surface, in: Capsule())
@@ -590,7 +677,7 @@ struct AreaView: View {
                     }
                     Spacer(minLength: 0)
                     let digits = tp.venue.phone.filter { $0.isNumber || $0 == "+" }
-                    if digits.count >= 7, let tel = URL(string: "tel:\(digits)") {
+                    if !tp.venue.phone.isEmpty, let tel = URL(string: "tel:\(digits)") {
                         Link("Call", destination: tel).font(.caption.weight(.bold)).foregroundStyle(Color.navy)
                             .frame(minWidth: 44, minHeight: 44)
                     }
@@ -598,9 +685,22 @@ struct AreaView: View {
                 .padding(12)
                 .background(Color.white)
                 .hairline(radius: 16)
-                .contentShape(Rectangle())
-                .onTapGesture { selected = tp }
+                // Website: these rows are static (only Call is a link).
             }
+        }
+    }
+
+    /// Website PLACE_CATEGORY_LABEL (storyService.ts).
+    static func webCategoryLabel(_ c: PlaceCategory?) -> String {
+        switch c {
+        case .restaurant?: return "Restaurant"
+        case .grocery?: return "Grocery"
+        case .chabad?: return "Chabad"
+        case .shul?: return "Shul"
+        case .hotel?: return "Hotel"
+        case .todo?: return "Things to do"
+        case .mikvah?: return "Mikvah"
+        default: return ""
         }
     }
 
