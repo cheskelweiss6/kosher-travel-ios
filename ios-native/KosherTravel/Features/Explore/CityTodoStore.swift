@@ -7,16 +7,15 @@ struct CityTodoAttraction: Decodable, Hashable {
     let d: String?         // shortDescription
     let l: String?         // exactLocation
     let w: String?         // bookingLink (website; the website's "N/A" is left out)
-    let p: String?         // photo (the gallery's photos: [photo])
-    let vp: String?        // verifiedPhoto (the gallery's fallbackPhoto), only when it differs from p
+    let g: [String]?       // the card's photo gallery as the website's PlacePhotosGallery resolves it ("" = no-photo tile)
 
     var name: String { n }
     var description: String { d ?? "" }
     var location: String { l ?? "" }
     var website: String { w ?? "" }
-    var photo: String { p ?? "" }
-    /// Website: fallbackPhoto = verifiedFallbackPhoto || photo.
-    var fallbackPhoto: String { (vp?.isEmpty == false ? vp : p) ?? "" }
+    var gallery: [String] { g ?? [] }
+    /// The first real photo (for the place sheet).
+    var photo: String { gallery.first(where: { !$0.isEmpty }) ?? "" }
 }
 
 /// A city's Things to Do data: the website's Top Attractions, in its order, and the destination's travelTips
