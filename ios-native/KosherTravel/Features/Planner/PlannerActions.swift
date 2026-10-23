@@ -177,6 +177,40 @@ enum PlannerPlaceMemory {
     }
 }
 
+/// A place the app lists: its name in an answer opens the app's own place sheet (directions, phone, website,
+/// photos and reviews are there); if the app can't find it, Google Maps opens instead.
+enum PlannerAppPlace {
+    static let host = "place.kt-app.invalid"
+
+    static func url(_ p: PlannerMapPlace) -> URL {
+        let e = PlannerMaps.encode
+        return URL(string: "https://\(host)/open?city=\(e(p.city))&name=\(e(p.name))&q=\(e(p.query))") ?? p.googleURL
+    }
+
+    static func isAppLink(_ url: URL) -> Bool { url.host?.lowercased() == host }
+
+    private static func value(_ url: URL, _ key: String) -> String {
+        URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first(where: { $0.name == key })?.value ?? ""
+    }
+
+    /// The app's own listing for the link, or the Google Maps search to open instead.
+    static func resolve(_ url: URL, data: ExploreData?) -> (item: PlaceItem?, maps: URL) {
+        let city = value(url, "city").lowercased()
+        let name = value(url, "name").lowercased()
+        let q = value(url, "q")
+        let maps = PlannerMaps.google(q.isEmpty ? value(url, "name") : q)
+        guard let data, !name.isEmpty else { return (nil, maps) }
+        var keys: [String] = []
+        for c in data.cities where c.name.lowercased() == city { keys.append("us:\(c.id)") }
+        for d in data.destinations where d.name.lowercased() == city { keys.append("dest:\(d.id)") }
+        for k in keys {
+            guard let page = CityPage.build(key: k, data: data) else { continue }
+            if let item = page.allItems.first(where: { $0.venue.name.lowercased() == name }) { return (item, maps) }
+        }
+        return (nil, maps)
+    }
+}
+
 /// One day of a plan with the places it visits, in order.
 struct PlannerDayRoute: Identifiable, Hashable {
     var label: String
@@ -293,12 +327,15 @@ enum PlannerActions {
         let list = places(for: msg, messages: messages, cards: cards)
         let ck = msg.id + "|" + String(msg.content.count) + "|" + String(list.count)
         if let c = linkedCache[ck] { return c }
-        guard !list.isEmpty else { return msg.content }
-        var text = msg.content
+        var text = mailLinks(msg.content)
+        guard !list.isEmpty else {
+            linkedCache[ck] = text
+            return text
+        }
         let sorted = list.sorted { $0.name.count > $1.name.count }
         var done = Set<String>()
         for p in sorted {
-            let url = p.googleURL.absoluteString
+            let url = (p.kind == "place" ? p.googleURL : PlannerAppPlace.url(p)).absoluteString
             guard let re = try? NSRegularExpression(pattern: #"\*\*\s*"# + esc(p.name) + #"\s*\*\*"#, options: [.caseInsensitive]) else { continue }
             let ns = text as NSString
             let ms = re.matches(in: text, range: NSRange(location: 0, length: ns.length))
@@ -323,13 +360,20 @@ enum PlannerActions {
                 let ns = lines[i] as NSString
                 guard let m = re.firstMatch(in: lines[i], range: NSRange(location: 0, length: ns.length)) else { continue }
                 let shown = ns.substring(with: m.range)
-                lines[i] = ns.replacingCharacters(in: m.range, with: "[\(escLabel(shown))](\(p.googleURL.absoluteString))")
+                lines[i] = ns.replacingCharacters(in: m.range, with: "[\(escLabel(shown))](\(PlannerAppPlace.url(p).absoluteString))")
                 break
             }
             text = lines.joined(separator: "\n")
         }
         linkedCache[ck] = text
         return text
+    }
+
+    /// Bare email addresses become mailto links (phones and web links are already tappable).
+    static func mailLinks(_ s: String) -> String {
+        guard s.contains("@"), let re = try? NSRegularExpression(pattern: #"(?<![\w.\[(/:-])([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})(?![\w\]])"#) else { return s }
+        return re.stringByReplacingMatches(in: s, range: NSRange(location: 0, length: (s as NSString).length),
+                                           withTemplate: "[$1](mailto:$1)")
     }
 
     /// The plan the PDF and Calendar use: this answer when it's a plan (or long), else the latest plan before it.

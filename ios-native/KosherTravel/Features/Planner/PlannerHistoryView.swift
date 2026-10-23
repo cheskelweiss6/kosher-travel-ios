@@ -10,11 +10,17 @@ struct PlannerHistoryView: View {
     @State private var pendingDelete: ChatSession?
     @State private var deleted = 0
 
-    private var groups: [(label: String, items: [ChatSession])] {
-        var out: [(label: String, items: [ChatSession])] = []
+    private struct DayGroup: Identifiable {
+        var label: String
+        var items: [ChatSession]
+        var id: String { label }
+    }
+
+    private var groups: [DayGroup] {
+        var out: [DayGroup] = []
         for s in store.sessions {
             let label = Self.dayLabel(s.sortDate)
-            if let i = out.firstIndex(where: { $0.label == label }) { out[i].items.append(s) } else { out.append((label, [s])) }
+            if let i = out.firstIndex(where: { $0.label == label }) { out[i].items.append(s) } else { out.append(DayGroup(label: label, items: [s])) }
         }
         return out
     }
@@ -31,7 +37,7 @@ struct PlannerHistoryView: View {
                     .foregroundStyle(Color.navy)
                 } else {
                     List {
-                        ForEach(groups, id: \.label) { g in
+                        ForEach(groups) { g in
                             Section(g.label) {
                                 ForEach(g.items) { s in row(s) }
                                     .onDelete { offsets in
@@ -41,6 +47,7 @@ struct PlannerHistoryView: View {
                             }
                         }
                         Section {
+                            EmptyView()
                         } footer: {
                             Text("Every chat starts fresh. The planner only reads the chat you are in and does not learn about you."
                                  + (signedIn ? " Your chats are kept in your account; delete any chat from the chat list."

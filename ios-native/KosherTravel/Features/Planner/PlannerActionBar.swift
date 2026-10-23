@@ -611,7 +611,39 @@ struct PlannerCalendarDraft {
             ?? cal.startOfDay(for: cal.date(byAdding: .day, value: 1, to: Date()) ?? Date())
         let end = f.endDate.flatMap { inF.date(from: $0) } ?? (cal.date(byAdding: .day, value: days - 1, to: start) ?? start)
         let name = title.isEmpty ? "Trip" : "Trip to \(title)"
-        return PlannerCalendarDraft(title: name, notes: notes, start: start, end: max(end, start))
+        var text = notes
+        if f.startDate != nil, let z = zmanimNotes(place: f.destination ?? title, start: start, end: max(end, start)) {
+            text = z + "\n\n" + notes
+        }
+        return PlannerCalendarDraft(title: name, notes: text, start: start, end: max(end, start))
+    }
+
+    /// Candle lighting and Shabbos/Yom Tov end for the trip's days, from the app's own zmanim (the same as the
+    /// Zmanim card), when the place and dates are known.
+    static func zmanimNotes(place: String, start: Date, end: Date) -> String? {
+        let parts = place.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        guard let name = parts.first, !name.isEmpty,
+              let w = ZmanimPlaces.resolve(ZmanimPlace(name: name, state: parts.count > 1 ? parts[1] : "")) else { return nil }
+        let cal = Calendar.current
+        let tz = TimeZone(identifier: w.tz) ?? .current
+        let timeF = DateFormatter()
+        timeF.locale = Locale(identifier: "en_US")
+        timeF.timeZone = tz
+        timeF.dateFormat = "EEE, MMM d, h:mm a"
+        var lines: [String] = []
+        var d = cal.startOfDay(for: start)
+        var n = 0
+        while d <= end && n < 21 {
+            let day = ZmanimEngine.day(TripBuilderSheet.ymd(d), lat: w.lat, lng: w.lng, tz: w.tz, opts: .defaults)
+            for h in day.highlights {
+                if let ms = h.ms { lines.append("\(h.label): \(timeF.string(from: Date(timeIntervalSince1970: ms / 1000)))") }
+            }
+            guard let next = cal.date(byAdding: .day, value: 1, to: d) else { break }
+            d = next
+            n += 1
+        }
+        guard !lines.isEmpty else { return nil }
+        return "Zmanim for \(w.label) (calculated by the app; check with the local shul):\n" + lines.joined(separator: "\n")
     }
 }
 

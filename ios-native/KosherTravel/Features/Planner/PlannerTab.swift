@@ -14,6 +14,7 @@ struct PlannerTab: View {
     @State private var showBuilder = false
     @State private var editing: ChatMessage?
     @State private var safari: IdentifiedURL?
+    @State private var placeSheet: PlaceItem?
     @State private var routeApplied = false
 
     static let demoQuestion = "Kosher restaurants in Miami Beach"
@@ -64,6 +65,12 @@ struct PlannerTab: View {
         }
         .sheet(item: $safari) { item in
             SafariSheet(url: item.url).ignoresSafeArea()
+        }
+        .sheet(item: $placeSheet) { item in
+            PlaceDetailView(item: item, onOpenStory: { id in
+                placeSheet = nil
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { path.append(.story(id)) }
+            })
         }
         .task(id: auth.uid ?? "") {
             store.setAccount(uid: auth.uid)
@@ -586,6 +593,11 @@ struct PlannerTab: View {
     private func handleLink(_ url: URL) -> OpenURLAction.Result {
         if let id = PlannerLinks.storyId(url) {
             path.append(.story(id))
+            return .handled
+        }
+        if PlannerAppPlace.isAppLink(url) {
+            let found = PlannerAppPlace.resolve(url, data: explore.data)
+            if let item = found.item { placeSheet = item } else { PlannerMaps.open(found.maps) }
             return .handled
         }
         if PlannerMaps.isMapsURL(url) {
