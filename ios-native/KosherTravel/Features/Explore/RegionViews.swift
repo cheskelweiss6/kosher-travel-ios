@@ -85,7 +85,8 @@ struct CaribbeanView: View {
                         .font(.headline)
                         .foregroundStyle(Color.navy)
                         .accessibilityAddTraits(.isHeader)
-                    Text("Verified kosher-friendly tropical getaways with active Jewish life.")
+                    Text(isCaribbean ? "Verified kosher-friendly tropical getaways with active Jewish life."
+                                     : "Beaches, volcanoes, rainforests and colonial cities, with Chabad houses and kosher food.")
                         .font(.footnote)
                         .foregroundStyle(Color.textSecondary)
                 }

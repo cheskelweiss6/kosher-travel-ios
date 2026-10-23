@@ -85,7 +85,10 @@ function webGallery(name: string, city: string, category: string, fallbackPhoto:
   // The keys the app uses (export-data.ts: cities = PREMIUM_CITIES, destinations = these lists)
   const keyed: [string, any][] = [];
   for (const c of PREMIUM_CITIES as any[]) keyed.push(['us:' + str(c.id), byId.get(c.id) || F.convertUSCityToDestination(c)]);
-  const appDests = [...CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS, ...DB_DESTINATIONS.filter((d: any) => d.region === 'North America' || d.region === 'Caribbean' || d.region === 'Central America')];
+  const appDestsAll = [...CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS, ...DB_DESTINATIONS.filter((d: any) => d.region === 'North America' || d.region === 'Caribbean' || d.region === 'Central America')];
+  // one per id, the first winning (same list as export-data.ts APP_DESTINATIONS)
+  const seenDest = new Set<string>();
+  const appDests = appDestsAll.filter((d: any) => { const id = str(d?.id); if (!id || seenDest.has(id)) return false; seenDest.add(id); return true; });
   for (const d of appDests as any[]) keyed.push(['dest:' + str(d.id), byId.get(d.id) || d]);
 
   const cities: Record<string, any> = {};
