@@ -75,11 +75,13 @@ enum KosherFoodFilter {
 struct KosherFilterChip: View {
     let hidden: Int
     let noun: String
+    /// The saved needs this list is filtered by (default: the food needs).
+    var relevant: [String]? = nil
     private let store = ProfileStore.shared
     @State private var editing = false
 
     var body: some View {
-        let relevant = KosherFoodFilter.saved(store.kosherPrefs)
+        let relevant = self.relevant ?? KosherFoodFilter.saved(store.kosherPrefs)
         if let prefs = store.kosherPrefs, !relevant.isEmpty {
             let on = prefs.filtersOn
             HStack(spacing: 10) {
@@ -293,10 +295,10 @@ struct CityRestaurantsView: View {
 }
 
 /// Wrapping row of action chips (the web's kt-actions).
-struct FlowActions: Layout {
+struct FlowActions: SwiftUI.Layout {
     var spacing: CGFloat = 8
 
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: LayoutSubviews, cache: inout ()) -> CGSize {
         let width = proposal.width ?? .infinity
         var x: CGFloat = 0, y: CGFloat = 0, rowH: CGFloat = 0, maxX: CGFloat = 0
         for s in subviews {
@@ -309,7 +311,7 @@ struct FlowActions: Layout {
         return CGSize(width: width.isFinite ? width : maxX, height: y + rowH)
     }
 
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: LayoutSubviews, cache: inout ()) {
         var x = bounds.minX, y = bounds.minY, rowH: CGFloat = 0
         for s in subviews {
             let sz = s.sizeThatFits(.unspecified)

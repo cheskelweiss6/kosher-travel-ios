@@ -22,6 +22,8 @@ struct AreaView: View {
     @State private var activeChip: PlaceCategory?
     @State private var openHub: CityHub?
     @State private var webSection: WebRoute?
+    @Environment(AuthStore.self) private var auth
+    private let bucket = BucketList.shared
 
     init(areaKey: String) {
         self.areaKey = areaKey
@@ -80,6 +82,14 @@ struct AreaView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
+                // Web: Save / Saved heart (the bucket list shown in My Travel).
+                let saved = bucket.contains(page.destId)
+                Button { bucket.toggle(page.destId) } label: {
+                    Image(systemName: saved ? "heart.fill" : "heart")
+                        .foregroundStyle(saved ? Color.alert : Color.navy)
+                }
+                .sensoryFeedback(.success, trigger: saved)
+                .accessibilityLabel(saved ? "Saved" : "Save")
                 Button { showMap = true } label: {
                     Image(systemName: "map")
                 }
@@ -98,6 +108,7 @@ struct AreaView: View {
             }
         }
         .refreshable { await loadLive(page, force: true) }
+        .task(id: auth.uid) { await bucket.bind(uid: auth.uid) }
         .task(id: baseKey) {
             applyRoute(page)
             await loadLive(page, force: false)
@@ -217,6 +228,9 @@ struct AreaView: View {
                                 cityName: page.name,
                                 summary: { summary(for: $0) },
                                 onSelect: { selected = $0 })
+        } else if CityHub.nativePages.contains(hub) {
+            CityHubPage(hub: hub, page: page, sections: sections(page),
+                        summary: { summary(for: $0) }, onSelect: { selected = $0 })
         } else {
             listSubPage(hub, page: page)
         }
@@ -536,6 +550,8 @@ struct AreaView: View {
         guard let sub = subRoute else { return }
         if sub == "map" {
             showMap = true
+        } else if sub.hasPrefix("hub:"), let h = CityHub(rawValue: String(sub.dropFirst(4))) {
+            openHub = h
         } else if sub.hasPrefix("place:"), let n = Int(sub.dropFirst(6)) {
             let all = page.allItems
             if all.indices.contains(n) { selected = all[n] }
@@ -734,6 +750,9 @@ enum CityHub: String, Identifiable, Hashable {
         case .traveler: return "Places travelers tagged in \(page.name)."
         }
     }
+
+    /// Sub-pages with their own native page in the website's layout (CityHubPage).
+    static let nativePages: Set<CityHub> = [.grocery, .chabad, .shuls, .hotels, .rentals, .businesses, .resources, .hasidic]
 
     /// The listing sections a native sub-page shows.
     var categories: [PlaceCategory] {
