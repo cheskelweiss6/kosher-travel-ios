@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import FirebaseFirestore
 
 // Work actions under AI Planner answers (Cheskel, Oct 23: "the AI chat should get upgrades with work capabilities").
 // Make PDF, Maps (every place, one by one or all together), Share, Copy and Add to Calendar. Native app only:
@@ -413,5 +414,169 @@ enum PlannerActions {
         if let p = PlannerPlaceMemory.places(forAnswer: plan.content).first, !p.city.isEmpty { return p.city }
         if let c = cards.first { return c.name }
         return ""
+    }
+}
+
+
+// MARK: Save to My Travel and Add to Bucket List (Oct 23 2026, SHARED-TRIPS)
+
+/// The same Firestore documents the website writes (App.tsx savePlannerTrip / addPlaceToBucket):
+/// a trip at users/{uid}/trips/{id} (source "ai-planner", the chat turned into a day-by-day route by the AI server's
+/// /api/trip-extract, only places the chat named), and a place card in users/{uid}/userData/preferences
+/// { bucketList[], bucketItems{id: {name, city, area, category, photo, summary, link, addedAt}} }.
+enum PlannerTrips {
+    static let extractURL = URL(string: "https://www.yourkoshertravel.com/kt-ai/api/trip-extract")!
+
+    /// Web normN: lowercase, no accents, words joined by single spaces.
+    static func norm(_ s: String) -> String {
+        let folded = s.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: "en_US")).lowercased()
+        let mapped = folded.unicodeScalars.map { CharacterSet.alphanumerics.contains($0) && $0.isASCII ? Character($0) : " " }
+        return String(mapped).split(separator: " ").joined(separator: " ")
+    }
+
+    static func slug(_ s: String, _ max: Int) -> String {
+        String(norm(s).replacingOccurrences(of: " ", with: "-").prefix(max))
+    }
+
+    /// The bucket list id: an app destination's own id, else place:<city>:<name> (web bucketIdFor).
+    static func bucketId(name: String, city: String, destId: String?) -> String {
+        if let destId, !destId.isEmpty { return destId }
+        return "place:\(slug(city, 30)):\(slug(name, 60))"
+    }
+
+    /// "us:illinois-chicago" / "dest:cancun" (planner cards) -> the website's destination id.
+    static func destId(fromCard id: String) -> String? {
+        for p in ["us:", "dest:"] where id.hasPrefix(p) { return String(id.dropFirst(p.count)) }
+        return nil
+    }
+
+    private static func chat(_ messages: [ChatMessage], last: Int? = nil) -> [[String: String]] {
+        var list = messages.filter { ($0.role == "user" || $0.role == "assistant") && !$0.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        if let last, list.count > last { list = Array(list.suffix(last)) }
+        return list.map { ["role": $0.role, "content": $0.content] }
+    }
+
+    private static func post(_ body: [String: Any], timeout: TimeInterval = 60) async -> [String: Any]? {
+        var req = URLRequest(url: extractURL, timeoutInterval: timeout)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        guard let data = try? JSONSerialization.data(withJSONObject: body) else { return nil }
+        req.httpBody = data
+        guard let (d, resp) = try? await URLSession.shared.data(for: req),
+              let http = resp as? HTTPURLResponse, http.statusCode == 200,
+              let j = try? JSONSerialization.jsonObject(with: d) as? [String: Any] else { return nil }
+        return j
+    }
+
+    private static var nowMs: Double { (Date().timeIntervalSince1970 * 1000).rounded() }
+
+    /// Day blocks of a plan, as the website saves them: "Day 1 ..." headings with their lines.
+    static func days(_ content: String) -> (days: [[String: Any]], headed: Bool) {
+        let lines = PlannerActions.plainText(content).components(separatedBy: "\n")
+        var out: [(title: String, lines: [String])] = []
+        let head = try? NSRegularExpression(pattern: #"^(?:•\s*)?day\s*(\d{1,2})\b\s*[:.\-–—)]?\s*(.*)$"#, options: [.caseInsensitive])
+        for raw in lines {
+            let line = raw.trimmingCharacters(in: .whitespaces)
+            if line.isEmpty { continue }
+            let ns = line as NSString
+            if let m = head?.firstMatch(in: line, range: NSRange(location: 0, length: ns.length)) {
+                let rest = m.range(at: 2).location != NSNotFound ? ns.substring(with: m.range(at: 2)).trimmingCharacters(in: .whitespaces) : ""
+                out.append((rest, []))
+                continue
+            }
+            let clean = line.replacingOccurrences(of: #"^[•☐☑]\s*"#, with: "", options: .regularExpression)
+            if !out.isEmpty, !clean.isEmpty { out[out.count - 1].lines.append(clean) }
+        }
+        if out.isEmpty {
+            let all = lines.map { $0.replacingOccurrences(of: #"^\s*[•☐☑]\s*"#, with: "", options: .regularExpression).trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty }
+            let one: [String: Any] = ["day": 1, "theme": "Trip plan", "activities": Array(all.prefix(40))]
+            return ([one], false)
+        }
+        let list: [[String: Any]] = out.enumerated().map { (i, d) -> [String: Any] in
+            let theme = String((d.title.isEmpty ? "Day \(i + 1)" : d.title).prefix(120))
+            return ["day": i + 1, "theme": theme, "activities": Array(d.lines.prefix(30))]
+        }
+        return (list, true)
+    }
+
+    /// Saves the plan to My Travel and then builds its route in the background. Returns the trip id.
+    @MainActor
+    static func save(uid: String, messages: [ChatMessage], plan: ChatMessage, title: String) -> String {
+        let id = "itinerary-ai-\(Int(nowMs))"
+        let d = days(plan.content)
+        let f = PlannerText.filters(from: messages)
+        var trip: [String: Any] = [
+            "id": id,
+            "title": title.isEmpty ? "AI trip plan" : (d.headed ? "\(d.days.count) days in \(title)" : title),
+            "city": title,
+            "style": "AI Planner",
+            "days": d.days,
+            "isUpcoming": true,
+            "source": "ai-planner",
+            "route": ["days": [], "status": "building"],
+            "updatedAt": FieldValue.serverTimestamp(),
+        ]
+        if let s = f.startDate, !s.isEmpty { trip["startDate"] = s }
+        guard FirebaseBoot.isConfigured else { return id }
+        let ref = Firestore.firestore().collection("users").document(uid).collection("trips").document(id)
+        let msgs = chat(messages)
+        var hints: [String: Any] = ["messages": msgs]
+        if let v = f.destination, !v.isEmpty { hints["destination"] = v } else if !title.isEmpty { hints["destination"] = title }
+        if let v = f.startDate, !v.isEmpty { hints["startDate"] = v }
+        if let v = f.endDate, !v.isEmpty { hints["endDate"] = v }
+        Task {
+            try? await ref.setData(trip, merge: true)
+            await MainActor.run { WarmWebPage.myTravel.retry(uid: uid) }
+            var route: [String: Any] = ["days": [], "status": "failed"]
+            for attempt in 0..<2 {
+                if let j = await post(hints, timeout: 90), var r = j["route"] as? [String: Any], let ds = r["days"] as? [Any], !ds.isEmpty {
+                    r["status"] = "ready"
+                    r["builtAt"] = nowMs
+                    r.removeValue(forKey: "model")
+                    route = r
+                    break
+                }
+                if attempt == 0 { try? await Task.sleep(nanoseconds: 1_500_000_000) }
+            }
+            try? await ref.setData(["route": route, "updatedAt": FieldValue.serverTimestamp()], merge: true)
+            await MainActor.run { if !WarmWebPage.myTravel.visible { WarmWebPage.myTravel.retry(uid: uid) } }
+        }
+        return id
+    }
+
+    static func inBucket(_ id: String) -> Bool { BucketList.shared.contains(id) }
+
+    /// Adds one place to the bucket list with a neat card (name, city, area, category, summary) written from the chat.
+    @MainActor
+    static func addToBucket(uid: String, name: String, city: String, area: String, kind: String, destId: String?, photo: String = "",
+                            messages: [ChatMessage]) async -> Bool {
+        await BucketList.shared.bind(uid: uid)
+        let id = bucketId(name: name, city: city, destId: destId)
+        if BucketList.shared.contains(id) { return false }
+        if destId == nil, FirebaseBoot.isConfigured {
+            var place: [String: Any] = ["name": name]
+            if !city.isEmpty { place["city"] = city }
+            if !area.isEmpty { place["area"] = area }
+            if !kind.isEmpty { place["kind"] = kind }
+            let card = (await post(["mode": "place", "messages": chat(messages, last: 12), "place": place], timeout: 40))?["place"] as? [String: Any]
+            let cardCity = (card?["city"] as? String) ?? ""
+            let cardArea = (card?["area"] as? String) ?? ""
+            let item: [String: Any] = [
+                "name": name,
+                "city": cardCity.isEmpty ? city : cardCity,
+                "area": cardArea.isEmpty ? area : cardArea,
+                "category": (kind.isEmpty || kind == "place") ? ((card?["category"] as? String) ?? "place") : kind,
+                "photo": photo,
+                "summary": (card?["summary"] as? String) ?? "",
+                "link": NSNull(),
+                "addedAt": nowMs,
+            ]
+            try? await Firestore.firestore().collection("users").document(uid).collection("userData").document("preferences")
+                .setData(["bucketItems": [id: item], "updatedAt": FieldValue.serverTimestamp()], merge: true)
+        }
+        if !BucketList.shared.contains(id) { BucketList.shared.toggle(id) }
+        WarmWebPage.myTravel.retry(uid: uid)
+        return true
     }
 }
