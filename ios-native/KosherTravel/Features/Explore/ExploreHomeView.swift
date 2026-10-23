@@ -8,6 +8,7 @@ struct ExploreHomeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
+                searchField
                 regions
                 inspiration
                 articles
@@ -28,13 +29,6 @@ struct ExploreHomeView: View {
                 .accessibilityLabel("Share your story")
                 .accessibilityIdentifier("explore-share")
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(value: ExploreRoute.web(.exploreSearch)) {
-                    Image(systemName: "magnifyingglass")
-                }
-                .accessibilityLabel("Search destinations")
-                .accessibilityIdentifier("explore-search")
-            }
             ToolbarItem(placement: .topBarTrailing) { AccountToolbarButtons() }
         }
         .refreshable { await feed.refresh() }
@@ -42,6 +36,32 @@ struct ExploreHomeView: View {
         .fullScreenCover(item: $webCover) { r in
             NavigationStack { WebScreen(route: r, fullScreen: true) }
         }
+    }
+
+    // MARK: Search (web: the home search field "Search a country, state or city" at the top of Explore)
+
+    private var searchField: some View {
+        NavigationLink(value: ExploreRoute.web(.exploreSearch)) {
+            HStack(spacing: 10) {
+                Image(systemName: "magnifyingglass")
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(Color.navy)
+                Text("Search a country, state or city")
+                    .font(.body)
+                    .foregroundStyle(Color.textSecondary)
+                    .lineLimit(1)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 16)
+            .frame(minHeight: 48)
+            .background(Color.white, in: RoundedRectangle(cornerRadius: 14))
+            .hairline(radius: 14)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, Theme.pagePadding)
+        .accessibilityLabel("Search a country, state or city")
+        .accessibilityIdentifier("explore-search")
     }
 
     // MARK: More (live screens inside the shell until they are native)

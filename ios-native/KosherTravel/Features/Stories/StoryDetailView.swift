@@ -46,7 +46,13 @@ struct StoryDetailView: View {
     var body: some View {
         Group {
             if let p = post {
-                content(p)
+                // Inspiration posts open in the full-screen Get Inspired feed (Reels style), like the web/Capacitor app;
+                // articles keep this page.
+                if p.isGuide || !(extra?.stops.isEmpty ?? true) {
+                    content(p)
+                } else {
+                    InspireFeedView(startId: p.id)
+                }
             } else if loading {
                 ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
