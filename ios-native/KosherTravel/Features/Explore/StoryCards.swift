@@ -92,34 +92,118 @@ struct TravelerArticlesSection: View {
     @Environment(StoryFeed.self) private var feed
     let kind: StoryPost.PlaceKind
     let placeName: String
+    var region: String? = nil
+    @State private var compose: WebRoute?
 
     var body: some View {
         let list = feed.articles(kind: kind, name: placeName)
-        VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Articles from travelers", count: list.count)
-                .padding(.horizontal, Theme.pagePadding)
+        let insp = kind == .city ? feed.inspiration.filter { $0.matches(kind: .city, name: placeName) } : []
+        VStack(alignment: .leading, spacing: 8) {
+            // Web PlaceStories (Oct 21 2026): small 72pt rows, photo left and title beside it, a "Share yours" tile last.
+            HStack {
+                Label("Articles from travelers", systemImage: "photo.on.rectangle")
+                    .font(.subheadline.weight(.heavy))
+                    .foregroundStyle(Color.navy)
+                Spacer()
+                if !list.isEmpty { Text("\(list.count)").font(.caption.weight(.bold)).foregroundStyle(Color.textSecondary) }
+            }
+            .padding(.horizontal, Theme.pagePadding)
             if !feed.loadedOnce && feed.posts.isEmpty {
-                LoadingCards(count: 2, minWidth: 220, aspect: 1.2)
+                RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.surface).frame(height: 72)
+                    .padding(.horizontal, Theme.pagePadding)
             } else if list.isEmpty {
-                Group {
-                    if let msg = feed.errorMessage { FeedStatusLine(message: msg) }
-                    else { EmptyNote(title: "No articles for \(placeName) yet", detail: "Be the first: write up your trip day by day") }
+                if let msg = feed.errorMessage {
+                    FeedStatusLine(message: msg).padding(.horizontal, Theme.pagePadding)
+                } else {
+                    Button { compose = shareRoute } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "camera").font(.system(size: 18)).foregroundStyle(.white)
+                                .frame(width: 44, height: 44).background(Color.navy, in: Circle())
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("No articles for \(placeName) yet").font(.subheadline.weight(.bold)).foregroundStyle(Color.navy)
+                                Text("Be the first: write up your trip day by day").font(.footnote).foregroundStyle(Color.textSecondary)
+                            }
+                            Spacer(minLength: 0)
+                            Image(systemName: "chevron.right").foregroundStyle(Color.textTertiary)
+                        }
+                        .padding(14)
+                        .background(Color.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color.hairline, style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, Theme.pagePadding)
                 }
-                .padding(.horizontal, Theme.pagePadding)
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .top, spacing: 12) {
+                    HStack(spacing: 8) {
                         ForEach(list) { post in
-                            NavigationLink(value: ExploreRoute.story(post.id)) { ArticleCard(post: post) }
+                            NavigationLink(value: ExploreRoute.story(post.id)) { CompactArticleCard(post: post) }
                                 .buttonStyle(.plain)
-                                .containerRelativeFrame(.horizontal) { len, _ in Layout.peekWidth(len, min: 220, spacing: 12) }
+                                .accessibilityLabel("\(post.title). Opens the article.")
                         }
+                        Button { compose = shareRoute } label: {
+                            VStack(spacing: 4) {
+                                Image(systemName: "plus").font(.system(size: 16, weight: .semibold))
+                                Text("Share yours").font(.caption.weight(.bold))
+                            }
+                            .foregroundStyle(Color.navy)
+                            .frame(width: 84, height: 72)
+                            .background(Color.white, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .hairline(radius: 12)
+                        }
+                        .buttonStyle(.plain)
                     }
                     .scrollTargetLayout()
                 }
                 .contentMargins(.horizontal, Theme.pagePadding, for: .scrollContent)
                 .scrollTargetBehavior(.viewAligned)
             }
+            if !insp.isEmpty {
+                Text("Get Inspired in \(placeName)").font(.footnote.weight(.heavy)).foregroundStyle(Color.navy)
+                    .padding(.horizontal, Theme.pagePadding).padding(.top, 8)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top, spacing: 10) {
+                        ForEach(insp) { post in
+                            NavigationLink(value: ExploreRoute.story(post.id)) { InspirationTile(post: post).frame(width: 120) }
+                                .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .contentMargins(.horizontal, Theme.pagePadding, for: .scrollContent)
+            }
         }
+        .fullScreenCover(item: $compose) { r in
+            NavigationStack { WebScreen(route: r, fullScreen: true) }
+        }
+    }
+
+    private var shareRoute: WebRoute { kind == .city ? .compose(city: placeName, region: region) : .compose() }
+}
+
+/// Web place-article-card: 214 x 72, photo on the left, two-line title and the place beside it.
+struct CompactArticleCard: View {
+    let post: StoryPost
+    var body: some View {
+        HStack(spacing: 0) {
+            RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 240)
+                .frame(width: 72, height: 72)
+                .clipped()
+            VStack(alignment: .leading, spacing: 2) {
+                Text(post.title.isEmpty ? post.cityName : post.title)
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(Color.navy)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                if !post.placeLine.isEmpty {
+                    Label(post.placeLine, systemImage: "mappin").font(.caption2).foregroundStyle(Color.textSecondary).lineLimit(1)
+                }
+            }
+            .padding(.horizontal, 10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(width: 214, height: 72)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .hairline(radius: 12)
     }
 }

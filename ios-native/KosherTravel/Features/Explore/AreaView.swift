@@ -61,6 +61,10 @@ struct AreaView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 heroBlock(page)
+                // Web order: the articles row first, then the facts, needs and hubs.
+                TravelerArticlesSection(kind: .city, placeName: page.name,
+                                        region: page.stateName.isEmpty ? page.country : page.stateName)
+                    .padding(.top, 14)
                 VStack(alignment: .leading, spacing: 14) {
                     facts(page)
                     CityNeedsBlock(page: page, sections: sections(page))
@@ -69,8 +73,6 @@ struct AreaView: View {
                             ForEach(hubs(page)) { hub in hubCard(hub, page: page) }
                         }
                     }
-                    TravelerArticlesSection(kind: .city, placeName: page.name)
-                        .padding(.top, 18)
                 }
                 .padding(.horizontal, Theme.pagePadding)
                 .padding(.top, 14)
@@ -179,7 +181,7 @@ struct AreaView: View {
         let photo = hubPhoto(hub, page: page)
         return Button {
             switch hub {
-            case .shabbat, .guides, .experience:
+            case .shabbat, .experience:
                 webSection = WebRoute.city(page.name, sub: page.subtitle, section: hub.webSection)
             default:
                 openHub = hub
@@ -228,6 +230,8 @@ struct AreaView: View {
                                 cityName: page.name,
                                 summary: { summary(for: $0) },
                                 onSelect: { selected = $0 })
+        } else if hub == .guides {
+            CityGuidesView(page: page)
         } else if CityHub.nativePages.contains(hub) {
             CityHubPage(hub: hub, page: page, sections: sections(page),
                         summary: { summary(for: $0) }, onSelect: { selected = $0 })

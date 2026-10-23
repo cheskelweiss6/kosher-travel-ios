@@ -1,3 +1,9 @@
 s1-denver-native:area:us:denver#native
 s2-nyc-native:area:us:new-york-city#native
 s3-cancun-native:area:dest:cancun#native
+s4-nyc-restaurants:area:us:new-york-city/hub:restaurants#native
+s5-nyc-chabad:area:us:new-york-city/hub:chabad#native
+s6-nyc-shuls:area:us:new-york-city/hub:shuls#native
+s7-nyc-hotels:area:us:new-york-city/hub:hotels#native
+s8-denver-guides:area:us:denver/hub:guides#native
+s9-denver-grocery:area:us:denver/hub:grocery#native
