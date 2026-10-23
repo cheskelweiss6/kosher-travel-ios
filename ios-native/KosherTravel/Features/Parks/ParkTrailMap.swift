@@ -17,6 +17,8 @@ struct ParkTrailMapView: View {
     @State private var position: MapCameraPosition = .automatic
     @State private var selected: Int?
 
+    init(park: StatePark) { self.park = park }
+
     private struct Resolved {
         let location: CLLocationCoordinate2D
         let path: [CLLocationCoordinate2D]

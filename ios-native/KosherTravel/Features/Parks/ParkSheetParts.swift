@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // MARK: - Pieces both park sheets share (web StateParkDetailModal / NationalParkDetailModal)
 
@@ -64,6 +65,12 @@ struct ParkSheetHero: View {
     let onClose: () -> Void
     @State private var page = 0
     @ScaledMetric(relativeTo: .body) private var height: CGFloat = 260
+
+    init(name: String, photos: [String], onClose: @escaping () -> Void) {
+        self.name = name
+        self.photos = photos
+        self.onClose = onClose
+    }
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -370,14 +377,30 @@ struct ParkPhotoID: Identifiable, Hashable {
 struct ParkLightbox: View {
     let url: String
     @Environment(\.dismiss) private var dismiss
+    @State private var image: UIImage?
+    @State private var failed = false
+
+    init(url: String) { self.url = url }
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Color.black.ignoresSafeArea()
-            RemoteImage(url: ParkImage.sized(url, width: 1280), maxPixel: 2000)
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.black)
-                .onTapGesture { dismiss() }
+            Group {
+                if let image {
+                    Image(uiImage: image).resizable().scaledToFit()
+                } else if failed {
+                    Image(systemName: "photo").font(.system(size: 28, weight: .light)).foregroundStyle(.white.opacity(0.5))
+                } else {
+                    ProgressView().tint(.white)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .contentShape(Rectangle())
+            .onTapGesture { dismiss() }
+            .task(id: url) {
+                image = await ImagePipeline.shared.load(ParkImage.sized(url, width: 1280), maxPixel: 2000)
+                failed = image == nil
+            }
             Button { dismiss() } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 15, weight: .semibold))

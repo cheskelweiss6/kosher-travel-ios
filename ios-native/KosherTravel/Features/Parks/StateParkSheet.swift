@@ -10,6 +10,8 @@ struct StateParkSheet: View {
     @State private var lightbox: ParkPhotoID?
     @State private var trailMap = false
 
+    init(park: StatePark) { self.park = park }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {

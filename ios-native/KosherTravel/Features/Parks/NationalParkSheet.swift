@@ -9,6 +9,8 @@ struct NationalParkSheet: View {
     @State private var tab: ParkSheetTab = .overview
     @State private var reviewCount: Int?
 
+    init(park: NationalPark) { self.park = park }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {

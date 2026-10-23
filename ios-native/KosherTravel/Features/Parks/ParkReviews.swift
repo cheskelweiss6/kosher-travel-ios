@@ -118,6 +118,12 @@ struct ParkReviewsSection: View {
     @State private var lightbox: ParkPhotoID?
     @FocusState private var focused: Bool
 
+    init(placeId: String, placeName: String, onCount: ((Int) -> Void)? = nil) {
+        self.placeId = placeId
+        self.placeName = placeName
+        self.onCount = onCount
+    }
+
     private var mine: PlaceReview? {
         guard let uid = auth.uid, let list else { return nil }
         return list.first { $0.userId == uid }
@@ -431,7 +437,12 @@ struct ParkReviewsSection: View {
         do {
             var urls: [String] = []
             for p in photos {
-                if let img = p.image { urls.append(try await ParkReviewService.upload(img, uid: uid)) } else if !p.url.isEmpty { urls.append(p.url) }
+                if let img = p.image {
+                    let u = try await ParkReviewService.upload(img, uid: uid)
+                    urls.append(u)
+                } else if !p.url.isEmpty {
+                    urls.append(p.url)
+                }
             }
             let name = !auth.displayName.isEmpty ? auth.displayName
                 : (auth.email.split(separator: "@").first.map(String.init) ?? "Traveler")
