@@ -117,8 +117,8 @@ struct StoryArticleCard: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
-            if !post.placeLine.isEmpty {
-                Label(post.placeLine, systemImage: "mappin.and.ellipse")
+            if !post.regionLine.isEmpty {
+                Label(post.regionLine, systemImage: "mappin.and.ellipse")
                     .font(.footnote)
                     .foregroundStyle(Color.textSecondary)
                     .labelStyle(StoryTightLabelStyle())
@@ -161,7 +161,7 @@ struct StoryInspirationTile: View {
                 .lineLimit(1)
             HStack(spacing: 6) {
                 TravelerAvatar(uid: extra?.userId ?? "", stored: post.authorPhoto, name: post.authorName, size: 20)
-                Text(post.placeLine.isEmpty ? post.authorName : post.placeLine)
+                Text(post.regionLine.isEmpty ? post.authorName : post.regionLine)
                     .font(.caption)
                     .foregroundStyle(Color.textSecondary)
                     .lineLimit(1)

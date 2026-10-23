@@ -141,16 +141,9 @@ struct StoryDetailView: View {
             }
             .padding(.bottom, 40)
         }
-        .navigationTitle(p.placeLine.isEmpty ? "Story" : p.placeLine)
+        // the web's place line (state or country, never "Wy, Wyoming"); one Share only, the paper plane in the action row
+        .navigationTitle(p.regionLine.isEmpty ? (p.isGuide ? "Article" : "Story") : p.regionLine)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                ShareLink(item: StoryActions.shareURL(p.id), subject: Text(p.title.isEmpty ? p.cityName : p.title)) {
-                    Image(systemName: "square.and.arrow.up")
-                }
-                .accessibilityLabel("Share")
-            }
-        }
     }
 
     @ViewBuilder
@@ -248,8 +241,8 @@ struct StoryDetailView: View {
                 .font(.serifTitle(.title2))
                 .foregroundStyle(Color.navy)
                 .fixedSize(horizontal: false, vertical: true)
-            if !p.placeLine.isEmpty {
-                Label(p.placeLine, systemImage: "mappin.and.ellipse")
+            if !p.regionLine.isEmpty {
+                Label(p.regionLine, systemImage: "mappin.and.ellipse")
                     .labelStyle(StoryTightLabelStyle())
                     .font(.subheadline)
                     .foregroundStyle(Color.textSecondary)
