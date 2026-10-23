@@ -86,6 +86,8 @@ struct SPListing: Codable, Hashable {
 struct SPStateData: Codable, Hashable {
     var cities: [SPCityCard]
     var attractions: [SPListing]
+    /// The state's kosher restaurants from every city (Oct 23 2026, gap G6; optional so an older export still decodes).
+    var restaurants: [SPListing]?
     var chabad: [SPListing]
     var groceries: [SPListing]
     var shuls: [SPListing]

@@ -25,9 +25,41 @@ final class StorySafety {
 
     func isBlocked(_ uid: String) -> Bool { !uid.isEmpty && blocked[uid] != nil }
 
+    /// Accounts the admin banned (bans/{uid}, public read), the same list the website reads (safety/muted.ts
+    /// refreshBans): their reviews are hidden for everyone, signed in or not (Oct 23 2026, gap G9).
+    private(set) var banned: Set<String> = []
+    @ObservationIgnored private var bansReadAt: Date?
+    @ObservationIgnored private var bansLoading = false
+
+    func isBanned(_ uid: String) -> Bool { !uid.isEmpty && banned.contains(uid) }
+    /// Blocked by this person or banned by the admin (web isMutedAuthor).
+    func isMuted(_ uid: String) -> Bool { isBlocked(uid) || isBanned(uid) }
+
+    /// Reads the bans list at most every 10 minutes (web refreshBans). A failed read keeps the last list.
+    @MainActor
+    func loadBans(force: Bool = false) async {
+        if bansLoading { return }
+        if !force, let at = bansReadAt, Date().timeIntervalSince(at) < 600 { return }
+        bansLoading = true
+        defer { bansLoading = false }
+        guard let url = URL(string: "https://firestore.googleapis.com/v1/projects/kosher-travel-app/databases/(default)/documents/bans?key=AIzaSyAqIbbxAIfqwuTaE31czStjZXDKJMynkEs&pageSize=300&mask.fieldPaths=at") else { return }
+        do {
+            let (data, resp) = try await URLSession.shared.data(from: url)
+            guard (resp as? HTTPURLResponse)?.statusCode == 200,
+                  let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+            let docs = json["documents"] as? [[String: Any]] ?? []
+            let ids = docs.compactMap { ($0["name"] as? String)?.split(separator: "/").last.map(String.init) }
+            banned = Set(ids)
+            bansReadAt = Date()
+        } catch {
+            print("[KT] bans not read: \(error.localizedDescription)")
+        }
+    }
+
     /// Reads the person's block list once per sign-in.
     @MainActor
     func load(uid: String?) async {
+        Task { await loadBans() }
         guard let uid, FirebaseBoot.isConfigured else { blocked = [:]; loadedFor = nil; return }
         if loadedFor == uid { return }
         loadedFor = uid

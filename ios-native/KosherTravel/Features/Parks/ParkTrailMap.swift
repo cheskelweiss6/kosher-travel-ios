@@ -5,8 +5,9 @@ import MapKit
 /// search of "{name}, {address}", the Trails Catalog, the selected trail's details and the Map Guide.
 ///
 /// The parks data has no trail coordinates. The website places each trailhead on a circle around the park centre and
-/// draws a generated winding line from it (TrailMapModal.tsx 106-158); those positions are invented, so they are off
-/// here until the owner decides (`showsWebsiteRoutes`). Turned on, the same geometry as the website is drawn.
+/// drew a generated winding line from it; those positions were invented, so they are off here (`showsWebsiteRoutes`).
+/// Oct 23 2026: Cheskel approved removing them on the website too (gap G3), so both show the park's real location and
+/// the trail list, with the same words.
 struct ParkTrailMapView: View {
     let park: StatePark
     static let showsWebsiteRoutes = false
@@ -44,7 +45,7 @@ struct ParkTrailMapView: View {
                     }
                     VStack(alignment: .leading, spacing: 6) {
                         ParkSheetTitle(text: "Trails Catalog")
-                        Text("Explore individual hiking trails. Click any trail card to pan directly to the trailhead and view the route.")
+                        Text("The park's hiking trails. Tap a trail to see its length, difficulty and details.")
                             .font(.footnote).foregroundStyle(Color.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -59,7 +60,7 @@ struct ParkTrailMapView: View {
                             .font(.caption.weight(.heavy))
                             .textCase(.uppercase)
                             .foregroundStyle(Color.navy)
-                        Text("Tap on any trail card or marker on the map to see route metrics, trailhead locations, and full difficulty reports.")
+                        Text("The pin shows where the park is. The app has no mapped routes for these trails, so none are drawn on the map. Get the official trail map at the park or on its website.")
                             .font(.footnote).foregroundStyle(Color.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -135,7 +136,7 @@ struct ParkTrailMapView: View {
             if searching {
                 HStack(spacing: 8) {
                     ProgressView()
-                    Text("Drawing trail network...").font(.footnote.weight(.semibold)).foregroundStyle(Color.navy)
+                    Text("Finding the park on the map...").font(.footnote.weight(.semibold)).foregroundStyle(Color.navy)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)

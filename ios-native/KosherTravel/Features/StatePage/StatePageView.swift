@@ -101,6 +101,8 @@ struct StatePageView: View {
         ]
         if parks.hasNationalParks(in: name) { items.append(.init(id: "national-parks", title: "National Parks")) }
         if parks.hasTribalAndScenic(in: name) { items.append(.init(id: "tribal-scenic", title: "Tribal & Scenic Landmarks")) }
+        // Oct 23 2026 (gap G6): the state's kosher restaurants from every city, same as the website's state tab
+        if !(store.state(name)?.restaurants ?? []).isEmpty { items.append(.init(id: "kosher", title: "Kosher Restaurants")) }
         items.append(.init(id: "grocery", title: "Kosher Grocery"))
         if !(store.state(name)?.shuls.isEmpty ?? true) { items.append(.init(id: "synagogues", title: "Shuls")) }
         items += [
@@ -124,6 +126,7 @@ struct StatePageView: View {
         case "state-parks": stateParksTab(d)
         case "national-parks": NationalParksTab(stateName: name)
         case "tribal-scenic": TribalScenicTab(stateName: name)
+        case "kosher": restaurantsTab(d)
         case "grocery": groceryTab(d)
         case "synagogues": shulsTab(d)
         case "chabad": chabadTab(d)
@@ -347,6 +350,24 @@ struct StatePageView: View {
     }
 
     // MARK: Grocery, Shuls, Chabad, Hotels, Attractions, Travel Guides
+
+    /// web: (selectedStateTab as string) === 'kosher' (App.tsx "Kosher Restaurants in {state}")
+    private func restaurantsTab(_ d: SPStateData) -> some View {
+        let list = d.restaurants ?? []
+        return VStack(alignment: .leading, spacing: 16) {
+            SPTabHeader(title: "Kosher Restaurants in \(name)", subtitle: "Discover certified kosher dining options across all cities in the state.")
+            if list.isEmpty {
+                SPEmptyBox(title: "No kosher restaurants recorded yet for \(name).",
+                           detail: "Use our AI Planner chat to suggest options or verify custom caterers.")
+            } else {
+                LazyVGrid(columns: SPGrid.columns, spacing: 16) {
+                    ForEach(Array(list.enumerated()), id: \.offset) { i, l in
+                        SPRestaurantCard(l: l) { open(l, .restaurant, i) }
+                    }
+                }
+            }
+        }
+    }
 
     private func groceryTab(_ d: SPStateData) -> some View {
         VStack(alignment: .leading, spacing: 16) {

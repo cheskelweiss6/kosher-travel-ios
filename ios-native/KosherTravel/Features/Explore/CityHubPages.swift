@@ -420,7 +420,7 @@ struct CityHubPage: View {
             .sheet(isPresented: $addingChabadRestaurant) {
                 let first = list.first?.venue
                 AddEstablishmentSheet(cityName: page.name, country: page.country.isEmpty ? "USA" : page.country,
-                    preset: .init(name: "Chabad of \(page.name) Kosher Cafe", category: "restaurant",
+                    cityId: page.destId, preset: .init(name: "Chabad of \(page.name) Kosher Cafe", category: "restaurant",
                                   subCategory: "Cafe & Deli / Grill",
                                   address: (first?.address).flatMap { $0.isEmpty ? nil : $0 } ?? "\(page.name) Chabad House",
                                   kashrus: "Chabad of \(page.name) (Rabbi \((first?.rabbi).flatMap { $0.isEmpty ? nil : $0 } ?? "Raskin"))",

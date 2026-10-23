@@ -972,7 +972,7 @@ struct PlaceDetailView: View {
                     Text("No reviews yet.").font(.subheadline).foregroundStyle(Color.textSecondary)
                 } else {
                     PlaceReviewSummaryCard(reviews: reviews)
-                    let shown = reviews.filter { !StorySafety.shared.isBlocked($0.userId) }
+                    let shown = reviews.filter { !StorySafety.shared.isMuted($0.userId) }   // blocked or banned (web isMutedAuthor)
                     ForEach(shown) { r in
                         PlaceReviewRow(review: r, isMine: r.userId == auth.uid, onReport: r.userId == auth.uid ? nil : {
                             if auth.isSignedIn { reportReview = r } else { ShellRouter.shared.requireSignIn("Sign in to report a review") }
