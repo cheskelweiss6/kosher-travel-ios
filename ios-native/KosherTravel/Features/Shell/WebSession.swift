@@ -88,6 +88,12 @@ enum WebSession {
 
     /// The user script that tells the page it is inside the app and which screen to open.
     static func shellScript(_ route: WebRoute, fullScreen: Bool = false) -> String {
+        let base = baseShellScript(route, fullScreen: fullScreen)
+        // The composer's native-app look (Features/Compose/ComposeSkin.swift), only on the compose screen.
+        return route.screen == "compose" ? base + "\n" + ComposeSkin.script : base
+    }
+
+    private static func baseShellScript(_ route: WebRoute, fullScreen: Bool) -> String {
         """
         (function(){try{
           window.__KT_SHELL__=\(route.shellJSON);
