@@ -107,6 +107,26 @@ final class StoriesStore {
         if !ex.userId.isEmpty { requestPhoto(ex.userId) }
     }
 
+    /// A post its poster (or the admin) deleted: off every list at once.
+    @MainActor
+    func remove(_ id: String) {
+        posts.removeAll { $0.id == id }
+        extras[id] = nil
+    }
+
+    /// Reads one post again after it was edited, so the new words, photos and links show at once.
+    @MainActor
+    func reload(_ id: String) async {
+        guard let r = await StoryDocs.one(id) else { return }
+        extras[id] = StoryExtra(id: id, data: r.data)
+        if let p = StoryPost(id: id, data: r.data) {
+            if let i = posts.firstIndex(where: { $0.id == id }) { posts[i] = p } else if p.status == "live" {
+                posts.append(p)
+                posts.sort { $0.createdAtMs > $1.createdAtMs }
+            }
+        }
+    }
+
     /// A traveler's live posts (their page), merged into the store.
     @MainActor
     func loadAuthor(_ uid: String) async -> Bool {
