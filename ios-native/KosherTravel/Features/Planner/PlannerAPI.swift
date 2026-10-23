@@ -32,7 +32,10 @@ enum PlannerAPI {
     /// The request body (web: plannerRequestBody).
     static func body(for history: [ChatMessage]) -> [String: Any] {
         var body: [String: Any] = [
-            "messages": history.map { ["id": $0.id, "role": $0.role, "content": $0.content] }
+            "messages": history.map { ["id": $0.id, "role": $0.role, "content": $0.content] },
+            // The server tells the AI about the app's Make PDF / Maps / Share / Calendar buttons only for this client,
+            // and lists the app places an answer names (the website never sends it, so its answers are unchanged).
+            "client": "ios-native",
         ]
         let filters = PlannerText.filters(from: history)
         if !filters.isEmpty { body["tripFilters"] = filters.dictionary }
@@ -106,7 +109,11 @@ enum PlannerAPI {
                 away[String(k.prefix(60))] = Int(mi.rounded())
             }
         }
-        return Answer(message: (json["message"] as? String) ?? message, suggestions: Array(suggestions), away: away)
+        let text = (json["message"] as? String) ?? message
+        if let list = json["places"] as? [[String: Any]] {
+            PlannerPlaceMemory.remember(list.prefix(40).compactMap { PlannerMapPlace(json: $0) }, forAnswer: text)
+        }
+        return Answer(message: text, suggestions: Array(suggestions), away: away)
     }
 }
 

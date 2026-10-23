@@ -43,7 +43,7 @@ struct PlannerTab: View {
         NavigationStack(path: $path) {
             chat
                 .navigationTitle("AI Planner")
-                .navigationBarTitleDisplayMode(store.messages.isEmpty ? .large : .inline)
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbar }
                 .navigationDestination(for: ExploreRoute.self) { route in
                     ExploreDestination(route: route)
@@ -53,9 +53,10 @@ struct PlannerTab: View {
             PlannerHistoryView(store: store, signedIn: auth.isSignedIn)
         }
         .sheet(isPresented: $showBuilder) {
-            TripBuilderSheet(places: places) { text, filters in
-                store.send(text, filters: filters)
-            }
+            let hasTrip = store.messages.contains { $0.isUser }
+            TripBuilderSheet(places: places, initial: hasTrip ? PlannerText.filters(from: store.messages) : nil,
+                             onCreate: { text, filters in store.send(text, filters: filters) },
+                             onApply: { next in store.applyFilters(next) })
         }
         .sheet(item: $editing) { msg in
             EditMessageSheet(original: msg.content) { text in store.edit(msg.id, to: text) }
@@ -64,10 +65,13 @@ struct PlannerTab: View {
         .sheet(item: $safari) { item in
             SafariSheet(url: item.url).ignoresSafeArea()
         }
-        .task(id: auth.uid ?? "") { store.setAccount(uid: auth.uid) }
+        .task(id: auth.uid ?? "") {
+            store.setAccount(uid: auth.uid)
+            // after the account's chats are in place, so a question from Ask AI is not wiped by the account switch
+            takeShellPrompt()
+        }
         .task { await feed.loadIfNeeded() }
         .onAppear(perform: applyLaunchRoute)
-        .onAppear(perform: takeShellPrompt)
         .onChange(of: ShellRouter.shared.plannerPrompt) { _, _ in takeShellPrompt() }
         .sensoryFeedback(.impact(weight: .light), trigger: store.sendCount)
         .sensoryFeedback(.success, trigger: store.answerCount)
@@ -87,19 +91,50 @@ struct PlannerTab: View {
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button { showHistory = true } label: {
-                Image(systemName: "list.bullet")
+            Button {
+                hideKeyboard()
+                showHistory = true
+            } label: {
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(Color.navy)
+                    .frame(width: 32, height: 32)
             }
-            .accessibilityLabel("Your chats")
+            .accessibilityLabel("Open chats")
+        }
+        // Web: "Filters" sits in the planner's own top bar, with the number of picks set for this chat.
+        ToolbarItem(placement: .topBarLeading) {
+            let count = store.messages.contains { $0.isUser } ? PlannerText.filters(from: store.messages).chipLabels.count : 0
+            Button {
+                hideKeyboard()
+                showBuilder = true
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "slider.horizontal.3")
+                    Text("Filters").fontWeight(.semibold)
+                    if count > 0 {
+                        Text("\(count)")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 6)
+                            .frame(minWidth: 20, minHeight: 20)
+                            .background(Color.navy, in: Capsule())
+                    }
+                }
+                .foregroundStyle(Color.navy)
+                .padding(.horizontal, 4)
+            }
+            .accessibilityLabel(count > 0 ? "Trip filters, \(count) set" : "Trip filters")
         }
         ToolbarItem(placement: .topBarTrailing) {
             Button {
+                hideKeyboard()
                 store.newChat()
             } label: {
                 Image(systemName: "square.and.pencil")
+                    .foregroundStyle(Color.navy)
             }
-            .disabled(store.messages.isEmpty)
-            .accessibilityLabel("New chat")
+            .accessibilityLabel("Start a new chat")
         }
         // Web: the planner's own header carries the account button.
         ToolbarItem(placement: .topBarTrailing) { AccountToolbarButtons() }
@@ -112,6 +147,7 @@ struct PlannerTab: View {
             ScrollView {
                 if store.messages.isEmpty {
                     welcome
+                    Color.clear.frame(height: 1).id("welcomeEnd")
                 } else {
                     LazyVStack(alignment: .leading, spacing: 14) {
                         ForEach(Array(store.messages.enumerated()), id: \.element.id) { i, msg in
@@ -157,7 +193,16 @@ struct PlannerTab: View {
             .onChange(of: store.currentId) { _, _ in
                 Task { @MainActor in proxy.scrollTo("bottom", anchor: .bottom) }
             }
+            // Keyboard up: the content above the message box moves up with it (Cheskel's 8:54 video: the box covered
+            // "Plan a trip").
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
+                scroll(proxy, to: store.messages.isEmpty ? "welcomeEnd" : "bottom", anchor: .bottom)
+            }
         }
+    }
+
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
     private func scroll(_ proxy: ScrollViewProxy, to id: String, anchor: UnitPoint) {
@@ -325,7 +370,8 @@ struct PlannerTab: View {
                 if typing {
                     TypewriterMarkdown(content: msg.content) { store.typingId = nil }
                 } else {
-                    PlannerMarkdown(content: msg.content)
+                    // place names open Maps (work actions, Oct 23)
+                    PlannerMarkdown(content: PlannerActions.linked(msg, messages: store.messages, cards: cards(for: msg)))
                 }
             }
             .font(.body)
@@ -337,6 +383,11 @@ struct PlannerTab: View {
                 let cards = cards(for: msg)
                 if !cards.isEmpty { destinationCards(cards, away: msg.away ?? [:]) }
                 if let articles = articlesFor(index: index) { articlesRow(articles) }
+                if PlannerActions.showsBar(for: msg, index: index, messages: store.messages, settled: settled, cards: cards(for: msg)) {
+                    PlannerActionBar(message: msg, index: index, messages: store.messages, cards: cards(for: msg)) { text in
+                        store.send(text)
+                    }
+                }
             }
             if settled {
                 let chips: [String] = (msg.suggestions ?? []).isEmpty
@@ -537,6 +588,10 @@ struct PlannerTab: View {
             path.append(.story(id))
             return .handled
         }
+        if PlannerMaps.isMapsURL(url) {
+            PlannerMaps.open(url)
+            return .handled
+        }
         if let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" {
             safari = IdentifiedURL(url: PlannerLinks.affiliate(url))
             return .handled
@@ -684,14 +739,8 @@ struct PlannerComposer: View {
                     .background(Color.white, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .strokeBorder(Color(red: 203 / 255, green: 213 / 255, blue: 225 / 255), lineWidth: 1))
-                    .accessibilityLabel("Message the AI Planner")
-                    .toolbar {
-                        ToolbarItemGroup(placement: .keyboard) {
-                            Spacer()
-                            Button("Done") { focused = false }
-                                .fontWeight(.semibold)
-                        }
-                    }
+                    .accessibilityLabel("Message the Trip Planner")
+                    .submitLabel(.return)
                 if store.isGenerating || store.typingId != nil {
                     Button {
                         if store.isGenerating { store.stop() } else { store.typingId = nil }

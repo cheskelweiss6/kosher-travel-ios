@@ -59,6 +59,33 @@ final class PlannerStore {
         run(history)
     }
 
+    /// A Filters change mid-chat (web: applyPlannerFilters): a small "Updated for: …" note, then the same plan again.
+    func applyFilters(_ next: TripFilters) {
+        var history = messages
+        if let last = history.last, last.isFiltersNote { history.removeLast() }
+        guard history.contains(where: { $0.isUser }) else { return }
+        let label = TripFilters.describeChange(PlannerText.filters(from: history), next)
+        if label.isEmpty {
+            // Changed back to what the plan already uses: drop the waiting note, nothing to ask.
+            if history.count != messages.count {
+                cancelRequest()
+                errorText = nil
+                messages = history
+                persist()
+            }
+            return
+        }
+        cancelRequest()
+        var note = ChatMessage(role: "user", content: TripFilters.updateRequestText(label), filters: next.cleaned)
+        note.kind = "filters"
+        note.label = label
+        typingId = nil
+        messages = history + [note]
+        sendCount += 1
+        persist()
+        run(messages)
+    }
+
     /// Retry re-sends the chat as it is (it ends with the question).
     func retry() {
         guard !isGenerating else { return }
