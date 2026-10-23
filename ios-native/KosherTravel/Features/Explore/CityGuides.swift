@@ -49,8 +49,26 @@ final class TourGuideStore {
     }
 }
 
-/// The city's Travel Guides page (App.tsx guides sub-page + TourGuideCard + AddTourGuideModal).
+/// The city's Travel Guides page (App.tsx guides sub-page). The website reaches it only when the hub has no inline
+/// section, so it shows the same section as the hub.
 struct CityGuidesView: View {
+    let page: CityPage
+
+    var body: some View {
+        ScrollView {
+            CitySubPageHero()
+            CityTourGuidesSection(page: page)
+                .padding(.horizontal, Theme.pagePadding)
+                .padding(.top, 12)
+                .padding(.bottom, 36)
+        }
+        .background(Color.white)
+    }
+}
+
+/// "Tour Guides in {city}" (App.tsx 10940-11008, Caribbean 10866-10934): shown inline on the city hub under the cards,
+/// with "Add Tour Guide", the TourGuideCards (guides of this city or this state), or the directory empty box.
+struct CityTourGuidesSection: View {
     let page: CityPage
     private let store = TourGuideStore.shared
     @State private var adding = false
@@ -58,38 +76,37 @@ struct CityGuidesView: View {
 
     var body: some View {
         let list = store.forCity(page)
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Tour Guides in \(page.name)").font(.headline).foregroundStyle(Color.navy)
-                        Text("Local guides, customized kosher tours, and Jewish heritage experts in \(page.name).")
-                            .font(.footnote).foregroundStyle(Color.textSecondary)
-                    }
-                    Spacer(minLength: 8)
-                    Button { adding = true } label: {
-                        Label("Add Tour Guide", systemImage: "plus")
-                            .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 12).frame(minHeight: 36)
-                            .foregroundStyle(.white)
-                            .background(Color.navy, in: Capsule())
-                    }
-                    .buttonStyle(.plain)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Label("Tour Guides in \(page.name)", systemImage: "safari")
+                        .font(.headline).foregroundStyle(Color.navy)
+                    Text("Local guides, customized kosher tours, and Jewish heritage experts in \(page.name).")
+                        .font(.footnote).foregroundStyle(Color.textSecondary)
                 }
-                if list.isEmpty {
-                    CityEmptyBox(title: "\(page.name) Tour Guides Directory",
-                                 detail: "No tour guides listed yet for \(page.name). Know a great local guide or excursion? Add them to the directory!")
-                } else {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 14)], spacing: 14) {
-                        ForEach(list) { g in card(g) }
-                    }
+                Spacer(minLength: 8)
+                addButton
+            }
+            if list.isEmpty {
+                VStack(spacing: 10) {
+                    Image(systemName: "safari").font(.title2).foregroundStyle(Color.navy)
+                        .frame(width: 48, height: 48).background(Color.surface, in: Circle())
+                    Text("\(page.name) Tour Guides Directory").font(.subheadline.weight(.bold)).foregroundStyle(Color.navy)
+                        .multilineTextAlignment(.center)
+                    Text("No tour guides listed yet for \(page.name). Know a local kosher tour guide? Add them here!")
+                        .font(.footnote).foregroundStyle(Color.textSecondary).multilineTextAlignment(.center)
+                    addButton
+                }
+                .frame(maxWidth: .infinity)
+                .padding(20)
+                .background(Color.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .hairline(radius: 16)
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 14)], spacing: 14) {
+                    ForEach(list) { g in TourGuideCardView(guide: g) }
                 }
             }
-            .padding(.horizontal, Theme.pagePadding)
-            .padding(.top, 12)
-            .padding(.bottom, 36)
         }
-        .background(Color.white)
         .sheet(isPresented: $adding) {
             AddTourGuideSheet(page: page) { g in
                 store.add(g)
@@ -98,37 +115,73 @@ struct CityGuidesView: View {
         }
     }
 
+    private var addButton: some View {
+        Button { adding = true } label: {
+            Label("Add Tour Guide", systemImage: "plus")
+                .font(.caption.weight(.semibold))
+                .padding(.horizontal, 12).frame(minHeight: 36)
+                .foregroundStyle(.white)
+                .background(Color.navy, in: Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// TourGuideCard.tsx: location badge, rating, tour type, the guide's name, description, phone / website, Reviews,
+/// and the "Shared by" footer with the date it was added.
+struct TourGuideCardView: View {
+    let guide: TourGuide
+    @Environment(\.openURL) private var openURL
+    @State private var summary: PlaceReviewSummary?
+
+    var body: some View { card(guide) }
+
     private func card(_ g: TourGuide) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
-                Label([g.city, g.state ?? ""].filter { !$0.isEmpty }.joined(separator: ", "), systemImage: "mappin")
+                Label(g.city + ((g.state ?? "").isEmpty ? ((g.country ?? "").isEmpty ? "" : ", \(g.country ?? "")") : ", \(g.state ?? "")"),
+                      systemImage: "mappin")
                     .font(.caption2.weight(.heavy)).foregroundStyle(Color.navy)
                     .padding(.horizontal, 7).padding(.vertical, 3).hairline(radius: 6)
                 if let langs = g.languages, !langs.isEmpty {
                     Label(langs.joined(separator: ", "), systemImage: "bubble.left.and.bubble.right")
                         .font(.caption2).foregroundStyle(Color.textSecondary).lineLimit(1)
                 }
+                Spacer(minLength: 0)
+                if let s = summary, s.count > 0 {
+                    Label(String(format: "%.1f (%d)", s.avg, s.count), systemImage: "star")
+                        .font(.caption2.weight(.bold)).foregroundStyle(Color.navy)
+                }
             }
             Text(g.tourType).font(.subheadline.weight(.bold)).foregroundStyle(Color.navy)
             Text(g.guideName).font(.footnote.weight(.semibold)).foregroundStyle(Color.navy)
             Text(g.description).font(.footnote).foregroundStyle(Color.textSecondary).lineLimit(2)
             HStack(spacing: 8) {
+                // Website: the phone always shows (tel: with digits and + only).
                 let digits = g.phone.filter { $0.isNumber || $0 == "+" }
-                if let tel = URL(string: "tel:\(digits)"), digits.count >= 7 {
-                    Button { openURL(tel) } label: { Label(g.phone, systemImage: "phone").font(.caption.weight(.semibold)) }
-                        .buttonStyle(.plain).foregroundStyle(Color.navy).frame(minHeight: 36)
+                Button { if let tel = URL(string: "tel:\(digits)") { openURL(tel) } } label: {
+                    Label(g.phone, systemImage: "phone").font(.caption.weight(.semibold))
                 }
+                .buttonStyle(.plain).foregroundStyle(Color.navy).frame(minHeight: 36)
                 if let w = g.website, !w.isEmpty, let url = URL(string: w.lowercased().hasPrefix("http") ? w : "https://" + w) {
                     Button { openURL(url) } label: { Label("Website", systemImage: "globe").font(.caption.weight(.semibold)) }
                         .buttonStyle(.plain).foregroundStyle(Color.navy).frame(minHeight: 36)
                 }
             }
             Divider().overlay(Color.hairline)
-            Text("Shared by \(g.submittedBy.isEmpty ? "Community Traveler" : g.submittedBy)")
-                .font(.caption2).foregroundStyle(Color.textTertiary)
+            HStack {
+                Text("Shared by \(g.submittedBy.isEmpty ? "Community Traveler" : g.submittedBy)")
+                Spacer(minLength: 8)
+                Text(g.createdAt)
+            }
+            .font(.caption2).foregroundStyle(Color.textTertiary)
         }
         .padding(16)
         .hairline(radius: 16)
+        .task(id: g.id) {
+            // Website: the count and average show before the reviews are opened (placeId "guide-<id>").
+            if let list = try? await PlaceReviewService.reviews(placeId: "guide-\(g.id)") { summary = PlaceReviewSummary(list) }
+        }
     }
 }
 

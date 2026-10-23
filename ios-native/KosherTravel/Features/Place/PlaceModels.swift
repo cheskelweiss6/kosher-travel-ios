@@ -266,10 +266,18 @@ struct CityPage: Hashable {
             let sub = d.state.isEmpty ? d.country : "\(d.state), \(d.country)"
             var center: CLLocationCoordinate2D? = nil
             if let lat = d.lat, let lng = d.lng { center = CLLocationCoordinate2D(latitude: lat, longitude: lng) }
+            // Website: a destination merges its US_CITIES twin (same name, same state when the destination has one,
+            // else the first by name) into Restaurants, Grocery and Chabad (App.tsx matchedUSCity).
+            let lower = d.name.lowercased()
+            let twin = data.cities.first { $0.name.lowercased() == lower && (d.state.isEmpty || $0.state.lowercased() == d.state.lowercased()) }
+                ?? data.cities.first { $0.name.lowercased() == lower }
             var p = make(key: key, destId: d.id, name: d.name, region: d.state.isEmpty ? d.country : d.state, subtitle: sub,
-                        photo: d.image, description: d.description, airport: d.airport, airportDistance: d.airportDistance,
+                        photo: d.image, description: d.description,
+                        airport: d.airport.isEmpty ? (twin?.airport ?? "") : d.airport,
+                        airportDistance: d.airportDistance.isEmpty ? (twin?.airportDistance ?? "") : d.airportDistance,
                         weather: d.weather, center: center,
-                        restaurants: d.restaurants, groceries: d.groceries, chabad: d.chabad, shuls: d.shuls,
+                        restaurants: d.restaurants + (twin?.restaurants ?? []), groceries: d.groceries + (twin?.groceries ?? []),
+                        chabad: d.chabad + (twin?.chabad ?? []), shuls: d.shuls,
                         mikvah: d.mikvah, attractions: d.attractions, hotels: d.hotels, rentals: d.rentals ?? [],
                         catering: d.catering ?? [], businesses: d.businesses ?? [], resources: d.resources ?? [],
                         eruv: d.eruv, hasidic: d.hasidic ?? "")
@@ -287,14 +295,29 @@ struct CityPage: Hashable {
                              attractions: [Venue], hotels: [Venue], rentals: [Venue], catering: [Venue],
                              businesses: [Venue], resources: [Venue], eruv: EruvInfo?, hasidic: String) -> CityPage {
         // Restaurants: one per name; Chabad takeout / prepared meals get their own section (website: isOfficialRestaurant)
-        var seen = Set<String>()
+        // One per name; a later copy (the twin city's) fills the fields the first left empty, like the website.
+        let mergedRestaurants = Self.mergeByName(restaurants) { e, r in
+            if e.photo.isEmpty { e.photo = r.photo }
+            if e.phone.isEmpty { e.phone = r.phone }
+            if e.website.isEmpty { e.website = r.website }
+            if e.kind.isEmpty { e.kind = r.kind }
+            if (e.distance ?? "").isEmpty, let d = r.distance, !d.isEmpty { e.distance = d }
+            if e.kashrus.isEmpty { e.kashrus = r.kashrus }
+            if e.address.isEmpty { e.address = r.address }
+            if e.description.isEmpty { e.description = r.description }
+        }
         var dining: [Venue] = []
         var meals: [Venue] = []
-        for r in restaurants {
-            let k = r.name.lowercased().trimmingCharacters(in: .whitespaces)
-            if k.isEmpty || seen.contains(k) { continue }
-            seen.insert(k)
+        for r in mergedRestaurants where !r.name.trimmingCharacters(in: .whitespaces).isEmpty {
             if Self.isOfficialRestaurant(r.name) { dining.append(r) } else { meals.append(r) }
+        }
+        let chabadMerged = Self.mergeByName(chabad) { e, c in
+            if e.photo.isEmpty { e.photo = c.photo }
+            if e.phone.isEmpty { e.phone = c.phone }
+            if e.website.isEmpty { e.website = c.website }
+            if (e.rabbi ?? "").isEmpty, let r = c.rabbi, !r.isEmpty { e.rabbi = r }
+            if e.address.isEmpty { e.address = c.address }
+            if e.shabbatMeals != true, c.shabbatMeals == true { e.shabbatMeals = true }
         }
         var groc = Set<String>()
         let groceriesUnique = groceries.filter { g in
@@ -303,7 +326,7 @@ struct CityPage: Hashable {
             groc.insert(k); return true
         }
         let lists: [(PlaceCategory, [Venue])] = [
-            (.restaurant, dining), (.takeout, meals), (.grocery, groceriesUnique), (.chabad, chabad), (.shul, shuls),
+            (.restaurant, dining), (.takeout, meals), (.grocery, groceriesUnique), (.chabad, chabadMerged), (.shul, shuls),
             (.mikvah, mikvah.map { [$0] } ?? []), (.todo, attractions), (.hotel, hotels), (.rental, rentals),
             (.catering, catering), (.business, businesses), (.resource, resources),
         ]
@@ -318,6 +341,17 @@ struct CityPage: Hashable {
         return CityPage(key: key, destId: destId, name: name, region: region, subtitle: subtitle, photo: photo,
                         description: description, airport: airport, airportDistance: airportDistance, weather: weather,
                         center: center, sections: sections, eruv: eruv, hasidic: hasidic)
+    }
+
+    /// Website `new Map(name.toLowerCase().trim())`: first copy wins, later copies fill its empty fields; first-seen order.
+    private static func mergeByName(_ list: [Venue], fill: (inout Venue, Venue) -> Void) -> [Venue] {
+        var order: [String] = []
+        var byName: [String: Venue] = [:]
+        for v in list {
+            let k = v.name.lowercased().trimmingCharacters(in: .whitespaces)
+            if var e = byName[k] { fill(&e, v); byName[k] = e } else { byName[k] = v; order.append(k) }
+        }
+        return order.compactMap { byName[$0] }
     }
 
     /// The website's test for a public restaurant vs. Chabad home catering / takeout (App.tsx isOfficialRestaurant).
