@@ -1,6 +1,6 @@
 #!/bin/sh
 # Re-export what the website's United States / state / Caribbean / country pages show, for the iOS app
-# (Features/StatePage/statepages.json). Run from the website repo root (ios-native/ next to src/) after data changes in src/.
+# (Features/StatePage/statepages.json and statesearch.json, the in-page search's listing index). Run from the website repo root (ios-native/ next to src/) after data changes in src/.
 set -e
 node ios-native/scripts/export-statepages-extract.mjs src/App.tsx ios-native/scripts/export-statepages.gen.ts
 npx esbuild ios-native/scripts/export-statepages.ts --bundle --platform=node --log-level=error \

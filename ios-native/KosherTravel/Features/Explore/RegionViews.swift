@@ -49,6 +49,7 @@ struct UnitedStatesView: View {
         .refreshable { await feed.refresh() }
         .task { await feed.loadIfNeeded() }
         .task { await store.load() }
+        .onAppear { if let carried = SPSearchIndex.shared.carry.removeValue(forKey: "United States") { query = carried } }
     }
 }
 
@@ -109,6 +110,7 @@ struct CaribbeanView: View {
         .refreshable { await feed.refresh() }
         .task { await feed.loadIfNeeded() }
         .task { await store.load() }
+        .onAppear { if let carried = SPSearchIndex.shared.carry.removeValue(forKey: "Caribbean") { query = carried } }
     }
 }
 

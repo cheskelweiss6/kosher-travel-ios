@@ -48,6 +48,27 @@ struct SPListing: Codable, Hashable {
     var cityName: String? = nil
     var destId: String? = nil
 
+    enum CodingKeys: String, CodingKey {
+        case name, address, phone, website, description, photo, kashrus, kind, photos, rabbi, shabbatMeals, tags, nusach,
+             link, directions, location, hours, email, price, notes, kosherNotes, cityName, destId
+    }
+
+    /// The export leaves empty text out; a missing field reads as empty.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        func s(_ k: CodingKeys) -> String { ((try? c.decodeIfPresent(String.self, forKey: k)) ?? nil) ?? "" }
+        func o(_ k: CodingKeys) -> String? { (try? c.decodeIfPresent(String.self, forKey: k)) ?? nil }
+        name = s(.name); address = s(.address); phone = s(.phone); website = s(.website)
+        description = s(.description); photo = s(.photo); kashrus = s(.kashrus); kind = s(.kind)
+        photos = (try? c.decodeIfPresent([String].self, forKey: .photos)) ?? nil
+        rabbi = o(.rabbi)
+        shabbatMeals = (try? c.decodeIfPresent(Bool.self, forKey: .shabbatMeals)) ?? nil
+        tags = (try? c.decodeIfPresent([String].self, forKey: .tags)) ?? nil
+        nusach = o(.nusach); link = o(.link); directions = o(.directions); location = o(.location); hours = o(.hours)
+        email = o(.email); price = o(.price); notes = o(.notes); kosherNotes = o(.kosherNotes)
+        cityName = o(.cityName); destId = o(.destId)
+    }
+
     var venue: Venue {
         Venue(name: name, address: address, phone: phone, website: website.isEmpty ? (link ?? "") : website,
               description: description, photo: photo, kashrus: kashrus, kind: kind, photos: photos, hours: hours, rabbi: rabbi,

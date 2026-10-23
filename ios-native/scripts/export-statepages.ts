@@ -9,6 +9,8 @@ import * as F from './export-statepages.gen';
 import { CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS } from '../../src/caribbeanData';
 import { DB_DESTINATIONS } from '../../src/database';
 import { DEFAULT_TRAVEL_HERO } from '../../src/cityHeroPhotos';
+import { buildSearchIndex } from '../../src/searchIndex';
+import { getNewThingsToDoFor } from '../../src/attractionsDatabase';
 import * as fs from 'fs';
 
 const { PREMIUM_STATES, PREMIUM_CITIES, US_CITIES, WORLD_DESTINATIONS, PREMIUM_CARIBBEAN, CURATED_ATTRACTIONS } = deps;
@@ -82,6 +84,8 @@ const listing = (x: any, region: string) => {
     cityName: str(x.cityName) || undefined, destId: destIdFor(x.cityName, region) || undefined,
   };
   for (const [k, v] of Object.entries(opt)) if (v !== undefined) o[k] = v;
+  // empty text is left out (the app reads a missing field as empty)
+  for (const k of ['address', 'phone', 'website', 'description', 'photo', 'kashrus', 'kind']) if (!o[k]) delete o[k];
   return o;
 };
 
@@ -144,3 +148,43 @@ console.log('usStates', out.usStates.length, 'caribbean', out.caribbean.length, 
   'chabad', n('chabad'), 'groceries', n('groceries'), 'shuls', n('shuls'), 'hotels', n('hotels'),
   'no-page cards', Object.values(states).flatMap((s: any) => s.cities).filter((c: any) => !c.key).map((c: any) => c.name).join('; '),
   'bytes', fs.statSync(file).size);
+
+// The in-page search's listing index (App.tsx getStoriesSearchIdx = buildSearchIndex(destinations, US_CITIES,
+// convertUSCityToDestination, searchAttractionsFor)), for the regions these pages cover. The words are the website's own
+// normalised word lists, so matching in the app scores exactly as on the website. Places travelers tagged are added by
+// the app at run time (searchAttractionsFor's live part).
+const searchAttractionsFor = (d: any) => [...(CURATED_ATTRACTIONS[d.name.toLowerCase().trim()] || []), ...getNewThingsToDoFor(d)];
+const idx = buildSearchIndex(destinations, US_CITIES as any, F.convertUSCityToDestination, searchAttractionsFor);
+const REGIONS = new Set(['North America', 'Caribbean', 'Central America']);
+const dests: any[] = [];
+const destPos = new Map<any, number>();
+const destRef = (d: any) => {
+  if (destPos.has(d)) return destPos.get(d)!;
+  const sub = d.state ? `${d.state}, ${d.country}` : d.country;
+  dests.push({ id: d.id, key: routeKey(d), name: d.name, state: str(d.state), country: str(d.country), region: str(d.region), sub, image: photo(d.image) });
+  destPos.set(d, dests.length - 1);
+  return dests.length - 1;
+};
+const thumbOf = (e: any) => {
+  const it = e.item || {};
+  const p = it.photo || it.image || (Array.isArray(it.photos) && it.photos[0]) || (e.kind === 'destination' ? e.dest?.image : '');
+  return typeof p === 'string' && /^(https?:|\/)/.test(p) ? photo(p) : '';
+};
+const entries = idx.filter((e: any) => e.dest && REGIONS.has(e.dest.region)).map((e: any) => {
+  const o: any = { k: e.kind, n: e.name, s: e.subtitle, c: e.cityName, d: destRef(e.dest),
+    nw: e.nameWords.join(' '), tw: e.typeWords.join(' '), pw: e.placeWords.join(' '), ew: e.extraWords.join(' ') };
+  if (e.aliasNorm) o.an = e.aliasNorm;
+  if (!o.ew) delete o.ew;
+  const th = thumbOf(e); if (th) o.th = th;
+  if (e.kind !== 'destination' && e.kind !== 'mikvah' && e.item && !e.item.sharedSight) {
+    const l = listing({ ...e.item, cityName: e.cityName }, e.dest.state || e.dest.country || '');
+    l.destId = e.dest.id;
+    if (l.description && l.description.length > 240) l.description = l.description.slice(0, 237).trimEnd() + '…';
+    o.it = l;
+    if (o.th && o.th === l.photo) delete o.th;
+  }
+  return o;
+});
+const sfile = (process.argv[2] || 'ios-native/KosherTravel/Features/StatePage/statepages.json').replace('statepages.json', 'statesearch.json');
+fs.writeFileSync(sfile, JSON.stringify({ generatedAt: new Date().toISOString(), dests, entries }));
+console.log('search entries', entries.length, 'dests', dests.length, 'bytes', fs.statSync(sfile).size);
