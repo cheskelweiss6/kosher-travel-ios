@@ -17,6 +17,7 @@ struct PlannerTab: View {
     @State private var placeSheet: PlaceItem?
     @State private var builderCity: String?
     @State private var routeApplied = false
+    @State private var confirmNewChat = false
 
     static let demoQuestion = "Kosher restaurants in Miami Beach"
     static let starters = [
@@ -47,6 +48,12 @@ struct PlannerTab: View {
                 .navigationTitle("AI Planner")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbar }
+                .confirmationDialog("Start a new chat?", isPresented: $confirmNewChat, titleVisibility: .visible) {
+                    Button("New chat") { store.newChat() }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("This chat stays saved in your chats.")
+                }
                 .navigationDestination(for: ExploreRoute.self) { route in
                     ExploreDestination(route: route)
                 }
@@ -147,13 +154,17 @@ struct PlannerTab: View {
             .accessibilityLabel(count > 0 ? "Trip filters, \(count) set" : "Trip filters")
         }
         ToolbarItem(placement: .topBarTrailing) {
+            // Asks first when the chat has messages: on iOS 26 the answer's Share / Make PDF row scrolls up under this
+            // button, and one stray tap emptied the whole chat with no way back (Cheskel's video, Oct 23 2026).
+            // Empty chat: nothing to start over (web: disabled={messages.length === 0}).
             Button {
                 hideKeyboard()
-                store.newChat()
+                if store.messages.isEmpty { store.newChat() } else { confirmNewChat = true }
             } label: {
                 Image(systemName: "square.and.pencil")
-                    .foregroundStyle(Color.navy)
+                    .foregroundStyle(store.messages.isEmpty ? Color.textTertiary : Color.navy)
             }
+            .disabled(store.messages.isEmpty)
             .accessibilityLabel("Start a new chat")
         }
         // Web: the planner's own header carries the account button.

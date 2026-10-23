@@ -401,10 +401,13 @@ enum PlannerActions {
     /// Plain text for Copy / Share / Calendar notes: no markdown marks; links keep their words.
     static func plainText(_ content: String) -> String {
         var t = PlannerText.sanitize(content)
+        // A link whose words are only "Maps" / "Directions" means nothing as plain text: leave it out (Cheskel, Oct 23 2026).
+        t = t.replacingOccurrences(of: #"[ \t]*\[(?i:maps?|google maps|apple maps|open in maps|directions|map it)\]\((?:https?):[^)\s]+\)"#, with: "", options: .regularExpression)
         t = t.replacingOccurrences(of: #"\[([^\]\n]+)\]\((?:https?|tel):[^)\s]+\)"#, with: "$1", options: .regularExpression)
         t = t.replacingOccurrences(of: "**", with: "").replacingOccurrences(of: "__", with: "")
         t = t.replacingOccurrences(of: #"(?m)^#{1,6}\s+"#, with: "", options: .regularExpression)
         t = t.replacingOccurrences(of: #"(?m)^(\s*)[-*]\s+"#, with: "$1• ", options: .regularExpression)
+        t = t.replacingOccurrences(of: #"(?m)[ \t]+$"#, with: "", options: .regularExpression)
         return t.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
