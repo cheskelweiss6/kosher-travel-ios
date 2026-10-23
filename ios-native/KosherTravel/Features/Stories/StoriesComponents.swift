@@ -191,12 +191,31 @@ struct StoryVideoBadge: View {
 }
 
 /// Follow / Following pill (navy outline; filled navy once following).
+/// Tapping "Following" asks first (Instagram-style): a confirm with a red "Unfollow" and Cancel
+/// (Cheskel, Oct 23 2026: "For someone that you follow should come up unfollow"). "Follow" acts at once.
 struct StoryFollowPill: View {
     let following: Bool
     let busy: Bool
+    var name: String? = nil
     let action: () -> Void
+    @State private var confirmUnfollow = false
+
+    init(following: Bool, busy: Bool, name: String? = nil, action: @escaping () -> Void) {
+        self.following = following
+        self.busy = busy
+        self.name = name
+        self.action = action
+    }
+
+    private var confirmTitle: String {
+        if let n = name?.trimmingCharacters(in: .whitespacesAndNewlines), !n.isEmpty { return "Unfollow \(n)?" }
+        return "Unfollow this traveler?"
+    }
+
     var body: some View {
-        Button(action: action) {
+        Button {
+            if following { confirmUnfollow = true } else { action() }
+        } label: {
             HStack(spacing: 5) {
                 if busy { ProgressView().controlSize(.mini) }
                 Text(following ? "Following" : "Follow")
@@ -211,6 +230,11 @@ struct StoryFollowPill: View {
         .buttonStyle(.plain)
         .disabled(busy)
         .sensoryFeedback(.selection, trigger: following)
+        .accessibilityLabel(following ? "Following. Double tap to unfollow." : "Follow")
+        .confirmationDialog(confirmTitle, isPresented: $confirmUnfollow, titleVisibility: .visible) {
+            Button("Unfollow", role: .destructive) { if following { action() } }
+            Button("Cancel", role: .cancel) {}
+        }
     }
 }
 
