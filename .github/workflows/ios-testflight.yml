@@ -1,0 +1,162 @@
+name: iOS TestFlight (signed build, internal testers)
+
+# Signed App Store build of the native SwiftUI app, uploaded to TestFlight.
+# Runs on a manual run (workflow_dispatch) or a push whose commit message contains [testflight].
+# Build number = run number + 100 (always above the Capacitor builds, which are <= 12 on version 1.0).
+# Signing material comes ONLY from encrypted repo secrets; nothing is echoed. Files are chmod 600 and removed at the end.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'ios-feature/**']
+
+permissions:
+  contents: read
+
+# Own group: never cancelled by app pushes (the simulator workflow cancels in-progress runs on its own group only).
+concurrency:
+  group: ios-testflight-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  testflight:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[testflight]')
+    runs-on: macos-26
+    timeout-minutes: 90
+    env:
+      TEAM_ID: 46MB33SVM3
+      BUNDLE_ID: com.yourkoshertravel.app
+      PROFILE_NAME: Kosher Travel App Store
+      ASC_KEY_ID: 3T39QBL65X
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$X" ]; then sudo xcode-select -s "$X"; fi
+          xcodebuild -version
+
+      - name: Build number
+        run: |
+          echo "BUILD_NUMBER=$((GITHUB_RUN_NUMBER + 100))" >> "$GITHUB_ENV"
+          echo "Build number: $((GITHUB_RUN_NUMBER + 100))"
+
+      - name: Firebase config (from secret, never printed)
+        env:
+          GSI: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}
+        run: |
+          if [ -n "$GSI" ]; then
+            printf '%s' "$GSI" | base64 --decode > ios-native/KosherTravel/Resources/GoogleService-Info.plist
+            plutil -lint ios-native/KosherTravel/Resources/GoogleService-Info.plist > /dev/null && echo "Firebase config: present"
+          else
+            echo "Firebase config: missing"
+          fi
+
+      - name: Generate Xcode project
+        run: |
+          if curl -fsSL -o /tmp/xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/latest/download/xcodegen.zip \
+             && unzip -q /tmp/xcodegen.zip -d /tmp/xcodegen; then XG=/tmp/xcodegen/xcodegen/bin/xcodegen; else brew install xcodegen; XG=xcodegen; fi
+          cd ios-native && "$XG" generate
+          echo "Entitlements:"; cat KosherTravel/KosherTravel.entitlements
+
+      - name: Signing (temporary keychain + App Store profile)
+        env:
+          P12_B64: ${{ secrets.IOS_DIST_P12_BASE64 }}
+          P12_PW: ${{ secrets.IOS_DIST_P12_PASSWORD }}
+          PROFILE_B64: ${{ secrets.IOS_PROFILE_BASE64 }}
+        run: |
+          set -e
+          test -n "$P12_B64" && test -n "$PROFILE_B64" || { echo "signing secrets missing"; exit 1; }
+          umask 077
+          KC="$RUNNER_TEMP/kt-signing.keychain-db"; KP="$(uuidgen)"
+          echo "KT_KEYCHAIN=$KC" >> "$GITHUB_ENV"
+          security create-keychain -p "$KP" "$KC"
+          security set-keychain-settings -lut 21600 "$KC"
+          security unlock-keychain -p "$KP" "$KC"
+          printf '%s' "$P12_B64" | base64 --decode > "$RUNNER_TEMP/dist.p12"; chmod 600 "$RUNNER_TEMP/dist.p12"
+          security import "$RUNNER_TEMP/dist.p12" -P "$P12_PW" -A -t cert -f pkcs12 -k "$KC" > /dev/null
+          rm -f "$RUNNER_TEMP/dist.p12"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KP" "$KC" > /dev/null
+          security list-keychains -d user -s "$KC" $(security list-keychains -d user | tr -d '"')
+          security find-identity -v -p codesigning "$KC" | grep -c "Apple Distribution" | sed 's/^/Distribution identities: /'
+          PD="$HOME/Library/MobileDevice/Provisioning Profiles"; mkdir -p "$PD"
+          printf '%s' "$PROFILE_B64" | base64 --decode > "$RUNNER_TEMP/kt.mobileprovision"
+          UUID=$(security cms -D -i "$RUNNER_TEMP/kt.mobileprovision" | plutil -extract UUID raw -)
+          NAME=$(security cms -D -i "$RUNNER_TEMP/kt.mobileprovision" | plutil -extract Name raw -)
+          cp "$RUNNER_TEMP/kt.mobileprovision" "$PD/$UUID.mobileprovision"; chmod 600 "$PD/$UUID.mobileprovision"
+          # Xcode 16+ also looks here
+          PD2="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"; mkdir -p "$PD2"; cp "$RUNNER_TEMP/kt.mobileprovision" "$PD2/$UUID.mobileprovision"
+          rm -f "$RUNNER_TEMP/kt.mobileprovision"
+          echo "Profile installed: $NAME"
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: ios-native/build/SourcePackages
+          key: spm-release-${{ runner.os }}-${{ hashFiles('ios-native/project.yml') }}
+
+      - name: Archive (Release, manual signing)
+        run: |
+          cd ios-native
+          set -o pipefail
+          xcodebuild -project KosherTravel.xcodeproj -scheme KosherTravel -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/KosherTravel.xcarchive" \
+            -clonedSourcePackagesDirPath build/SourcePackages \
+            OTHER_CODE_SIGN_FLAGS="--keychain $KT_KEYCHAIN" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" archive > archive.log 2>&1 || { grep -E -B2 -A6 "error:" archive.log | head -150; tail -40 archive.log; exit 1; }
+          tail -5 archive.log
+          APP="$RUNNER_TEMP/KosherTravel.xcarchive/Products/Applications/KosherTravel.app"
+          echo "Version: $(plutil -extract CFBundleShortVersionString raw "$APP/Info.plist") ($(plutil -extract CFBundleVersion raw "$APP/Info.plist"))"
+          echo "Signed entitlements:"; codesign -d --entitlements - --xml "$APP" 2>/dev/null | plutil -p - || codesign -d --entitlements - "$APP"
+
+      - name: Export + upload to TestFlight
+        env:
+          KEY_P8_B64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -e
+          umask 077
+          mkdir -p ~/.appstoreconnect/private_keys
+          KEYF=~/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8
+          printf '%s' "$KEY_P8_B64" | base64 --decode > "$KEYF"; chmod 600 "$KEYF"
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>export</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>provisioningProfiles</key><dict><key>$BUNDLE_ID</key><string>$PROFILE_NAME</string></dict>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          EOF
+          set -o pipefail
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/KosherTravel.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" > export.log 2>&1 || { tail -60 export.log; exit 1; }
+          tail -3 export.log
+          IPA=$(ls "$RUNNER_TEMP"/export/*.ipa | head -1); ls -la "$IPA"
+          echo "Upload started: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          if xcrun altool --upload-app -f "$IPA" -t ios --apiKey "$ASC_KEY_ID" --apiIssuer "$ISSUER" > upload.log 2>&1; then
+            tail -20 upload.log
+          else
+            echo "altool --upload-app failed:"; tail -40 upload.log
+            echo "Trying xcodebuild export with destination upload"
+            sed -i '' 's#<string>export</string>#<string>upload</string>#' "$RUNNER_TEMP/ExportOptions.plist"
+            xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/KosherTravel.xcarchive" \
+              -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export-upload" \
+              -authenticationKeyPath "$KEYF" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ISSUER" > upload2.log 2>&1 || { tail -60 upload2.log; exit 1; }
+            tail -20 upload2.log
+          fi
+          echo "Upload finished: $(date -u +%Y-%m-%dT%H:%M:%SZ) build $BUILD_NUMBER"
+
+      - name: Clean up signing material
+        if: always()
+        run: |
+          rm -f ~/.appstoreconnect/private_keys/AuthKey_*.p8 "$RUNNER_TEMP"/*.p12 "$RUNNER_TEMP"/*.mobileprovision
+          rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/"*.mobileprovision "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/"*.mobileprovision
+          [ -n "$KT_KEYCHAIN" ] && security delete-keychain "$KT_KEYCHAIN" || true
+          rm -f ios-native/KosherTravel/Resources/GoogleService-Info.plist

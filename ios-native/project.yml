@@ -35,6 +35,15 @@ targets:
         product: FirebaseStorage
       - package: GoogleSignIn
         product: GoogleSignIn
+    # Universal links + Sign in with Apple (both enabled on the App ID and carried by the App Store profile).
+    entitlements:
+      path: KosherTravel/KosherTravel.entitlements
+      properties:
+        com.apple.developer.associated-domains:
+          - applinks:www.yourkoshertravel.com
+          - applinks:yourkoshertravel.com
+        com.apple.developer.applesignin:
+          - Default
     info:
       path: KosherTravel/Info.plist
       properties:
@@ -73,5 +82,11 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_PREVIEWS: YES
         CODE_SIGN_STYLE: Automatic
+      configs:
+        # Release = the signed TestFlight build (.github/workflows/ios-testflight.yml). Debug/simulator builds are unchanged.
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: Apple Distribution
+          PROVISIONING_PROFILE_SPECIFIER: Kosher Travel App Store
     scheme:
       gatherCoverageData: false
