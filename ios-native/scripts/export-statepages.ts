@@ -101,6 +101,8 @@ for (const s of PREMIUM_STATES) {
     cities: cities.map((d: any) => card(d)),
     attractions: agg.attractions.map((a: any) => listing(a, s.name)),
     chabad: agg.chabad.map((a: any) => listing(a, s.name)),
+    // Oct 23 2026 (gap G6): the state's "Kosher Restaurants" tab, from every city (website allStateRestaurants)
+    restaurants: agg.restaurants.map((a: any) => listing(a, s.name)),
     groceries: agg.groceries.map((a: any) => listing(a, s.name)),
     shuls: agg.synagogues.map((a: any) => listing(a, s.name)),
     hotels: agg.hotels.map((a: any) => listing(a, s.name)),
@@ -149,7 +151,7 @@ const file = process.argv[2] || 'ios-native/KosherTravel/Features/StatePage/stat
 fs.writeFileSync(file, JSON.stringify(out));
 const n = (k: string) => Object.values(states).reduce((a: number, s: any) => a + s[k].length, 0);
 console.log('usStates', out.usStates.length, 'caribbean', out.caribbean.length, 'state cities', n('cities'), 'attractions', n('attractions'),
-  'chabad', n('chabad'), 'groceries', n('groceries'), 'shuls', n('shuls'), 'hotels', n('hotels'),
+  'chabad', n('chabad'), 'restaurants', n('restaurants'), 'groceries', n('groceries'), 'shuls', n('shuls'), 'hotels', n('hotels'),
   'no-page cards', Object.values(states).flatMap((s: any) => s.cities).filter((c: any) => !c.key).map((c: any) => c.name).join('; '),
   'bytes', fs.statSync(file).size);
 

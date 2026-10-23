@@ -150,7 +150,7 @@ struct ParkReviewsSection: View {
             }
             if writing { form }
             // Web: reviews from people this traveler blocked are left out (isMutedAuthor).
-            let shown = (list ?? []).filter { !safety.isBlocked($0.userId) }
+            let shown = (list ?? []).filter { !safety.isMuted($0.userId) }   // blocked or banned (web isMutedAuthor)
             if !shown.isEmpty {
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(shown) { r in

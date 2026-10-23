@@ -1,10 +1,17 @@
 import SwiftUI
+import FirebaseFirestore
 
 /// "Add Kosher Establishment for {city}" (App.tsx contribution form + handleAddPlace). Opened from the Chabad page's
-/// "Confirm & Post Chabad Restaurant", prefilled like the website. Posts the same body to the same /api/places.
+/// "Confirm & Post Chabad Restaurant", prefilled like the website.
+/// Oct 23 2026 (Cheskel approved gap G10): the place goes to the admin's review queue (Admin > Review, "Places people
+/// sent"), the same document the website writes (src/components/placeSubmit.ts):
+///   places/{auto} { name, category, subCategory, cityName, cityId, country, address, hechsher, phone, website,
+///                   description, status "pending", source "submission", addedBy, addedByName, createdAt }
+/// It used to POST to /api/places, which answers 404, so nothing was saved. Signed in only (the rules refuse others).
 struct AddEstablishmentSheet: View {
     let cityName: String
     let country: String
+    var cityId: String = ""
     var preset: Preset
 
     struct Preset {
@@ -19,6 +26,8 @@ struct AddEstablishmentSheet: View {
     }
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(AuthStore.self) private var auth
+    @State private var failed = false
     @State private var p = Preset()
     @State private var loaded = false
     @State private var success = false
@@ -46,15 +55,21 @@ struct AddEstablishmentSheet: View {
                 Section("Street Address *") { TextField("e.g. 10 Chabad Lane, Ocean Drive", text: $p.address) }
                 if success {
                     Section {
-                        Label("Establishment added successfully! indexed & saved.", systemImage: "checkmark.circle")
+                        Label("Sent for review. It shows in the app once the admin approves it.", systemImage: "checkmark.circle")
                             .font(.footnote.weight(.semibold)).foregroundStyle(Color.navy)
+                    }
+                }
+                if failed {
+                    Section {
+                        Label("Couldn't send it right now. Check your connection and try again.", systemImage: "exclamationmark.circle")
+                            .font(.footnote.weight(.semibold)).foregroundStyle(Color.alert)
                     }
                 }
                 Section {
                     Button {
                         Task { await submit() }
                     } label: {
-                        Text("Submit Establishment to Database").font(.subheadline.weight(.bold))
+                        Text(sending ? "Sending…" : "Send for review").font(.subheadline.weight(.bold))
                             .frame(maxWidth: .infinity, minHeight: 44)
                     }
                     .disabled(sending)
@@ -76,28 +91,35 @@ struct AddEstablishmentSheet: View {
     @MainActor
     private func submit() async {
         if p.name.isEmpty || p.address.isEmpty || p.kashrus.isEmpty { missing = true; return }
+        guard let uid = auth.uid else {
+            ShellRouter.shared.requireSignIn("Sign in to send a place. It goes to the admin for review.")
+            return
+        }
+        guard FirebaseBoot.isConfigured else { failed = true; return }
         sending = true
+        failed = false
         defer { sending = false }
-        let body: [String: Any] = [
-            "name": p.name, "category": p.category, "subCategory": p.subCategory, "city": cityName, "country": country,
-            "address": p.address, "kashrus": p.kashrus, "phone": p.phone, "website": p.website, "description": p.description,
-            "lat": 18.42, "lng": -77.10, "priceRange": "$$",  // the website's newPlace defaults, sent as is
-            "isGlattMeat": false, "isCholovYisroel": false, "isPasYisroel": false,
-            "shabbatMeals": false, "dailyMinyan": false, "hasBakery": false, "hasButcher": false,
+        func cut(_ v: String, _ n: Int) -> String { String(v.trimmingCharacters(in: .whitespacesAndNewlines).prefix(n)) }
+        let category = ["restaurant", "chabad", "grocery"].contains(p.category) ? p.category : "restaurant"
+        let data: [String: Any] = [
+            "name": cut(p.name, 120), "category": category, "subCategory": cut(p.subCategory, 80),
+            "cityName": cut(cityName, 80), "cityId": cut(cityId, 80), "country": cut(country, 80),
+            "address": cut(p.address, 300), "hechsher": cut(p.kashrus, 200), "phone": cut(p.phone, 40),
+            "website": cut(p.website, 300), "description": cut(p.description, 1000),
+            "status": "pending", "source": "submission", "addedBy": uid,
+            "addedByName": cut(auth.displayName.isEmpty ? "Traveler" : auth.displayName, 80),
+            "createdAt": FieldValue.serverTimestamp(),
         ]
-        guard let url = URL(string: "https://www.yourkoshertravel.com/api/places"),
-              let data = try? JSONSerialization.data(withJSONObject: body) else { return }
-        var req = URLRequest(url: url)
-        req.httpMethod = "POST"
-        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.httpBody = data
-        // Website: on success it shows the line, clears the form and closes after 2 s; on failure it stays as is.
-        // (Oct 23: the live site answers this POST with 404, so the website form doesn't save either.)
-        guard let result = try? await URLSession.shared.data(for: req),
-              let http = result.1 as? HTTPURLResponse, (200..<300).contains(http.statusCode) else { return }
+        do {
+            _ = try await Firestore.firestore().collection("places").addDocument(data: data)
+        } catch {
+            print("[KT] place not sent: \(error)")
+            failed = true
+            return
+        }
         success = true
         p = Preset(category: p.category, subCategory: p.subCategory)  // website keeps category and cuisine
-        try? await Task.sleep(for: .seconds(2))
+        try? await Task.sleep(for: .seconds(3))
         dismiss()
     }
 }
