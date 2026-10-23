@@ -309,6 +309,8 @@ struct UsernamePage: View {
                 return
             }
             savedTick += 1
+            // Oct 23 2026: the new username also shows on all their old posts, comments and reviews
+            AuthorNameSync.apply(uid: uid, username: v)
             // the Profile and Stories screens read the new name (StoryActions signs posts with it)
             await ProfileStore.shared.reload()
             await StoriesStore.shared.syncAccount(uid: nil)

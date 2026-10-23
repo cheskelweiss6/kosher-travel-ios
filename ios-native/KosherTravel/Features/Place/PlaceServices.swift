@@ -11,7 +11,8 @@ struct PlaceReview: Identifiable, Hashable, Sendable {
     var placeKind: String
     var destId: String
     var userId: String
-    var userName: String
+    /// The name saved with the review. Screens show `userName`: the reviewer's current username when they set one.
+    var storedUserName: String
     var userPhoto: String
     var rating: Int
     var text: String
@@ -30,7 +31,7 @@ struct PlaceReview: Identifiable, Hashable, Sendable {
         placeKey = s("placeKey"); placeId = s("placeId"); placeName = s("placeName")
         let kind = s("placeKind"); placeKind = kind.isEmpty ? "place" : kind
         destId = s("destId"); userId = s("userId")
-        let name = s("userName"); userName = name.isEmpty ? "Traveler" : name
+        let name = s("userName"); storedUserName = name.isEmpty ? "Traveler" : name
         userPhoto = s("userPhoto")
         let r = (d["rating"] as? NSNumber)?.intValue ?? Int(s("rating")) ?? 5
         rating = max(1, min(5, r))
@@ -41,6 +42,10 @@ struct PlaceReview: Identifiable, Hashable, Sendable {
         let updated = millis("updatedAt")
         updatedAtMs = updated > 0 ? updated : createdAtMs
     }
+
+    /// Oct 23 2026 (Cheskel: "apply new user names the old posts"): the reviewer's current username
+    /// (profiles/{uid}.username, read live), else the name saved with the review.
+    var userName: String { StoriesStore.shared.name(uid: userId, stored: storedUserName) }
 }
 
 struct PlaceReviewSummary: Hashable {

@@ -33,7 +33,10 @@ struct StoryPost: Identifiable, Hashable {
     var title: String
     var caption: String
     var intro: String
-    var authorName: String
+    /// The name saved with the post. Screens show `authorName`: the author's current username when they set one.
+    var storedAuthorName: String
+    /// The author's uid (storyPosts.userId).
+    var userId: String
     var authorPhoto: String
     var cityId: String
     var cityName: String
@@ -47,6 +50,10 @@ struct StoryPost: Identifiable, Hashable {
     var likesCount: Int
     var viewsCount: Int
     var reportCount: Int
+
+    /// Oct 23 2026 (Cheskel: "apply new user names the old posts"): the author's current username
+    /// (profiles/{uid}.username, read live and cached per uid), else the name stored with the post.
+    var authorName: String { StoriesStore.shared.name(uid: userId, stored: storedAuthorName) }
 
     var isGuide: Bool { type == "guide" }
     var cover: StoryMedia? { media.first(where: { !$0.cardImage.isEmpty }) }
@@ -82,7 +89,8 @@ struct StoryPost: Identifiable, Hashable {
         title = s("title")
         caption = s("caption")
         intro = s("intro")
-        authorName = s("authorName").isEmpty ? "Traveler" : s("authorName")
+        storedAuthorName = s("authorName").isEmpty ? "Traveler" : s("authorName")
+        userId = s("userId")
         authorPhoto = s("authorPhoto")
         cityId = s("cityId")
         cityName = s("cityName")

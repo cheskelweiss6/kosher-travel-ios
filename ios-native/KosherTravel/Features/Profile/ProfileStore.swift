@@ -233,8 +233,10 @@ final class ProfileStore {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         try await userRef(uid).collection("userData").document("preferences")
             .setData(["username": trimmed, "profileDNA": ["username": trimmed]], merge: true)
+        let changed = trimmed != username
         username = trimmed
         await AuthFlows.saveAccountName(trimmed)
+        if changed { AuthorNameSync.apply(uid: uid, username: trimmed) }   // Oct 23 2026: old posts show the new name too
     }
 
     /// "Remove username": back to the account's name.
@@ -244,6 +246,7 @@ final class ProfileStore {
         try await userRef(uid).collection("userData").document("preferences")
             .setData(["username": "", "profileDNA": ["username": ""]], merge: true)
         username = ""
+        AuthorNameSync.apply(uid: uid, username: "")   // Oct 23 2026: old posts go back to the account's name
     }
 
     // MARK: followers / following (public counts)
@@ -468,7 +471,8 @@ final class ProfileStore {
         change.photoURL = url.isEmpty ? nil : URL(string: url)
         try await change.commitChanges()
         try? await userRef(user.uid).setData(["photoURL": url], merge: true)
-        try? await db.collection("profiles").document(user.uid).setData(["photoURL": url, "updatedAt": FieldValue.serverTimestamp()])
+        // merge (Oct 23 2026): the public profiles doc also holds the username
+        try? await db.collection("profiles").document(user.uid).setData(["photoURL": url, "updatedAt": FieldValue.serverTimestamp()], merge: true)
     }
 
     static func squareJpeg(_ image: UIImage, size: CGFloat = 512) -> Data? {
