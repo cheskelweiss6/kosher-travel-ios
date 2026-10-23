@@ -1,0 +1,3 @@
+[KT] launch route=area:us:new-york-city/hub:restaurants#native
+[KT] city new-york-city: traveler places=0 reviewed places=0
+[KT] feed source=firestore docs=10 firebase=true

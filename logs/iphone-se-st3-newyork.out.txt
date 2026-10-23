@@ -1,0 +1,2 @@
+[KT] launch route=state:new-york#native
+[KT] feed source=firestore docs=10 firebase=true

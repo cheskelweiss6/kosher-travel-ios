@@ -1,0 +1,2 @@
+[KT] launch route=home
+[KT] feed source=firestore docs=10 firebase=true

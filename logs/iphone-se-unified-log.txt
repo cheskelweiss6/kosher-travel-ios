@@ -1,0 +1,663 @@
+getpwuid_r did not find a match for uid 501
+Timestamp               Ty Process[PID:TID]
+2026-10-23 13:51:05.281 Df KosherTravel[31025:15bf1] [com.apple.xpc:connection] [0x1055cf560] activating connection: mach=true listener=false peer=false name=com.apple.cfprefsd.daemon
+2026-10-23 13:51:05.436 Df KosherTravel[31025:15bf1] (libMobileGestalt.dylib) No persisted cache on this platform.
+2026-10-23 13:51:05.442 A  KosherTravel[31025:15c36] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-10-23 13:51:05.449 A  KosherTravel[31025:15c36] (Security) SecItemCopyMatching_ios
+2026-10-23 13:51:05.451 Df KosherTravel[31025:15c36] [com.apple.securityd:secitemratelimit] Not internal release, disabling SIRL
+2026-10-23 13:51:05.452 Df KosherTravel[31025:15c36] [com.apple.securityd:thread-local-client-debug] SecSecurityClientGet new thread!
+2026-10-23 13:51:05.455 Df KosherTravel[31025:15c36] [com.apple.securityd:keychain] System Keychain Always Supported set via feature flag to disabled
+2026-10-23 13:51:05.455 Df KosherTravel[31025:15c36] [com.apple.xpc:connection] [0x1055e0690] activating connection: mach=true listener=false peer=false name=com.apple.securityd
+2026-10-23 13:51:05.507 Df KosherTravel[31025:15c3f] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-10-23 13:51:05.507 Df KosherTravel[31025:15c36] [com.apple.BoardServices:XPCErrors] [C:1] Alloc com.apple.frontboard.systemappservices
+2026-10-23 13:51:05.507 Df KosherTravel[31025:15c3f] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-10-23 13:51:05.508 Df KosherTravel[31025:15c3f] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x1055e6410>
+2026-10-23 13:51:05.508 Df KosherTravel[31025:15c3f] [com.apple.runningboard:connection] Initializing connection
+2026-10-23 13:51:05.508 Df KosherTravel[31025:15c3f] [com.apple.runningboard:process] Removing all cached process handles
+2026-10-23 13:51:05.508 Df KosherTravel[31025:15c36] [com.apple.xpc:connection] [0x108c443c0] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-10-23 13:51:05.508 Df KosherTravel[31025:15c3f] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-10-23 13:51:05.509 Df KosherTravel[31025:15c3f] [com.apple.xpc:connection] [0x108c44500] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-10-23 13:51:05.511 A  KosherTravel[31025:15c41] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-10-23 13:51:05.524 Df KosherTravel[31025:15c43] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-10-23 13:51:05.525 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Application] Deactivation reason added: 10; deactivation reasons: 0 -> 1024; animating application lifecycle event: 0
+2026-10-23 13:51:05.525 Df KosherTravel[31025:15bf1] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.open
+2026-10-23 13:51:05.526 Df KosherTravel[31025:15bf1] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.workspace-service
+2026-10-23 13:51:05.526 Df KosherTravel[31025:15bf1] [com.apple.FrontBoard:Common] FBSWorkspace registering source: com.apple.frontboard.systemappservices
+2026-10-23 13:51:05.526 A  KosherTravel[31025:15c36] (RunningBoardServices) didChangeInheritances
+2026-10-23 13:51:05.528 Df KosherTravel[31025:15c43] [com.apple.runningboard:connection] Handshake succeeded
+2026-10-23 13:51:05.528 Df KosherTravel[31025:15c43] [com.apple.runningboard:connection] Identity resolved as app<com.yourkoshertravel.app((null))>
+2026-10-23 13:51:05.528 Df KosherTravel[31025:15bf1] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x105fb5020; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.workspace-service>
+2026-10-23 13:51:05.528 Df KosherTravel[31025:15bf1] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x105d58dc0 com.apple.frontboard.systemappservices> attempting immediate handshake from activate
+2026-10-23 13:51:05.529 Df KosherTravel[31025:15c3f] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x1055e6410>
+2026-10-23 13:51:05.529 Df KosherTravel[31025:15bf1] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x105d58dc0 com.apple.frontboard.systemappservices> sent handshake
+2026-10-23 13:51:05.529 Df KosherTravel[31025:15c3f] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x105d14a40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1067 (elapsed = 0).
+2026-10-23 13:51:05.529 Df KosherTravel[31025:15bf1] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x105fb5320>
+2026-10-23 13:51:05.530 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UIApplicationSceneKeyboardSettings on FBSSceneSettings
+2026-10-23 13:51:05.533 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneOcclusionSettings> on FBSSceneSettings
+2026-10-23 13:51:05.533 Df KosherTravel[31025:15bf1] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x108c44780> for initial
+2026-10-23 13:51:05.533 Df KosherTravel[31025:15bf1] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x108c44780> for CADisplay KVO
+2026-10-23 13:51:05.534 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneInterfaceProtectionSettings> on FBSSceneSettings
+2026-10-23 13:51:05.535 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferencesHostSettingsExtension on FBSSceneSettings
+2026-10-23 13:51:05.536 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneSafeAreaSettingsExtension on FBSSceneSettings
+2026-10-23 13:51:05.537 Df KosherTravel[31025:15bf1] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 1, category name = (null)
+2026-10-23 13:51:05.538 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferenceClientSettingsExtension on FBSSceneClientSettings
+2026-10-23 13:51:05.538 Df KosherTravel[31025:15bf1] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 0, category name = (null)
+2026-10-23 13:51:05.539 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIHomeAffordanceHostSceneSettings> on FBSSceneSettings
+2026-10-23 13:51:05.539 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISystemShellSceneHostingEnvironmentSettings on FBSSceneSettings
+2026-10-23 13:51:05.540 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneRenderingEnvironmentSettings on FBSSceneSettings
+2026-10-23 13:51:05.540 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneRenderingEnvironmentClientSettings> on FBSSceneClientSettings
+2026-10-23 13:51:05.540 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneTransitioningHostSettings> on FBSSceneSettings
+2026-10-23 13:51:05.540 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneFocusSystemSettings> on FBSSceneSettings
+2026-10-23 13:51:05.540 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationSettingsExtension on FBSSceneSettings
+2026-10-23 13:51:05.541 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationClientSettingsExtension on FBSSceneClientSettings
+2026-10-23 13:51:05.541 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneWindowingControlClientSettings on FBSSceneClientSettings
+2026-10-23 13:51:05.541 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingContentSizePreferenceClientSettings> on FBSSceneClientSettings
+2026-10-23 13:51:05.542 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneHostingTraitCollectionPropagationSettings on FBSSceneSettings
+2026-10-23 13:51:05.542 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationSettings> on FBSSceneSettings
+2026-10-23 13:51:05.542 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationClientSettings> on FBSSceneClientSettings
+2026-10-23 13:51:05.543 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingEventDeferringSettings> on FBSSceneSettings
+2026-10-23 13:51:05.544 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneSettings
+2026-10-23 13:51:05.545 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneClientSettings
+2026-10-23 13:51:05.545 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingViewControllerPreferencePropagationClientSettings> on FBSSceneClientSettings
+2026-10-23 13:51:05.545 Df KosherTravel[31025:15c3f] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneZoomTransitionSettings> on FBSSceneSettings
+2026-10-23 13:51:05.546 Df KosherTravel[31025:15c47] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneSettingsCore on FBSSceneSettings
+2026-10-23 13:51:05.548 Df KosherTravel[31025:15c47] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneClientSettingsCore on FBSSceneClientSettings
+2026-10-23 13:51:05.553 Df KosherTravel[31025:15c47] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneSettings setting counterpart class: UIApplicationSceneSettings
+2026-10-23 13:51:05.553 Df KosherTravel[31025:15bf1] [com.apple.dt.xctest:Default] Registering for test daemon availability notify post.
+2026-10-23 13:51:05.554 Df KosherTravel[31025:15bf1] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-10-23 13:51:05.554 Df KosherTravel[31025:15c47] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneClientSettings setting counterpart class: UIApplicationSceneClientSettings
+2026-10-23 13:51:05.554 Df KosherTravel[31025:15bf1] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-10-23 13:51:05.555 Df KosherTravel[31025:15c47] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneTransitionContextCore on FBSSceneTransitionContext
+2026-10-23 13:51:05.555 Df KosherTravel[31025:15bf1] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-10-23 13:51:05.556 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Application] Deactivation reason added: 11; deactivation reasons: 1024 -> 3072; animating application lifecycle event: 0
+2026-10-23 13:51:05.559 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Application] Deactivation reason removed: 10; deactivation reasons: 3072 -> 2048; animating application lifecycle event: 0
+2026-10-23 13:51:05.560 Df KosherTravel[31025:15bf1] [com.apple.UIKit:EventBus] Event Timing Profile for Touch: not found, path="/System/Library/EventTimingProfiles/Sim.Touch.plist"
+2026-10-23 13:51:05.561 Df KosherTravel[31025:15bf1] [com.apple.UIKit:EventBus] Event Timing Profile for Pencil: not found, path="/System/Library/EventTimingProfiles/Sim.Pencil.plist"
+2026-10-23 13:51:05.561 Df KosherTravel[31025:15bf1] [com.apple.UIKit:UpdateScheduler] Selected display: name=LCD (PurpleMain), id=1
+2026-10-23 13:51:05.565 Df KosherTravel[31025:15bf1] [com.apple.app_launch_measurement:ApplicationLaunch] alm_acquire_pageins_recording_assertion: acquired pageins recording assertion!
+2026-10-23 13:51:05.570 Df KosherTravel[31025:15bf1] [com.apple.UIKit:BackgroundTask] Will add backgroundTask with taskName: Persistent SceneSession Map Update, expirationHandler: <__NSGlobalBlock__: 0x1e78c84e8>
+2026-10-23 13:51:05.570 Df KosherTravel[31025:15bf1] [com.apple.UIKit:BackgroundTask] Reusing background assertion <BKSProcessAssertion: 0x1055e6410>
+2026-10-23 13:51:05.570 Df KosherTravel[31025:15bf1] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x1055e6410>
+2026-10-23 13:51:05.570 Df KosherTravel[31025:15bf1] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x108d3cd80>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 1067 (elapsed = 0).
+2026-10-23 13:51:05.571 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Application] Deactivation reason added: 5; deactivation reasons: 2048 -> 2080; animating application lifecycle event: 1
+2026-10-23 13:51:05.571 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Should send trait collection or coordinate space update, interface style 1 -> 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:05.572 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:05.572 Df KosherTravel[31025:15bf1] [com.apple.UIKit:HomeAffordanceObservation] Initializing: <_UIHomeAffordanceSceneNotifier: 0x108d64850>; with scene: <UIWindowScene: 0x1055e6550>
+2026-10-23 13:51:05.572 Df KosherTravel[31025:15bf1] [com.apple.BacklightServices:scenes] 0x108d11b00 setDelegate:<0x108d120a0 _UIBacklightEnvironment> hasDelegate:YES for environment:sceneID:com.yourkoshertravel.app-default
+2026-10-23 13:51:05.573 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:05.573 Df KosherTravel[31025:15bf1] [com.apple.UIKit:EventDeferring] [0x108d647e0] Initialized with scene: <UIWindowScene: 0x1055e6550>; behavior: <_UIEventDeferringBehavior_iOS: 0x105fb7160>; availableForProcess: 1, systemShellManagesKeyboardFocus: 1
+2026-10-23 13:51:05.573 Df KosherTravel[31025:15bf1] [com.apple.BoardServices:XPCErrors] [C:2] Alloc com.apple.backboard.hid-services.xpc
+2026-10-23 13:51:05.573 Df KosherTravel[31025:15bf1] [com.apple.xpc:connection] [0x108c45040] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-10-23 13:51:05.575 Df KosherTravel[31025:15c36] [com.apple.BackBoard:EventDelivery] BKSHIDEventObserver - connection activation
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x108d0e3a0; process scope; status: target> was:none
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to LastOneWins
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Scene target of keyboard event deferring environment did change: 1; scene: UIWindowScene: 0x1055e6550; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.yourkoshertravel.app-default
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.UIKit:EventDeferring] [0x108d647e0] Scene target of event deferring environments did update: scene: 0x1055e6550; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x1055e6550; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.yourkoshertravel.app-default
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Stack[KeyWindow] 0x108d121c0: Taking no further action for migration from LastOneWins -> SystemShellManaged as there are no scenes
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to SystemShellManaged
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Key window needs update: 0; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x1055e6550; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x0; reason: UIWindowScene: 0x1055e6550: Window scene became target of keyboard environment
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:05.576 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:05.577 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:05.660 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Orientation] <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9) Scene updated orientation preferences: none -> ( Pu )
+2026-10-23 13:51:05.678 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Key window API is scene-level: YES
+2026-10-23 13:51:05.678 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] UIWindowScene: 0x1055e6550: Window became key in scene: UIWindow: 0x108cac400; contextId: 0xF045C97F: reason: UIWindowScene: 0x1055e6550: Window requested to become key in scene: 0x108cac400
+2026-10-23 13:51:05.678 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Key window needs update: 1; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x1055e6550; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x108cac400; reason: UIWindowScene: 0x1055e6550: Window requested to become key in scene: 0x108cac400
+2026-10-23 13:51:05.678 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Window did become application key: UIWindow: 0x108cac400; contextId: 0xF045C97F; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.yourkoshertravel.app-default
+2026-10-23 13:51:05.678 Df KosherTravel[31025:15bf1] [com.apple.UIKit:EventDeferring] [0x108d647e0] Begin local event deferring requested for token: 0x108d0c9c0; environments: 1; reason: UIWindowScene: 0x1055e6550: Begin event deferring in keyboardFocus for window: 0x108cac400
+2026-10-23 13:51:05.679 Df KosherTravel[31025:15c36] [com.apple.BackBoard:EventDelivery] BKSHIDEventDeliveryManager - connection activation
+2026-10-23 13:51:05.683 Df KosherTravel[31025:15c41] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x108d0e3a0; token: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.yourkoshertravel.app-default; status: ancestor> was:target
+2026-10-23 13:51:05.721 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:05.723 Df KosherTravel[31025:15bf1] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.yourkoshertravel.app-default  persistentID: B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9
+2026-10-23 13:51:05.723 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Application] Ignoring already applied deactivation reason: 5; deactivation reasons: 2080
+2026-10-23 13:51:05.723 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Application] Deactivation reason added: 12; deactivation reasons: 2080 -> 6176; animating application lifecycle event: 1
+2026-10-23 13:51:05.723 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Application] Deactivation reason removed: 11; deactivation reasons: 6176 -> 4128; animating application lifecycle event: 1
+2026-10-23 13:51:05.724 Df KosherTravel[31025:15bf1] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneIntelligenceSupportSettings> on FBSSceneSettings
+2026-10-23 13:51:05.727 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:05.727 Df KosherTravel[31025:15c41] [com.apple.UIIntelligenceSupport:xpc] establishing connection to agent
+2026-10-23 13:51:05.730 A  KosherTravel[31025:15bf1] (CoreFoundation) Updating Key-Value Observers Of Preferences
+2026-10-23 13:51:05.734 Df KosherTravel[31025:15c41] [com.apple.xpc:session] [0x108cc2760] Session created.
+2026-10-23 13:51:05.734 Df KosherTravel[31025:15c41] [com.apple.xpc:session] [0x108cc2760] Session created from connection [0x108df08c0]
+2026-10-23 13:51:05.734 Df KosherTravel[31025:15c41] [com.apple.xpc:connection] [0x108df08c0] activating connection: mach=true listener=false peer=false name=com.apple.uiintelligencesupport.agent
+2026-10-23 13:51:05.734 Df KosherTravel[31025:15c41] [com.apple.xpc:session] [0x108cc2760] Session activated
+2026-10-23 13:51:06.085 Df KosherTravel[31025:15c47] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 2
+2026-10-23 13:51:06.085 Df KosherTravel[31025:15c47] [com.apple.UIKit:BackgroundTask] Ending task with identifier 2 and description: <_UIBackgroundTaskInfo: 0x108d3cd80>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 1067 (elapsed = 0), _expireHandler: <__NSGlobalBlock__: 0x1e78c84e8>
+2026-10-23 13:51:06.086 Df KosherTravel[31025:15c47] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x1055e6410> (used by background task with identifier 2: <_UIBackgroundTaskInfo: 0x108d3cd80>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 1067 (elapsed = 0))
+2026-10-23 13:51:06.230 Df KosherTravel[31025:15c3f] [com.apple.xpc:connection] [0x108df1180] activating connection: mach=true listener=false peer=false name=com.apple.fontservicesd
+2026-10-23 13:51:06.295 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:06.385 Df KosherTravel[31025:15bf1] [com.apple.network:] networkd_settings_read_from_file_locked initialized networkd settings by reading plist directly
+2026-10-23 13:51:06.385 Df KosherTravel[31025:15bf1] [com.apple.network:] networkd_settings_read_from_file_locked initialized networkd settings by reading plist directly
+2026-10-23 13:51:06.386 Df KosherTravel[31025:15bf1] [com.apple.network:path] nw_path_evaluator_start [BF22D3B4-740C-4F90-AF1B-29E7B12F06A6 <NULL> generic, multipath service: handover, attribution: developer]
+	path: satisfied (Path is satisfied), interface: en0
+2026-10-23 13:51:06.548 Df KosherTravel[31025:15c3f] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 1
+2026-10-23 13:51:06.548 Df KosherTravel[31025:15c3f] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x105d14a40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1067 (elapsed = 1), _expireHandler: (null)
+2026-10-23 13:51:06.548 Df KosherTravel[31025:15c3f] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x1055e6410> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x105d14a40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1067 (elapsed = 1))
+2026-10-23 13:51:06.548 Df KosherTravel[31025:15c3f] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x1055e6410> for task identifier: 1
+2026-10-23 13:51:06.703 Df KosherTravel[31025:15bf1] [PrototypeTools:domain] Not observing PTDefaults on customer install.
+2026-10-23 13:51:06.724 F  KosherTravel[31025:15bf1] [com.apple.runtime-issues:SwiftUI] Invalid frame dimension (negative or non-finite).
+2026-10-23 13:51:06.725 A  KosherTravel[31025:15bf1] (libswiftos.dylib) Activity for state dumps
+2026-10-23 13:51:06.727 F  KosherTravel[31025:15bf1] [com.apple.runtime-issues:SwiftUI] Invalid frame dimension (negative or non-finite).
+2026-10-23 13:51:06.727 A  KosherTravel[31025:15bf1] (libswiftos.dylib) Activity for state dumps
+2026-10-23 13:51:06.818 Df KosherTravel[31025:15bf1] [com.apple.CoreAnalytics:client] No XPC connection in Simulator
+2026-10-23 13:51:06.828 Df KosherTravel[31025:15c44] (CoreVideo) Pixel format registry initialized. Constant classes enabled.
+2026-10-23 13:51:06.858 Df KosherTravel[31025:15c44] [com.apple.xpc:connection] [0x1098f66c0] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-10-23 13:51:06.858 Df KosherTravel[31025:15c44] [com.apple.xpc:connection] [0x1098f6300] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-10-23 13:51:06.859 Df KosherTravel[31025:15c44] [com.apple.xpc:connection] [0x1098f6440] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-10-23 13:51:06.867 Df KosherTravel[31025:15c71] [com.apple.CFNetwork:Default] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> resuming, timeouts(12.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:06.867 A  KosherTravel[31025:15c71] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-10-23 13:51:06.877 Df KosherTravel[31025:15c72] [com.apple.FileURL:default] kExcludedFromBackupXattrName set on path: /Users/runner/Library/Developer/CoreSimulator/Devices/56D35C0D-1155-4499-9271-7FFA19AB0A54/data/Containers/Data/Application/122580AC-0710-4B93-928F-5BDE856BEDF4/Library/Application Support/firestore/__FIRAPP_DEFAULT/kosher-travel-app/main
+2026-10-23 13:51:06.895 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Initializing NSHTTPCookieStorage singleton
+2026-10-23 13:51:06.896 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Initializing CFHTTPCookieStorage singleton
+2026-10-23 13:51:06.896 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Creating default cookie storage with process/bundle identifier
+2026-10-23 13:51:06.896 A  KosherTravel[31025:15c43] (libsystem_containermanager.dylib) container_system_group_path_for_identifier
+2026-10-23 13:51:06.896 Df KosherTravel[31025:15c43] [com.apple.containermanager:xpc] Requesting container lookup; class = 13, identifier = com.apple.nsurlsessiond, group_identifier = systemgroup.com.apple.nsurlstoragedresources, create = 1, temp = 0, euid = 501, uid = 501
+2026-10-23 13:51:06.897 A  KosherTravel[31025:15c43] (libsystem_containermanager.dylib) container_query_t
+2026-10-23 13:51:06.897 Df KosherTravel[31025:15c43] [com.apple.containermanager:xpc] Query; euid = 501, uid = 501, class = 13, identifier = [com.apple.nsurlsessiond](1), flags = 900000003
+2026-10-23 13:51:06.899 Df KosherTravel[31025:15c43] [com.apple.containermanager:unspecified] _container_query_get_result_at_index: success
+2026-10-23 13:51:06.899 A  KosherTravel[31025:15c43] (libsystem_containermanager.dylib) container_copy_object
+2026-10-23 13:51:06.899 Df KosherTravel[31025:15c43] [com.apple.containermanager:unspecified] container_system_group_path_for_identifier: success
+2026-10-23 13:51:06.900 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Initializing AlternativeServices Storage singleton
+2026-10-23 13:51:06.901 Df KosherTravel[31025:15c43] [com.apple.FileURL:default] kExcludedFromBackupXattrName set on path: /Users/runner/Library/Developer/CoreSimulator/Devices/56D35C0D-1155-4499-9271-7FFA19AB0A54/data/Containers/Data/Application/122580AC-0710-4B93-928F-5BDE856BEDF4/Library/HTTPStorages/com.yourkoshertravel.app
+2026-10-23 13:51:06.905 Df KosherTravel[31025:15c72] [com.apple.network:path] nw_path_evaluator_start [EA76D114-F7B4-4A54-A0DE-95659C446D55 <NULL> generic, multipath service: handover, attribution: developer]
+	path: satisfied (Path is satisfied), interface: en0
+2026-10-23 13:51:06.905 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 0: creating secure tcp or quic connection
+2026-10-23 13:51:06.913 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Default] Garbage collection for alternative services
+2026-10-23 13:51:06.921 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 1: enabling TLS
+2026-10-23 13:51:06.921 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 1: starting, TC(0x0)
+2026-10-23 13:51:06.922 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1 07CC4E41-7E39-4FEC-8A00-789CA6B30774 Hostname#1089e4f5:443 quic-connection, url: https://kosher-travel-news.sites.tab.bot/api/news, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{3ACE14DC-BE60-4A9E-B7DF-6D1240FF7588}{(null)}{Y}{2}{0x0} (private), proc: 3206D44A-81C0-3212-9A50-0501ED1A1B9D, delegated upid: 0] start
+2026-10-23 13:51:06.922 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1 Hostname#1089e4f5:443 initial parent-flow ((null))] event: path:start @0.000s
+2026-10-23 13:51:06.927 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1 Hostname#1089e4f5:443 waiting parent-flow (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.005s, uuid: DF64B632-C9A0-4BBC-9B69-C7616678932A
+2026-10-23 13:51:06.943 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1 Hostname#1089e4f5:443 in_progress parent-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_connect @0.021s
+2026-10-23 13:51:06.943 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C1] reporting state preparing
+2026-10-23 13:51:06.957 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1 Hostname#1089e4f5:443 in_progress parent-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_child @0.035s
+2026-10-23 13:51:06.958 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1.1 Hostname#1089e4f5:443 initial path ((null))] event: path:start @0.035s
+2026-10-23 13:51:06.958 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1.1 Hostname#1089e4f5:443 waiting path (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.036s, uuid: DF64B632-C9A0-4BBC-9B69-C7616678932A
+2026-10-23 13:51:06.958 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1.1 Hostname#1089e4f5:443 in_progress transform (satisfied (Path is satisfied), interface: en0)] event: transform:start @0.036s
+2026-10-23 13:51:06.958 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1.1.1 Hostname#1089e4f5:443 initial path ((null))] event: path:start @0.036s
+2026-10-23 13:51:06.968 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1.1.1 Hostname#1089e4f5:443 waiting path (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.046s, uuid: 1674A4C0-E4D4-4381-9305-742E9036C08D
+2026-10-23 13:51:06.975 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1.1.1 Hostname#1089e4f5:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] event: resolver:start_dns @0.053s
+2026-10-23 13:51:06.980 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> setting up Connection 1
+2026-10-23 13:51:07.014 Df KosherTravel[31025:15c74] [com.apple.network:connection] nw_endpoint_resolver_update [C1.1.1 Hostname#1089e4f5:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#c22f1b9e:443
+2026-10-23 13:51:07.014 Df KosherTravel[31025:15c74] [com.apple.network:connection] nw_endpoint_resolver_update [C1.1.1 Hostname#1089e4f5:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#950363c8:443
+2026-10-23 13:51:07.014 Df KosherTravel[31025:15c74] [com.apple.network:connection] [C1.1.1 Hostname#1089e4f5:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] event: resolver:receive_dns @0.092s
+2026-10-23 13:51:07.014 Df KosherTravel[31025:15c74] [com.apple.network:connection] [C1.1.1.1 IPv4#c22f1b9e:443 initial path ((null))] event: path:start @0.092s
+2026-10-23 13:51:07.014 Df KosherTravel[31025:15c74] [com.apple.network:connection] [C1.1.1.1 IPv4#c22f1b9e:443 waiting path (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.092s, uuid: 4EDF1E1A-8014-4616-86F9-7E045A63E735
+2026-10-23 13:51:07.015 Df KosherTravel[31025:15c74] [com.apple.network:connection] [C1.1.1.1 IPv4#c22f1b9e:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_connect @0.093s
+2026-10-23 13:51:07.021 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_socket_handle_socket_event [C1.1.1.1:3] Socket received CONNECTED event
+2026-10-23 13:51:07.021 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_flow_connected [C1.1.1.1 IPv4#c22f1b9e:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] Transport protocol connected (socket)
+2026-10-23 13:51:07.022 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C1.1.1.1 IPv4#c22f1b9e:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:finish_transport @0.099s
+2026-10-23 13:51:07.024 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_session_apply_protocol_options_for_transport_block_invoke_2(2367) [C1.1.1.1:2][0x10a540060] TLS configured [server(0) min_version(0x0303) max_version(0x0304) name(redacted) tickets(false) false_start(false) enforce_ev(false) enforce_ats(false) ats_non_pfs_ciphersuite_allowed(false) cc_mode_enforced(false) ech(false) pqtls(true), pake(false) skip_ats_trust(false)]
+2026-10-23 13:51:07.024 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2806) [C1.1.1.1:2][0x10a540060] Client handshake started
+2026-10-23 13:51:07.024 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS client enter_early_data
+2026-10-23 13:51:07.026 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS client read_server_hello
+2026-10-23 13:51:07.041 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client read_hello_retry_request
+2026-10-23 13:51:07.041 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client read_server_hello
+2026-10-23 13:51:07.041 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client read_encrypted_extensions
+2026-10-23 13:51:07.041 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client read_certificate_request
+2026-10-23 13:51:07.041 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client read_server_certificate
+2026-10-23 13:51:07.041 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client read_server_certificate_verify
+2026-10-23 13:51:07.041 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_evaluate_trust_async(2249) [C1.1.1.1:2][0x10a540060] Performing external trust evaluation
+2026-10-23 13:51:07.043 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:07.043 A  KosherTravel[31025:15c74] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:07.043 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:07.043 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_evaluate_trust_async_external(2234) [C1.1.1.1:2][0x10a540060] Asyncing for external verify block
+2026-10-23 13:51:07.043 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Connection 1: asked to evaluate TLS Trust
+2026-10-23 13:51:07.044 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> auth completion disp=1 cred=0x0
+2026-10-23 13:51:07.047 Df KosherTravel[31025:15c43] [com.apple.securityd:trust] (Trust 0x10a521500) No pending evals, starting
+2026-10-23 13:51:07.047 A  KosherTravel[31025:15c43] (Security) SecTrustEvaluateIfNecessaryFastAsync
+2026-10-23 13:51:07.047 Df KosherTravel[31025:15c43] [com.apple.xpc:connection] [0x10a449540] activating connection: mach=true listener=false peer=false name=com.apple.trustd
+2026-10-23 13:51:07.061 Df KosherTravel[31025:15c43] [com.apple.xpc:connection] [0x10a449a40] activating connection: mach=true listener=false peer=false name=com.apple.trustd
+2026-10-23 13:51:07.109 Df KosherTravel[31025:15c43] [com.apple.securityd:trust] (Trust 0x10a521500) Completed async eval kickoff
+2026-10-23 13:51:07.167 Df KosherTravel[31025:15c74] [com.apple.securityd:trust] (Trust 0x10a521500) trustd returned 4
+2026-10-23 13:51:07.167 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] System Trust Evaluation yielded status(0)
+2026-10-23 13:51:07.167 Df KosherTravel[31025:15c74] [com.apple.securityd:trust] (Trust 0x10a521200) No pending evals, starting
+2026-10-23 13:51:07.167 A  KosherTravel[31025:15c74] (Security) SecTrustEvaluateIfNecessaryFastAsync
+2026-10-23 13:51:07.167 Df KosherTravel[31025:15c74] [com.apple.xpc:connection] [0x10a605180] activating connection: mach=true listener=false peer=false name=com.apple.trustd
+2026-10-23 13:51:07.168 Df KosherTravel[31025:15c74] [com.apple.securityd:trust] (Trust 0x10a521200) Completed async eval kickoff
+2026-10-23 13:51:07.197 Df KosherTravel[31025:15c74] [com.apple.xpc:connection] [0x10a449a40] invalidated because the current process cancelled the connection by calling xpc_connection_cancel()
+2026-10-23 13:51:07.198 Df KosherTravel[31025:15c74] [com.apple.securityd:trust] (Trust 0x10a521200) trustd returned 4
+2026-10-23 13:51:07.200 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Connection 1: TLS Trust result 0
+2026-10-23 13:51:07.200 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_evaluate_trust_async_external_block_invoke_3(2148) [C1.1.1.1:2][0x10a540060] Returning from external verify block with result: true
+2026-10-23 13:51:07.200 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_certificate_verify_callback(2430) [C1.1.1.1:2][0x10a540060] Certificate verification result: OK
+2026-10-23 13:51:07.201 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client read_server_finished
+2026-10-23 13:51:07.201 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client send_end_of_early_data
+2026-10-23 13:51:07.204 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client send_client_encrypted_extensions
+2026-10-23 13:51:07.205 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client send_client_certificate
+2026-10-23 13:51:07.205 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client complete_second_flight
+2026-10-23 13:51:07.205 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS 1.3 client done
+2026-10-23 13:51:07.205 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS client finish_client_handshake
+2026-10-23 13:51:07.205 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C1.1.1.1:2][0x10a540060] Client handshake state: TLS client done
+2026-10-23 13:51:07.205 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2812) [C1.1.1.1:2][0x10a540060] Client handshake done
+2026-10-23 13:51:07.205 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:07.206 A  KosherTravel[31025:15c74] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:07.206 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:07.206 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] nw_protocol_boringssl_signal_connected(895) [C1.1.1.1:2][0x10a540060] TLS connected [server(0) version(0x0304) ciphersuite(TLS_AES_256_GCM_SHA384) group(0x11ec) signature_alg(0x0403) alpn(h2) resumed(0) offered_ticket(0) in_early_data(0) early_data_accepted(0) false_started(0) ocsp_received(0) sct_received(0) connect_time(181ms) flight_time(17ms) rtt(17ms) write_stalls(0) read_stalls(2) pake(0x0000)]
+2026-10-23 13:51:07.206 Df KosherTravel[31025:15c74] [com.apple.network:connection] nw_flow_connected [C1.1.1.1 IPv4#c22f1b9e:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] Output protocol connected (CFNetworkConnection-2707649913)
+2026-10-23 13:51:07.213 Df KosherTravel[31025:15c74] [com.apple.network:connection] [C1.1.1.1 IPv4#c22f1b9e:443 ready socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:child_finish_connect @0.291s
+2026-10-23 13:51:07.213 Df KosherTravel[31025:15c74] [com.apple.network:connection] [C1.1.1 Hostname#1089e4f5:443 ready resolver (satisfied (Path is satisfied), interface: en0)] event: flow:child_finish_connect @0.291s
+2026-10-23 13:51:07.213 Df KosherTravel[31025:15c74] [com.apple.network:connection] [C1.1 Hostname#1089e4f5:443 ready transform (satisfied (Path is satisfied), interface: en0)] event: flow:child_finish_connect @0.291s
+2026-10-23 13:51:07.213 Df KosherTravel[31025:15c74] [com.apple.network:connection] nw_flow_connected [C1 IPv4#c22f1b9e:443 in_progress parent-flow (satisfied (Path is satisfied), interface: en0)] Output protocol connected (endpoint_flow)
+2026-10-23 13:51:07.219 Df KosherTravel[31025:15c74] [com.apple.network:connection] [C1 IPv4#c22f1b9e:443 ready parent-flow (satisfied (Path is satisfied), interface: en0)] event: flow:finish_connect @0.297s
+2026-10-23 13:51:07.220 Df KosherTravel[31025:15c74] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C1] reporting state ready
+2026-10-23 13:51:07.220 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:07.220 A  KosherTravel[31025:15c74] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:07.220 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:07.229 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:07.229 A  KosherTravel[31025:15c74] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:07.229 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:07.231 Df KosherTravel[31025:15c74] [com.apple.xpc:connection] [0x10a605180] invalidated because the current process cancelled the connection by calling xpc_connection_cancel()
+2026-10-23 13:51:07.231 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Connection 1: connected successfully
+2026-10-23 13:51:07.231 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Connection 1: TLS handshake complete
+2026-10-23 13:51:07.231 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Connection 1: ready C(N) E(N)
+2026-10-23 13:51:07.232 Df KosherTravel[31025:15c74] [com.apple.network:connection] [C1] event: client:connection_reused @0.310s
+2026-10-23 13:51:07.232 Df KosherTravel[31025:15c74] [com.apple.network:connection] nw_protocol_socket_notify [C1.1.1.1:3] nw_protocol_notification_type_connection_idle is false
+2026-10-23 13:51:07.239 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> now using Connection 1
+2026-10-23 13:51:07.240 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> sent request, body N 0
+2026-10-23 13:51:07.414 Df KosherTravel[31025:15bf1] [com.apple.xpc:connection] [0x10a781f40] activating connection: mach=true listener=false peer=false name=com.apple.IOSurface.Remote
+2026-10-23 13:51:07.438 A  KosherTravel[31025:15c72] (RunningBoardServices) didChangeInheritances
+2026-10-23 13:51:07.440 Df KosherTravel[31025:15bf1] [com.apple.xpc:connection] [0x10a780f00] activating connection: mach=true listener=false peer=false name=com.apple.lsd.mapdb
+2026-10-23 13:51:07.442 A  KosherTravel[31025:15c74] (RunningBoardServices) didChangeInheritances
+2026-10-23 13:51:07.496 Df KosherTravel[31025:15bf1] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [2C3A83B6-1D5E-4104-B22C-D06B55C61915] (reporting strategy default)>
+2026-10-23 13:51:07.506 E  KosherTravel[31025:15c72] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-23 13:51:07.506 Df KosherTravel[31025:15bf1] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [4A5F3946-6501-4AC2-81A0-91FB9E250A54] (reporting strategy default)>
+2026-10-23 13:51:07.506 Df KosherTravel[31025:15bf1] [com.apple.network:activity] Set activity <nw_activity 50:1 [2C3A83B6-1D5E-4104-B22C-D06B55C61915] (reporting strategy default)> as the global parent
+2026-10-23 13:51:07.508 Df KosherTravel[31025:15bf1] [com.apple.UIKit:UpdateScheduler] Target list changed: <CADisplay:LCD PurpleMain>
+2026-10-23 13:51:07.508 Df KosherTravel[31025:15bf1] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.yourkoshertravel.app-default  persistentID: B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9
+2026-10-23 13:51:07.509 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:07.523 Df KosherTravel[31025:15bf1] [com.apple.UIKit:EventDeferring] [0x108d647e0] Scene target of event deferring environments did update: scene: 0x1055e6550; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-10-23 13:51:07.524 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x1055e6550; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.yourkoshertravel.app-default
+2026-10-23 13:51:07.525 Df KosherTravel[31025:15bf1] [com.apple.Accessibility:AXCommon] Read Per-App on Init: Smart invert = (null)
+2026-10-23 13:51:07.528 Df KosherTravel[31025:15bf1] [com.apple.FrontBoard:SceneExtension] Realizing settings extension SBUISecureRenderingSettingsExtension on FBSSceneSettings
+2026-10-23 13:51:07.535 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:07.535 Df KosherTravel[31025:15bf1] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1055e6550> (B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9)
+2026-10-23 13:51:07.538 Df KosherTravel[31025:15bf1] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.yourkoshertravel.app-default  persistentID: B07D33ED-5D6B-4A4D-9300-DD6FB90BA8A9
+2026-10-23 13:51:07.539 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Application] Deactivation reason removed: 12; deactivation reasons: 4128 -> 32; animating application lifecycle event: 1
+2026-10-23 13:51:07.540 Df KosherTravel[31025:15bf1] [com.apple.KeyboardArbiter:Client] Send setDeactivating: N (-DeactivationReason:SuspendedEventsOnly)
+2026-10-23 13:51:07.546 Sd KosherTravel[31025:0] (21AB2359-DEEC-3444-94FE-B7257E43BE34) IOHIDManager State
+{
+    DispatchQueue = 0;
+    RunLoop = 1;
+    createOptions = 0;
+    isOpen = 0;
+    openOptions = 0;
+}
+2026-10-23 13:51:07.551 Df KosherTravel[31025:15bf1] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-10-23 13:51:07.649 Df KosherTravel[31025:15bf1] [com.apple.KeyboardArbiter:Client] startConnection
+2026-10-23 13:51:07.651 Df KosherTravel[31025:15bf1] [com.apple.xpc:connection] [0x109884140] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-10-23 13:51:07.655 Df KosherTravel[31025:15bf1] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-10-23 13:51:07.662 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyboardSceneDelegate] forceReloadInputViews
+2026-10-23 13:51:07.662 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyboardSceneDelegate] Reloading input views for key-window scene responder: <(null): 0x0; > force:Y
+2026-10-23 13:51:07.663 Df KosherTravel[31025:15bf1] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-10-23 13:51:07.697 Df KosherTravel[31025:15c93] [com.apple.CFNetwork:Default] TCP Conn [2:0x10a77c6e0] using empty proxy configuration
+2026-10-23 13:51:07.697 Df KosherTravel[31025:15c93] [com.apple.CFNetwork:Default] Stream client bypassing proxies on TCP Conn [2:0x10a77c6e0]
+2026-10-23 13:51:07.697 Df KosherTravel[31025:15c93] [com.apple.CFNetwork:Default] TCP Conn 0x10a77c6e0 started
+2026-10-23 13:51:07.697 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2 EE36E991-914D-4BBF-AB0F-B43123918D4D IPv6#e953eeef.443 tcp, definite, attribution: developer, context: Default Network Context (private), proc: 3206D44A-81C0-3212-9A50-0501ED1A1B9D, delegated upid: 0, no proxy, prohibit fallback, allow socket access] start
+2026-10-23 13:51:07.697 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2 IPv6#e953eeef.443 initial parent-flow ((null))] event: path:start @0.000s
+2026-10-23 13:51:07.697 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2 IPv6#e953eeef.443 waiting parent-flow (unsatisfied (No network route))] event: path:unsatisfied @0.000s, uuid: 1772A457-E8BA-4559-A54D-86756DF8A332
+2026-10-23 13:51:07.697 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C2] reporting state waiting
+2026-10-23 13:51:07.698 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2 IPv6#e953eeef.443 in_progress parent-flow (unsatisfied (No network route))] event: flow:start_connect @0.000s
+2026-10-23 13:51:07.698 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C2] reporting state preparing
+2026-10-23 13:51:07.698 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2 IPv6#e953eeef.443 in_progress parent-flow (unsatisfied (No network route))] event: flow:start_child @0.000s
+2026-10-23 13:51:07.698 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2.1 IPv6#e953eeef.443 initial path ((null))] event: path:start @0.000s
+2026-10-23 13:51:07.698 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2.1 IPv6#e953eeef.443 waiting path (unsatisfied (No network route))] event: path:unsatisfied @0.000s, uuid: 1772A457-E8BA-4559-A54D-86756DF8A332
+2026-10-23 13:51:07.698 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2.1 IPv6#e953eeef.443 failed path (unsatisfied (No network route))] event: null:null @0.001s
+2026-10-23 13:51:07.698 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2 IPv6#e953eeef.443 failed parent-flow (unsatisfied (No network route))] event: flow:child_failed @0.001s
+2026-10-23 13:51:07.699 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C2] reporting state failed error Network is down
+2026-10-23 13:51:07.701 E  KosherTravel[31025:15c3f] [com.apple.network:connection] nw_endpoint_flow_failed_with_error [C2 IPv6#e953eeef.443 failed parent-flow (unsatisfied (No network route))] already failing, returning
+2026-10-23 13:51:07.701 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C2 IPv6#e953eeef.443 failed parent-flow (unsatisfied (No network route))] event: flow:failed_connect @0.004s
+2026-10-23 13:51:07.702 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] TCP Conn 0x10a77c6e0 event 3. err: 50
+2026-10-23 13:51:07.702 E  KosherTravel[31025:15c3f] [com.apple.network:connection] nw_connection_get_connected_socket_block_invoke [C2] Client called nw_connection_get_connected_socket on unconnected nw_connection
+2026-10-23 13:51:07.702 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] TCP Conn 0x10a77c6e0 complete. fd: -1, err: 50
+2026-10-23 13:51:07.702 E  KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] TCP Conn 0x10a77c6e0 Failed : error 0:50 [50]
+2026-10-23 13:51:07.707 Df KosherTravel[31025:15bf1] [com.apple.network:activity] <nw_activity 50:1 [2C3A83B6-1D5E-4104-B22C-D06B55C61915] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 4662ms
+2026-10-23 13:51:07.707 Df KosherTravel[31025:15bf1] [com.apple.network:activity] <nw_activity 50:2 [4A5F3946-6501-4AC2-81A0-91FB9E250A54] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 4662ms
+2026-10-23 13:51:07.707 Df KosherTravel[31025:15bf1] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [2C3A83B6-1D5E-4104-B22C-D06B55C61915] (global parent) (reporting strategy default) complete (reason success)>
+2026-10-23 13:51:07.707 Df KosherTravel[31025:15bf1] [com.apple.network:activity] Unset the global parent activity
+2026-10-23 13:51:07.707 Df KosherTravel[31025:15bf1] [com.apple.app_launch_measurement:ApplicationLaunch] alm_release_pageins_recording_assertion: releasing pageins recording assertion
+2026-10-23 13:51:07.708 E  KosherTravel[31025:15c3f] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+2026-10-23 13:51:07.737 Df KosherTravel[31025:15c94] [com.apple.CFNetwork:Default] TCP Conn 0x10a77c6e0 canceled
+2026-10-23 13:51:07.739 Df KosherTravel[31025:15c94] [com.apple.CFNetwork:Default] TCP Conn [3:0x10a77c820] using empty proxy configuration
+2026-10-23 13:51:07.739 Df KosherTravel[31025:15c94] [com.apple.CFNetwork:Default] Stream client bypassing proxies on TCP Conn [3:0x10a77c820]
+2026-10-23 13:51:07.739 Df KosherTravel[31025:15c94] [com.apple.CFNetwork:Default] TCP Conn 0x10a77c820 started
+2026-10-23 13:51:07.776 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C2 EE36E991-914D-4BBF-AB0F-B43123918D4D IPv6#e953eeef.443 tcp, legacy-socket, definite, attribution: developer] cancel
+2026-10-23 13:51:07.777 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C2 IPv6#e953eeef.443 tcp, legacy-socket, definite, attribution: developer] cancelled
+2026-10-23 13:51:07.777 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C2] reporting state cancelled
+2026-10-23 13:51:07.777 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C3 8E90CD3D-4F3B-426E-962F-0C3D6D60219C IPv4#745b27a4:443 tcp, definite, attribution: developer, context: Default Network Context (private), proc: 3206D44A-81C0-3212-9A50-0501ED1A1B9D, delegated upid: 0, no proxy, prohibit fallback, allow socket access] start
+2026-10-23 13:51:07.777 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C3 IPv4#745b27a4:443 initial parent-flow ((null))] event: path:start @0.000s
+2026-10-23 13:51:07.777 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C3 IPv4#745b27a4:443 waiting parent-flow (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.000s, uuid: 3C624CE5-7ADB-4CDD-9320-AA4FE0EF9B98
+2026-10-23 13:51:07.778 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_socket_initialize_socket [C3:1] Not guarding fd 19
+2026-10-23 13:51:07.783 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C3 IPv4#745b27a4:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_connect @0.005s
+2026-10-23 13:51:07.783 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C3] reporting state preparing
+2026-10-23 13:51:07.854 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_socket_handle_socket_event [C3:1] Socket received CONNECTED event
+2026-10-23 13:51:07.854 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_flow_connected [C3 IPv4#745b27a4:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] Output protocol connected (socket)
+2026-10-23 13:51:07.854 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C3 IPv4#745b27a4:443 ready socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:finish_connect @0.077s
+2026-10-23 13:51:07.855 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C3] reporting state ready
+2026-10-23 13:51:07.856 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] TCP Conn 0x10a77c820 event 1. err: 0
+2026-10-23 13:51:07.856 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] TCP Conn 0x10a77c820 complete. fd: 20, err: 0
+2026-10-23 13:51:07.990 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> received response, status 200 content U
+2026-10-23 13:51:07.991 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> done using Connection 1
+2026-10-23 13:51:07.991 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C1] event: client:connection_idle @1.069s
+2026-10-23 13:51:07.992 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_protocol_socket_notify [C1.1.1.1:3] nw_protocol_notification_type_connection_idle is true
+2026-10-23 13:51:07.996 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> response ended
+2026-10-23 13:51:07.997 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Summary] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> summary for task success {transaction_duration_ms=1125, response_status=200, connection=1, protocol="h2", domain_lookup_duration_ms=39, connect_duration_ms=204, secure_connection_duration_ms=181, private_relay=false, request_start_ms=368, request_duration_ms=0, response_start_ms=1118, response_duration_ms=6, request_bytes=141, request_throughput_kbps=2930, response_bytes=6186, response_throughput_kbps=7816, cache_hit=false}
+2026-10-23 13:51:07.999 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <F0F5A062-0436-44BC-AB74-64564E366124>.<1> finished successfully
+2026-10-23 13:51:08.169 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <3B900592-6AFA-4B3D-B710-214604D38152>.<1> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.169 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.169 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] Task <B5F37F8B-F601-4632-A1BE-950FD7177E47>.<2> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.169 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <7D1D28C4-B1A8-429B-B3D9-1614FCBA99A2>.<4> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.172 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Connection 0: creating secure tcp or quic connection
+2026-10-23 13:51:08.172 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <7D1D28C4-B1A8-429B-B3D9-1614FCBA99A2>.<4> waiting for setup of Connection 4
+2026-10-23 13:51:08.172 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <B5F37F8B-F601-4632-A1BE-950FD7177E47>.<2> waiting for setup of Connection 4
+2026-10-23 13:51:08.172 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <3B900592-6AFA-4B3D-B710-214604D38152>.<1> waiting for setup of Connection 4
+2026-10-23 13:51:08.172 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Connection 4: enabling TLS
+2026-10-23 13:51:08.172 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Connection 4: starting, TC(0x0)
+2026-10-23 13:51:08.172 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4 C1F02171-46ED-4B67-BC53-BC7889E9F8B6 Hostname#1089e4f5:443 quic-connection, url: https://kosher-travel-news.sites.tab.bot/api/news/img, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{DC5F1EF2-2930-4DCC-B815-ED1D222F64B8}{(null)}{Y}{2}{0x0} (private), proc: 3206D44A-81C0-3212-9A50-0501ED1A1B9D, delegated upid: 0] start
+2026-10-23 13:51:08.173 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4 Hostname#1089e4f5:443 initial parent-flow ((null))] event: path:start @0.000s
+2026-10-23 13:51:08.174 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4 Hostname#1089e4f5:443 waiting parent-flow (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.001s, uuid: 7BF61EBF-F58F-46AE-855E-C90A95392E64
+2026-10-23 13:51:08.174 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4 Hostname#1089e4f5:443 in_progress parent-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_connect @0.001s
+2026-10-23 13:51:08.174 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C4] reporting state preparing
+2026-10-23 13:51:08.175 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4 Hostname#1089e4f5:443 in_progress parent-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_child @0.002s
+2026-10-23 13:51:08.175 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1 Hostname#1089e4f5:443 initial path ((null))] event: path:start @0.002s
+2026-10-23 13:51:08.175 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1 Hostname#1089e4f5:443 waiting path (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.002s, uuid: 7BF61EBF-F58F-46AE-855E-C90A95392E64
+2026-10-23 13:51:08.175 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1 Hostname#1089e4f5:443 in_progress transform (satisfied (Path is satisfied), interface: en0)] event: transform:start @0.002s
+2026-10-23 13:51:08.175 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1 Hostname#1089e4f5:443 initial path ((null))] event: path:start @0.002s
+2026-10-23 13:51:08.175 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1 Hostname#1089e4f5:443 waiting path (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.002s, uuid: B7762D4D-3108-4A7B-A160-A4E21DEF1263
+2026-10-23 13:51:08.176 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1 Hostname#1089e4f5:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] event: resolver:start_dns @0.003s
+2026-10-23 13:51:08.177 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> setting up Connection 4
+2026-10-23 13:51:08.177 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_endpoint_resolver_update [C4.1.1 Hostname#1089e4f5:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#c22f1b9e:443
+2026-10-23 13:51:08.177 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_endpoint_resolver_update [C4.1.1 Hostname#1089e4f5:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#950363c8:443
+2026-10-23 13:51:08.177 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1 Hostname#1089e4f5:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] event: resolver:receive_dns @0.004s
+2026-10-23 13:51:08.177 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1.1 IPv4#c22f1b9e:443 initial path ((null))] event: path:start @0.004s
+2026-10-23 13:51:08.178 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1.1 IPv4#c22f1b9e:443 waiting path (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.005s, uuid: CB5AB9CC-B8A4-4F62-8251-58C02D1A950A
+2026-10-23 13:51:08.178 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1.1 IPv4#c22f1b9e:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_connect @0.005s
+2026-10-23 13:51:08.183 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_socket_handle_socket_event [C4.1.1.1:3] Socket received CONNECTED event
+2026-10-23 13:51:08.183 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_flow_connected [C4.1.1.1 IPv4#c22f1b9e:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] Transport protocol connected (socket)
+2026-10-23 13:51:08.183 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1.1 IPv4#c22f1b9e:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:finish_transport @0.010s
+2026-10-23 13:51:08.184 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_session_apply_protocol_options_for_transport_block_invoke_2(2367) [C4.1.1.1:2][0x10b73c560] TLS configured [server(0) min_version(0x0303) max_version(0x0304) name(redacted) tickets(false) false_start(false) enforce_ev(false) enforce_ats(false) ats_non_pfs_ciphersuite_allowed(false) cc_mode_enforced(false) ech(false) pqtls(true), pake(false) skip_ats_trust(false)]
+2026-10-23 13:51:08.185 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2806) [C4.1.1.1:2][0x10b73c560] Client handshake started
+2026-10-23 13:51:08.185 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS client enter_early_data
+2026-10-23 13:51:08.185 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS client read_server_hello
+2026-10-23 13:51:08.190 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client read_hello_retry_request
+2026-10-23 13:51:08.190 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client read_server_hello
+2026-10-23 13:51:08.190 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client read_encrypted_extensions
+2026-10-23 13:51:08.191 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client read_certificate_request
+2026-10-23 13:51:08.191 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client read_server_certificate
+2026-10-23 13:51:08.191 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client read_server_certificate_verify
+2026-10-23 13:51:08.191 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_evaluate_trust_async(2249) [C4.1.1.1:2][0x10b73c560] Performing external trust evaluation
+2026-10-23 13:51:08.191 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.191 A  KosherTravel[31025:15c74] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:08.191 A  KosherTravel[31025:15c74] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.191 Df KosherTravel[31025:15c74] [com.apple.network:boringssl] boringssl_context_evaluate_trust_async_external(2234) [C4.1.1.1:2][0x10b73c560] Asyncing for external verify block
+2026-10-23 13:51:08.191 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Connection 4: asked to evaluate TLS Trust
+2026-10-23 13:51:08.192 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> auth completion disp=1 cred=0x0
+2026-10-23 13:51:08.192 Df KosherTravel[31025:15c74] [com.apple.securityd:trust] (Trust 0x10a70f600) No pending evals, starting
+2026-10-23 13:51:08.192 A  KosherTravel[31025:15c74] (Security) SecTrustEvaluateIfNecessaryFastAsync
+2026-10-23 13:51:08.193 Df KosherTravel[31025:15c74] [com.apple.xpc:connection] [0x108df0000] activating connection: mach=true listener=false peer=false name=com.apple.trustd
+2026-10-23 13:51:08.193 Df KosherTravel[31025:15c74] [com.apple.securityd:trust] (Trust 0x10a70f600) Completed async eval kickoff
+2026-10-23 13:51:08.315 Df KosherTravel[31025:15c72] [com.apple.securityd:trust] (Trust 0x10a70f600) trustd returned 4
+2026-10-23 13:51:08.315 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] System Trust Evaluation yielded status(0)
+2026-10-23 13:51:08.315 Df KosherTravel[31025:15c72] [com.apple.securityd:trust] (Trust 0x10a522340) No pending evals, starting
+2026-10-23 13:51:08.316 A  KosherTravel[31025:15c72] (Security) SecTrustEvaluateIfNecessaryFastAsync
+2026-10-23 13:51:08.316 Df KosherTravel[31025:15c72] [com.apple.xpc:connection] [0x108df3840] activating connection: mach=true listener=false peer=false name=com.apple.trustd
+2026-10-23 13:51:08.316 Df KosherTravel[31025:15c72] [com.apple.securityd:trust] (Trust 0x10a522340) Completed async eval kickoff
+2026-10-23 13:51:08.316 Df KosherTravel[31025:15c72] [com.apple.xpc:connection] [0x108df0000] invalidated because the current process cancelled the connection by calling xpc_connection_cancel()
+2026-10-23 13:51:08.343 Df KosherTravel[31025:15c72] [com.apple.securityd:trust] (Trust 0x10a522340) trustd returned 4
+2026-10-23 13:51:08.343 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Connection 4: TLS Trust result 0
+2026-10-23 13:51:08.343 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_evaluate_trust_async_external_block_invoke_3(2148) [C4.1.1.1:2][0x10b73c560] Returning from external verify block with result: true
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_certificate_verify_callback(2430) [C4.1.1.1:2][0x10b73c560] Certificate verification result: OK
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client read_server_finished
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client send_end_of_early_data
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client send_client_encrypted_extensions
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client send_client_certificate
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client complete_second_flight
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS 1.3 client done
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS client finish_client_handshake
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C4.1.1.1:2][0x10b73c560] Client handshake state: TLS client done
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] boringssl_context_info_handler(2812) [C4.1.1.1:2][0x10b73c560] Client handshake done
+2026-10-23 13:51:08.344 A  KosherTravel[31025:15c72] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.344 A  KosherTravel[31025:15c72] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:08.344 A  KosherTravel[31025:15c72] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:boringssl] nw_protocol_boringssl_signal_connected(895) [C4.1.1.1:2][0x10b73c560] TLS connected [server(0) version(0x0304) ciphersuite(TLS_AES_256_GCM_SHA384) group(0x11ec) signature_alg(0x0403) alpn(h2) resumed(0) offered_ticket(0) in_early_data(0) early_data_accepted(0) false_started(0) ocsp_received(0) sct_received(0) connect_time(159ms) flight_time(6ms) rtt(5ms) write_stalls(0) read_stalls(2) pake(0x0000)]
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_flow_connected [C4.1.1.1 IPv4#c22f1b9e:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] Output protocol connected (CFNetworkConnection-2707649913)
+2026-10-23 13:51:08.344 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1.1 IPv4#c22f1b9e:443 ready socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:child_finish_connect @0.171s
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1.1 Hostname#1089e4f5:443 ready resolver (satisfied (Path is satisfied), interface: en0)] event: flow:child_finish_connect @0.172s
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4.1 Hostname#1089e4f5:443 ready transform (satisfied (Path is satisfied), interface: en0)] event: flow:child_finish_connect @0.172s
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_flow_connected [C4 IPv4#c22f1b9e:443 in_progress parent-flow (satisfied (Path is satisfied), interface: en0)] Output protocol connected (endpoint_flow)
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4 IPv4#c22f1b9e:443 ready parent-flow (satisfied (Path is satisfied), interface: en0)] event: flow:finish_connect @0.172s
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C4] reporting state ready
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.xpc:connection] [0x108df3840] invalidated because the current process cancelled the connection by calling xpc_connection_cancel()
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Connection 4: connected successfully
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Connection 4: TLS handshake complete
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Connection 4: ready C(N) E(N)
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C4] event: client:connection_reused @0.172s
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_protocol_socket_notify [C4.1.1.1:3] nw_protocol_notification_type_connection_idle is false
+2026-10-23 13:51:08.345 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> now using Connection 4
+2026-10-23 13:51:08.346 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <7D1D28C4-B1A8-429B-B3D9-1614FCBA99A2>.<4> now using Connection 4
+2026-10-23 13:51:08.346 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <B5F37F8B-F601-4632-A1BE-950FD7177E47>.<2> now using Connection 4
+2026-10-23 13:51:08.346 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <3B900592-6AFA-4B3D-B710-214604D38152>.<1> now using Connection 4
+2026-10-23 13:51:08.346 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> sent request, body N 0
+2026-10-23 13:51:08.346 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <7D1D28C4-B1A8-429B-B3D9-1614FCBA99A2>.<4> sent request, body N 0
+2026-10-23 13:51:08.346 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <B5F37F8B-F601-4632-A1BE-950FD7177E47>.<2> sent request, body N 0
+2026-10-23 13:51:08.346 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <3B900592-6AFA-4B3D-B710-214604D38152>.<1> sent request, body N 0
+2026-10-23 13:51:08.346 A  KosherTravel[31025:15c3f] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.346 A  KosherTravel[31025:15c3f] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:08.346 A  KosherTravel[31025:15c3f] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.347 A  KosherTravel[31025:15c3f] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.347 A  KosherTravel[31025:15c3f] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:08.347 A  KosherTravel[31025:15c3f] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.555 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.555 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <0AE31254-47A9-4257-8A78-A4AF7719BB59>.<6> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.555 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] Task <51DD1AE3-6033-413D-9909-B289D927350D>.<7> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.556 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] Task <22DA9421-BD5D-45D8-89D0-2D7972F0A4BD>.<8> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.556 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <8FEEB7AA-39E3-4122-A412-F2E0BF1A8C0A>.<9> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.556 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <62344802-D621-41E7-81B0-FE3EE2BE7F19>.<10> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.556 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <9D49FC6F-6DB5-4B94-BB07-7E1DE7E57067>.<11> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.556 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <A1A47258-9B52-492B-91F7-CDA8C81ACB6C>.<12> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.556 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <0188DB2D-F2C4-41DC-A05D-97C2069521A7>.<13> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.556 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <B6723DD2-6F67-4529-8A61-15E0180FA5C7>.<14> resuming, timeouts(20.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-10-23 13:51:08.559 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 0: creating secure tcp or quic connection
+2026-10-23 13:51:08.560 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 5: enabling TLS
+2026-10-23 13:51:08.560 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 5: starting, TC(0x0)
+2026-10-23 13:51:08.560 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5 1F34356D-B1FE-42A9-82F0-CEB361180BFD Hostname#ce8adddf:443 quic-connection, url: https://firebasestorage.googleapis.com/v0/b/kosher-travel-app.firebasestorage.app/o/storyMedia/ZilNixJYqChwhgBopF7OHFcyIX13/XmciAE8okhqAST3K0Jll/l0g7q157c7k_thumb.jpg, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{DC5F1EF2-2930-4DCC-B815-ED1D222F64B8}{(null)}{Y}{2}{0x0} (private), proc: 3206D44A-81C0-3212-9A50-0501ED1A1B9D, delegated upid: 0] start
+2026-10-23 13:51:08.561 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5 Hostname#ce8adddf:443 initial parent-flow ((null))] event: path:start @0.000s
+2026-10-23 13:51:08.562 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5 Hostname#ce8adddf:443 waiting parent-flow (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.000s, uuid: 4E6F3D43-3B53-41F2-B828-411BA3716FFE
+2026-10-23 13:51:08.562 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5 Hostname#ce8adddf:443 in_progress parent-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_connect @0.001s
+2026-10-23 13:51:08.563 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C5] reporting state preparing
+2026-10-23 13:51:08.563 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5 Hostname#ce8adddf:443 in_progress parent-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_child @0.002s
+2026-10-23 13:51:08.563 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1 Hostname#ce8adddf:443 initial path ((null))] event: path:start @0.002s
+2026-10-23 13:51:08.564 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1 Hostname#ce8adddf:443 waiting path (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.003s, uuid: 4E6F3D43-3B53-41F2-B828-411BA3716FFE
+2026-10-23 13:51:08.564 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1 Hostname#ce8adddf:443 in_progress transform (satisfied (Path is satisfied), interface: en0)] event: transform:start @0.003s
+2026-10-23 13:51:08.564 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1.1 Hostname#ce8adddf:443 initial path ((null))] event: path:start @0.003s
+2026-10-23 13:51:08.564 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1.1 Hostname#ce8adddf:443 waiting path (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.003s, uuid: 3061B232-F237-482B-8A9A-79E051811D0D
+2026-10-23 13:51:08.564 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] event: resolver:start_dns @0.003s
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> setting up Connection 5
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <51DD1AE3-6033-413D-9909-B289D927350D>.<7> waiting for setup of Connection 5
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <8FEEB7AA-39E3-4122-A412-F2E0BF1A8C0A>.<9> waiting for setup of Connection 5
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <62344802-D621-41E7-81B0-FE3EE2BE7F19>.<10> waiting for setup of Connection 5
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <0AE31254-47A9-4257-8A78-A4AF7719BB59>.<6> waiting for setup of Connection 5
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <9D49FC6F-6DB5-4B94-BB07-7E1DE7E57067>.<11> waiting for setup of Connection 5
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <A1A47258-9B52-492B-91F7-CDA8C81ACB6C>.<12> waiting for setup of Connection 5
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <22DA9421-BD5D-45D8-89D0-2D7972F0A4BD>.<8> waiting for setup of Connection 5
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <0188DB2D-F2C4-41DC-A05D-97C2069521A7>.<13> waiting for setup of Connection 5
+2026-10-23 13:51:08.565 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <B6723DD2-6F67-4529-8A61-15E0180FA5C7>.<14> waiting for setup of Connection 5
+2026-10-23 13:51:08.595 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_endpoint_resolver_update [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#fb5111d7:443
+2026-10-23 13:51:08.595 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_endpoint_resolver_update [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#cfdf5e39:443
+2026-10-23 13:51:08.595 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_endpoint_resolver_update [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#8bcb56fa:443
+2026-10-23 13:51:08.595 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_endpoint_resolver_update [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#19897976:443
+2026-10-23 13:51:08.595 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_endpoint_resolver_update [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#835e3402:443
+2026-10-23 13:51:08.595 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_endpoint_resolver_update [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#812c8ba5:443
+2026-10-23 13:51:08.596 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_endpoint_resolver_update [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#6091ce39:443
+2026-10-23 13:51:08.596 Df KosherTravel[31025:15c3f] [com.apple.network:connection] nw_endpoint_resolver_update [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] Adding endpoint handler for IPv4#d0793671:443
+2026-10-23 13:51:08.596 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C5.1.1 Hostname#ce8adddf:443 in_progress resolver (satisfied (Path is satisfied), interface: en0)] event: resolver:receive_dns @0.034s
+2026-10-23 13:51:08.599 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C5.1.1.1 IPv4#fb5111d7:443 initial path ((null))] event: path:start @0.037s
+2026-10-23 13:51:08.599 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C5.1.1.1 IPv4#fb5111d7:443 waiting path (satisfied (Path is satisfied), interface: en0)] event: path:satisfied @0.038s, uuid: 9A3EFAC3-80D6-4FA6-AACD-04D0FA7DE6B9
+2026-10-23 13:51:08.600 Df KosherTravel[31025:15c3f] [com.apple.network:connection] [C5.1.1.1 IPv4#fb5111d7:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:start_connect @0.039s
+2026-10-23 13:51:08.607 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_socket_handle_socket_event [C5.1.1.1:3] Socket received CONNECTED event
+2026-10-23 13:51:08.607 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_flow_connected [C5.1.1.1 IPv4#fb5111d7:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] Transport protocol connected (socket)
+2026-10-23 13:51:08.607 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1.1.1 IPv4#fb5111d7:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:finish_transport @0.046s
+2026-10-23 13:51:08.608 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_session_apply_protocol_options_for_transport_block_invoke_2(2367) [C5.1.1.1:2][0x10b7fcf60] TLS configured [server(0) min_version(0x0303) max_version(0x0304) name(redacted) tickets(false) false_start(false) enforce_ev(false) enforce_ats(false) ats_non_pfs_ciphersuite_allowed(false) cc_mode_enforced(false) ech(false) pqtls(true), pake(false) skip_ats_trust(false)]
+2026-10-23 13:51:08.608 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2806) [C5.1.1.1:2][0x10b7fcf60] Client handshake started
+2026-10-23 13:51:08.609 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS client enter_early_data
+2026-10-23 13:51:08.609 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS client read_server_hello
+2026-10-23 13:51:08.627 Df KosherTravel[31025:15c3f] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client read_hello_retry_request
+2026-10-23 13:51:08.627 Df KosherTravel[31025:15c3f] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client read_server_hello
+2026-10-23 13:51:08.628 Df KosherTravel[31025:15c3f] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client read_encrypted_extensions
+2026-10-23 13:51:08.628 Df KosherTravel[31025:15c3f] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client read_certificate_request
+2026-10-23 13:51:08.628 Df KosherTravel[31025:15c3f] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client read_server_certificate
+2026-10-23 13:51:08.628 Df KosherTravel[31025:15c3f] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client read_server_certificate_verify
+2026-10-23 13:51:08.628 Df KosherTravel[31025:15c3f] [com.apple.network:boringssl] boringssl_context_evaluate_trust_async(2249) [C5.1.1.1:2][0x10b7fcf60] Performing external trust evaluation
+2026-10-23 13:51:08.628 A  KosherTravel[31025:15c3f] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.628 A  KosherTravel[31025:15c3f] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:08.629 A  KosherTravel[31025:15c3f] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.629 Df KosherTravel[31025:15c3f] [com.apple.network:boringssl] boringssl_context_evaluate_trust_async_external(2234) [C5.1.1.1:2][0x10b7fcf60] Asyncing for external verify block
+2026-10-23 13:51:08.629 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] Connection 5: asked to evaluate TLS Trust
+2026-10-23 13:51:08.630 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> auth completion disp=1 cred=0x0
+2026-10-23 13:51:08.630 Df KosherTravel[31025:15c3f] [com.apple.securityd:trust] (Trust 0x10a70e040) No pending evals, starting
+2026-10-23 13:51:08.637 A  KosherTravel[31025:15c3f] (Security) SecTrustEvaluateIfNecessaryFastAsync
+2026-10-23 13:51:08.640 Df KosherTravel[31025:15c3f] [com.apple.xpc:connection] [0x1098e5b80] activating connection: mach=true listener=false peer=false name=com.apple.trustd
+2026-10-23 13:51:08.640 Df KosherTravel[31025:15c3f] [com.apple.securityd:trust] (Trust 0x10a70e040) Completed async eval kickoff
+2026-10-23 13:51:08.648 Df KosherTravel[31025:15c70] [com.apple.securityd:trust] (Trust 0x10a70e040) trustd returned 4
+2026-10-23 13:51:08.648 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] System Trust Evaluation yielded status(0)
+2026-10-23 13:51:08.648 Df KosherTravel[31025:15c70] [com.apple.securityd:trust] (Trust 0x109ac15c0) No pending evals, starting
+2026-10-23 13:51:08.648 A  KosherTravel[31025:15c70] (Security) SecTrustEvaluateIfNecessaryFastAsync
+2026-10-23 13:51:08.648 Df KosherTravel[31025:15c70] [com.apple.xpc:connection] [0x1098e5540] activating connection: mach=true listener=false peer=false name=com.apple.trustd
+2026-10-23 13:51:08.649 Df KosherTravel[31025:15c70] [com.apple.securityd:trust] (Trust 0x109ac15c0) Completed async eval kickoff
+2026-10-23 13:51:08.649 Df KosherTravel[31025:15c70] [com.apple.xpc:connection] [0x1098e5b80] invalidated because the current process cancelled the connection by calling xpc_connection_cancel()
+2026-10-23 13:51:08.651 Df KosherTravel[31025:15c43] [com.apple.securityd:trust] (Trust 0x109ac15c0) trustd returned 4
+2026-10-23 13:51:08.651 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 5: TLS Trust result 0
+2026-10-23 13:51:08.651 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_evaluate_trust_async_external_block_invoke_3(2148) [C5.1.1.1:2][0x10b7fcf60] Returning from external verify block with result: true
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_certificate_verify_callback(2430) [C5.1.1.1:2][0x10b7fcf60] Certificate verification result: OK
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client read_server_finished
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client send_end_of_early_data
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client send_client_encrypted_extensions
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client send_client_certificate
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client complete_second_flight
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS 1.3 client done
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS client finish_client_handshake
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2823) [C5.1.1.1:2][0x10b7fcf60] Client handshake state: TLS client done
+2026-10-23 13:51:08.652 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] boringssl_context_info_handler(2812) [C5.1.1.1:2][0x10b7fcf60] Client handshake done
+2026-10-23 13:51:08.652 A  KosherTravel[31025:15c43] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.653 A  KosherTravel[31025:15c43] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:08.653 A  KosherTravel[31025:15c43] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.653 Df KosherTravel[31025:15c43] [com.apple.network:boringssl] nw_protocol_boringssl_signal_connected(895) [C5.1.1.1:2][0x10b7fcf60] TLS connected [server(0) version(0x0304) ciphersuite(TLS_AES_256_GCM_SHA384) group(0x11ec) signature_alg(0x0403) alpn(h2) resumed(0) offered_ticket(0) in_early_data(0) early_data_accepted(0) false_started(0) ocsp_received(0) sct_received(0) connect_time(44ms) flight_time(19ms) rtt(18ms) write_stalls(0) read_stalls(2) pake(0x0000)]
+2026-10-23 13:51:08.653 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_flow_connected [C5.1.1.1 IPv4#fb5111d7:443 in_progress socket-flow (satisfied (Path is satisfied), interface: en0)] Output protocol connected (CFNetworkConnection-2707649913)
+2026-10-23 13:51:08.653 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1.1.1 IPv4#fb5111d7:443 ready socket-flow (satisfied (Path is satisfied), interface: en0)] event: flow:child_finish_connect @0.092s
+2026-10-23 13:51:08.653 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1.1 Hostname#ce8adddf:443 ready resolver (satisfied (Path is satisfied), interface: en0)] event: flow:child_finish_connect @0.092s
+2026-10-23 13:51:08.653 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5.1 Hostname#ce8adddf:443 ready transform (satisfied (Path is satisfied), interface: en0)] event: flow:child_finish_connect @0.092s
+2026-10-23 13:51:08.654 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_flow_connected [C5 IPv4#fb5111d7:443 in_progress parent-flow (satisfied (Path is satisfied), interface: en0)] Output protocol connected (endpoint_flow)
+2026-10-23 13:51:08.654 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5 IPv4#fb5111d7:443 ready parent-flow (satisfied (Path is satisfied), interface: en0)] event: flow:finish_connect @0.092s
+2026-10-23 13:51:08.654 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_connection_report_state_with_handler_on_nw_queue [C5] reporting state ready
+2026-10-23 13:51:08.654 Df KosherTravel[31025:15c43] [com.apple.xpc:connection] [0x1098e5540] invalidated because the current process cancelled the connection by calling xpc_connection_cancel()
+2026-10-23 13:51:08.654 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 5: connected successfully
+2026-10-23 13:51:08.654 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 5: TLS handshake complete
+2026-10-23 13:51:08.654 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Connection 5: ready C(N) E(N)
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C5] event: client:connection_reused @0.093s
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_protocol_socket_notify [C5.1.1.1:3] nw_protocol_notification_type_connection_idle is false
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> now using Connection 5
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <51DD1AE3-6033-413D-9909-B289D927350D>.<7> now using Connection 5
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <8FEEB7AA-39E3-4122-A412-F2E0BF1A8C0A>.<9> now using Connection 5
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <62344802-D621-41E7-81B0-FE3EE2BE7F19>.<10> now using Connection 5
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <0AE31254-47A9-4257-8A78-A4AF7719BB59>.<6> now using Connection 5
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <9D49FC6F-6DB5-4B94-BB07-7E1DE7E57067>.<11> now using Connection 5
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <A1A47258-9B52-492B-91F7-CDA8C81ACB6C>.<12> now using Connection 5
+2026-10-23 13:51:08.655 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <22DA9421-BD5D-45D8-89D0-2D7972F0A4BD>.<8> now using Connection 5
+2026-10-23 13:51:08.656 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <0188DB2D-F2C4-41DC-A05D-97C2069521A7>.<13> now using Connection 5
+2026-10-23 13:51:08.656 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <B6723DD2-6F67-4529-8A61-15E0180FA5C7>.<14> now using Connection 5
+2026-10-23 13:51:08.656 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> sent request, body N 0
+2026-10-23 13:51:08.657 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <51DD1AE3-6033-413D-9909-B289D927350D>.<7> sent request, body N 0
+2026-10-23 13:51:08.657 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <8FEEB7AA-39E3-4122-A412-F2E0BF1A8C0A>.<9> sent request, body N 0
+2026-10-23 13:51:08.657 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <62344802-D621-41E7-81B0-FE3EE2BE7F19>.<10> sent request, body N 0
+2026-10-23 13:51:08.657 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <0AE31254-47A9-4257-8A78-A4AF7719BB59>.<6> sent request, body N 0
+2026-10-23 13:51:08.657 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <9D49FC6F-6DB5-4B94-BB07-7E1DE7E57067>.<11> sent request, body N 0
+2026-10-23 13:51:08.657 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <A1A47258-9B52-492B-91F7-CDA8C81ACB6C>.<12> sent request, body N 0
+2026-10-23 13:51:08.657 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <22DA9421-BD5D-45D8-89D0-2D7972F0A4BD>.<8> sent request, body N 0
+2026-10-23 13:51:08.657 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <0188DB2D-F2C4-41DC-A05D-97C2069521A7>.<13> sent request, body N 0
+2026-10-23 13:51:08.658 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <B6723DD2-6F67-4529-8A61-15E0180FA5C7>.<14> sent request, body N 0
+2026-10-23 13:51:08.658 A  KosherTravel[31025:15c43] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.658 A  KosherTravel[31025:15c43] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:08.658 A  KosherTravel[31025:15c43] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.659 A  KosherTravel[31025:15c43] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.659 A  KosherTravel[31025:15c43] (Security) SecKeyCopyAttributes
+2026-10-23 13:51:08.659 A  KosherTravel[31025:15c43] (Security) SecKeyCopyPublicBytes
+2026-10-23 13:51:08.659 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <B5F37F8B-F601-4632-A1BE-950FD7177E47>.<2> received response, status 200 content K
+2026-10-23 13:51:08.659 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <B5F37F8B-F601-4632-A1BE-950FD7177E47>.<2> done using Connection 4
+2026-10-23 13:51:08.659 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <B5F37F8B-F601-4632-A1BE-950FD7177E47>.<2> response ended
+2026-10-23 13:51:08.660 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Summary] Task <B5F37F8B-F601-4632-A1BE-950FD7177E47>.<2> summary for task success {transaction_duration_ms=488, response_status=200, connection=4, reused=1, reused_after_ms=0, request_start_ms=174, request_duration_ms=0, response_start_ms=487, response_duration_ms=0, request_bytes=43, request_throughput_kbps=3545, response_bytes=14836, response_throughput_kbps=402273, cache_hit=false}
+2026-10-23 13:51:08.660 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <B5F37F8B-F601-4632-A1BE-950FD7177E47>.<2> finished successfully
+2026-10-23 13:51:08.704 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <3B900592-6AFA-4B3D-B710-214604D38152>.<1> received response, status 200 content K
+2026-10-23 13:51:08.704 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <3B900592-6AFA-4B3D-B710-214604D38152>.<1> done using Connection 4
+2026-10-23 13:51:08.704 Df KosherTravel[31025:15c74] [com.apple.CFNetwork:Default] Task <3B900592-6AFA-4B3D-B710-214604D38152>.<1> response ended
+2026-10-23 13:51:08.704 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Summary] Task <3B900592-6AFA-4B3D-B710-214604D38152>.<1> summary for task success {transaction_duration_ms=532, response_status=200, connection=4, reused=1, reused_after_ms=0, request_start_ms=174, request_duration_ms=0, response_start_ms=532, response_duration_ms=0, request_bytes=45, request_throughput_kbps=3431, response_bytes=25879, response_throughput_kbps=787266, cache_hit=false}
+2026-10-23 13:51:08.704 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <3B900592-6AFA-4B3D-B710-214604D38152>.<1> finished successfully
+2026-10-23 13:51:08.707 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <7D1D28C4-B1A8-429B-B3D9-1614FCBA99A2>.<4> received response, status 200 content K
+2026-10-23 13:51:08.707 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> received response, status 200 content K
+2026-10-23 13:51:08.707 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <7D1D28C4-B1A8-429B-B3D9-1614FCBA99A2>.<4> done using Connection 4
+2026-10-23 13:51:08.708 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <7D1D28C4-B1A8-429B-B3D9-1614FCBA99A2>.<4> response ended
+2026-10-23 13:51:08.708 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Summary] Task <7D1D28C4-B1A8-429B-B3D9-1614FCBA99A2>.<4> summary for task success {transaction_duration_ms=536, response_status=200, connection=4, reused=1, reused_after_ms=0, request_start_ms=174, request_duration_ms=0, response_start_ms=536, response_duration_ms=0, request_bytes=46, request_throughput_kbps=4182, response_bytes=22074, response_throughput_kbps=666379, cache_hit=false}
+2026-10-23 13:51:08.708 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> done using Connection 4
+2026-10-23 13:51:08.708 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <7D1D28C4-B1A8-429B-B3D9-1614FCBA99A2>.<4> finished successfully
+2026-10-23 13:51:08.708 Df KosherTravel[31025:15c43] [com.apple.network:connection] [C4] event: client:connection_idle @0.535s
+2026-10-23 13:51:08.708 Df KosherTravel[31025:15c43] [com.apple.network:connection] nw_protocol_socket_notify [C4.1.1.1:3] nw_protocol_notification_type_connection_idle is true
+2026-10-23 13:51:08.708 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> response ended
+2026-10-23 13:51:08.708 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Summary] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> summary for task success {transaction_duration_ms=537, response_status=200, connection=4, protocol="h2", domain_lookup_duration_ms=1, connect_duration_ms=167, secure_connection_duration_ms=159, private_relay=false, request_start_ms=174, request_duration_ms=0, response_start_ms=536, response_duration_ms=0, request_bytes=125, request_throughput_kbps=13315, response_bytes=40030, response_throughput_kbps=406409, cache_hit=false}
+2026-10-23 13:51:08.708 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <271FC4D0-5920-4756-8B75-C4099CE1BF2F>.<3> finished successfully
+2026-10-23 13:51:09.121 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <62344802-D621-41E7-81B0-FE3EE2BE7F19>.<10> received response, status 200 content K
+2026-10-23 13:51:09.122 A  KosherTravel[31025:15c72] (Security) SecTrustEvaluateIfNecessary
+2026-10-23 13:51:09.124 Df KosherTravel[31025:15c72] [com.apple.xpc:connection] [0x1098e4f00] activating connection: mach=true listener=false peer=false name=com.apple.trustd
+2026-10-23 13:51:09.141 Df KosherTravel[31025:15c72] [com.apple.xpc:connection] [0x1098e4f00] invalidated because the current process cancelled the connection by calling xpc_connection_cancel()
+2026-10-23 13:51:09.143 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <B6723DD2-6F67-4529-8A61-15E0180FA5C7>.<14> received response, status 200 content K
+2026-10-23 13:51:09.143 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <0188DB2D-F2C4-41DC-A05D-97C2069521A7>.<13> received response, status 200 content K
+2026-10-23 13:51:09.143 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <9D49FC6F-6DB5-4B94-BB07-7E1DE7E57067>.<11> received response, status 200 content K
+2026-10-23 13:51:09.144 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <0AE31254-47A9-4257-8A78-A4AF7719BB59>.<6> received response, status 200 content K
+2026-10-23 13:51:09.157 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Default] Task <51DD1AE3-6033-413D-9909-B289D927350D>.<7> received response, status 200 content K
+2026-10-23 13:51:09.162 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] Task <8FEEB7AA-39E3-4122-A412-F2E0BF1A8C0A>.<9> received response, status 200 content K
+2026-10-23 13:51:09.166 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <A1A47258-9B52-492B-91F7-CDA8C81ACB6C>.<12> received response, status 200 content K
+2026-10-23 13:51:09.175 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> received response, status 200 content K
+2026-10-23 13:51:09.209 Df KosherTravel[31025:15c3f] [com.apple.CFNetwork:Default] Task <22DA9421-BD5D-45D8-89D0-2D7972F0A4BD>.<8> received response, status 200 content K
+2026-10-23 13:51:09.213 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Default] Task <A1A47258-9B52-492B-91F7-CDA8C81ACB6C>.<12> done using Connection 5
+2026-10-23 13:51:09.213 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Default] Task <A1A47258-9B52-492B-91F7-CDA8C81ACB6C>.<12> response ended
+2026-10-23 13:51:09.213 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Summary] Task <A1A47258-9B52-492B-91F7-CDA8C81ACB6C>.<12> summary for task success {transaction_duration_ms=654, response_status=200, connection=5, reused=1, reused_after_ms=0, request_start_ms=98, request_duration_ms=0, response_start_ms=607, response_duration_ms=47, request_bytes=159, request_throughput_kbps=1394, response_bytes=31809, response_throughput_kbps=5406, cache_hit=false}
+2026-10-23 13:51:09.213 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Default] Task <A1A47258-9B52-492B-91F7-CDA8C81ACB6C>.<12> finished successfully
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <9D49FC6F-6DB5-4B94-BB07-7E1DE7E57067>.<11> done using Connection 5
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <B6723DD2-6F67-4529-8A61-15E0180FA5C7>.<14> done using Connection 5
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <51DD1AE3-6033-413D-9909-B289D927350D>.<7> done using Connection 5
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <9D49FC6F-6DB5-4B94-BB07-7E1DE7E57067>.<11> response ended
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <B6723DD2-6F67-4529-8A61-15E0180FA5C7>.<14> response ended
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <51DD1AE3-6033-413D-9909-B289D927350D>.<7> response ended
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Summary] Task <9D49FC6F-6DB5-4B94-BB07-7E1DE7E57067>.<11> summary for task success {transaction_duration_ms=680, response_status=200, connection=5, reused=1, reused_after_ms=0, request_start_ms=98, request_duration_ms=0, response_start_ms=585, response_duration_ms=95, request_bytes=157, request_throughput_kbps=1546, response_bytes=59963, response_throughput_kbps=5022, cache_hit=false}
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <9D49FC6F-6DB5-4B94-BB07-7E1DE7E57067>.<11> finished successfully
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Summary] Task <B6723DD2-6F67-4529-8A61-15E0180FA5C7>.<14> summary for task success {transaction_duration_ms=680, response_status=200, connection=5, reused=1, reused_after_ms=0, request_start_ms=97, request_duration_ms=1, response_start_ms=584, response_duration_ms=96, request_bytes=159, request_throughput_kbps=1041, response_bytes=62901, response_throughput_kbps=5239, cache_hit=false}
+2026-10-23 13:51:09.239 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <B6723DD2-6F67-4529-8A61-15E0180FA5C7>.<14> finished successfully
+2026-10-23 13:51:09.240 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Summary] Task <51DD1AE3-6033-413D-9909-B289D927350D>.<7> summary for task success {transaction_duration_ms=682, response_status=200, connection=5, reused=1, reused_after_ms=0, request_start_ms=98, request_duration_ms=0, response_start_ms=599, response_duration_ms=82, request_bytes=159, request_throughput_kbps=4782, response_bytes=50984, response_throughput_kbps=4972, cache_hit=false}
+2026-10-23 13:51:09.240 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <51DD1AE3-6033-413D-9909-B289D927350D>.<7> finished successfully
+2026-10-23 13:51:09.258 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <62344802-D621-41E7-81B0-FE3EE2BE7F19>.<10> done using Connection 5
+2026-10-23 13:51:09.258 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <62344802-D621-41E7-81B0-FE3EE2BE7F19>.<10> response ended
+2026-10-23 13:51:09.258 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Summary] Task <62344802-D621-41E7-81B0-FE3EE2BE7F19>.<10> summary for task success {transaction_duration_ms=700, response_status=200, connection=5, reused=1, reused_after_ms=0, request_start_ms=98, request_duration_ms=0, response_start_ms=563, response_duration_ms=136, request_bytes=150, request_throughput_kbps=2016, response_bytes=75183, response_throughput_kbps=4393, cache_hit=false}
+2026-10-23 13:51:09.258 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <62344802-D621-41E7-81B0-FE3EE2BE7F19>.<10> finished successfully
+2026-10-23 13:51:09.277 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> done using Connection 5
+2026-10-23 13:51:09.277 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> response ended
+2026-10-23 13:51:09.278 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Summary] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> summary for task success {transaction_duration_ms=720, response_status=200, connection=5, protocol="h2", domain_lookup_duration_ms=31, connect_duration_ms=53, secure_connection_duration_ms=44, private_relay=false, request_start_ms=99, request_duration_ms=0, response_start_ms=618, response_duration_ms=102, request_bytes=237, request_throughput_kbps=18580, response_bytes=61123, response_throughput_kbps=4783, cache_hit=false}
+2026-10-23 13:51:09.278 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <7BEF14CF-0254-4FD3-844C-97EBF087B8B2>.<5> finished successfully
+2026-10-23 13:51:09.309 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Default] Task <8FEEB7AA-39E3-4122-A412-F2E0BF1A8C0A>.<9> done using Connection 5
+2026-10-23 13:51:09.309 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Default] Task <8FEEB7AA-39E3-4122-A412-F2E0BF1A8C0A>.<9> response ended
+2026-10-23 13:51:09.309 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Summary] Task <8FEEB7AA-39E3-4122-A412-F2E0BF1A8C0A>.<9> summary for task success {transaction_duration_ms=751, response_status=200, connection=5, reused=1, reused_after_ms=0, request_start_ms=98, request_duration_ms=0, response_start_ms=604, response_duration_ms=146, request_bytes=152, request_throughput_kbps=2915, response_bytes=78440, response_throughput_kbps=4273, cache_hit=false}
+2026-10-23 13:51:09.309 Df KosherTravel[31025:15c47] [com.apple.CFNetwork:Default] Task <8FEEB7AA-39E3-4122-A412-F2E0BF1A8C0A>.<9> finished successfully
+2026-10-23 13:51:09.347 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <0188DB2D-F2C4-41DC-A05D-97C2069521A7>.<13> done using Connection 5
+2026-10-23 13:51:09.347 Df KosherTravel[31025:15c70] [com.apple.CFNetwork:Default] Task <0188DB2D-F2C4-41DC-A05D-97C2069521A7>.<13> response ended
+2026-10-23 13:51:09.347 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Summary] Task <0188DB2D-F2C4-41DC-A05D-97C2069521A7>.<13> summary for task success {transaction_duration_ms=788, response_status=200, connection=5, reused=1, reused_after_ms=0, request_start_ms=97, request_duration_ms=1, response_start_ms=584, response_duration_ms=204, request_bytes=150, request_throughput_kbps=1070, response_bytes=101888, response_throughput_kbps=3992, cache_hit=false}
+2026-10-23 13:51:09.347 Df KosherTravel[31025:15c43] [com.apple.CFNetwork:Default] Task <0188DB2D-F2C4-41DC-A05D-97C2069521A7>.<13> finished successfully
+2026-10-23 13:51:09.358 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <0AE31254-47A9-4257-8A78-A4AF7719BB59>.<6> done using Connection 5
+2026-10-23 13:51:09.358 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <0AE31254-47A9-4257-8A78-A4AF7719BB59>.<6> response ended
+2026-10-23 13:51:09.359 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Summary] Task <0AE31254-47A9-4257-8A78-A4AF7719BB59>.<6> summary for task success {transaction_duration_ms=800, response_status=200, connection=5, reused=1, reused_after_ms=0, request_start_ms=98, request_duration_ms=0, response_start_ms=585, response_duration_ms=215, request_bytes=160, request_throughput_kbps=1807, response_bytes=102898, response_throughput_kbps=3827, cache_hit=false}
+2026-10-23 13:51:09.359 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <0AE31254-47A9-4257-8A78-A4AF7719BB59>.<6> finished successfully
+2026-10-23 13:51:09.461 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <22DA9421-BD5D-45D8-89D0-2D7972F0A4BD>.<8> done using Connection 5
+2026-10-23 13:51:09.461 Df KosherTravel[31025:15c72] [com.apple.network:connection] [C5] event: client:connection_idle @0.899s
+2026-10-23 13:51:09.461 Df KosherTravel[31025:15c72] [com.apple.network:connection] nw_protocol_socket_notify [C5.1.1.1:3] nw_protocol_notification_type_connection_idle is true
+2026-10-23 13:51:09.461 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <22DA9421-BD5D-45D8-89D0-2D7972F0A4BD>.<8> response ended
+2026-10-23 13:51:09.461 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Summary] Task <22DA9421-BD5D-45D8-89D0-2D7972F0A4BD>.<8> summary for task success {transaction_duration_ms=902, response_status=200, connection=5, reused=1, reused_after_ms=0, request_start_ms=97, request_duration_ms=1, response_start_ms=650, response_duration_ms=251, request_bytes=159, request_throughput_kbps=1268, response_bytes=133501, response_throughput_kbps=4239, cache_hit=false}
+2026-10-23 13:51:09.462 Df KosherTravel[31025:15c72] [com.apple.CFNetwork:Default] Task <22DA9421-BD5D-45D8-89D0-2D7972F0A4BD>.<8> finished successfully
+2026-10-23 13:51:10.683 A  KosherTravel[31025:15c36] (RunningBoardServices) didChangeInheritances
+2026-10-23 13:51:10.684 E  KosherTravel[31025:15c41] [com.google.firebase:[FirebaseCore]] 13.1.1 - [FirebaseCore][I-COR000003] The default Firebase app has not yet been configured. Add `FirebaseApp.configure()` to your application initialization. This can be done in in the App Delegate's application(_:didFinishLaunchingWithOptions:)` (or the `@main` struct's initializer in SwiftUI). Read more: https://firebase.google.com/docs/ios/setup#initialize_firebase_in_your_app
+2026-10-23 13:51:10.684 Df KosherTravel[31025:15c41] [com.google.utilities.logger:[GoogleUtilities/AppDelegateSwizzler]] 13.1.1 - [GoogleUtilities/AppDelegateSwizzler][I-SWZ001014] App Delegate does not conform to UIApplicationDelegate protocol.
+2026-10-23 13:51:10.684 E  KosherTravel[31025:15c41] [com.google.firebase:[FirebaseAuth]] 13.1.1 - [FirebaseAuth][I-AUT000001] Error loading saved user when starting up: Error Domain=FIRAuthErrorDomain Code=17995 "An error occurred when accessing the keychain. The NSLocalizedFailureReasonErrorKey field in the NSError.userInfo dictionary will contain more information about the error encountered" UserInfo={NSLocalizedDescription=An error occurred when accessing the keychain. The NSLocalizedFailureReasonErrorKey field in the NSError.userInfo dictionary will contain more information about the error encountered, FIRAuthErrorUserInfoNameKey=ERROR_KEYCHAIN_ERROR, NSLocalizedFailureReason=SecItemCopyMatching (-34018) A required entitlement isn't present.}
