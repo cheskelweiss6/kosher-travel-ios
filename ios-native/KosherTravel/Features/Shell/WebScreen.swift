@@ -18,6 +18,8 @@ struct WebScreen: View {
     @Environment(AuthStore.self) private var auth
     @Environment(\.dismiss) private var dismiss
     @State private var authScript: String?
+    /// The signed-in account the page was loaded for ("" = signed out). The page reloads only when this changes.
+    @State private var loadedUid: String?
     @State private var reloadToken = 0
     @State private var loading = true
     @State private var failed: String?
@@ -63,17 +65,28 @@ struct WebScreen: View {
             case .web(let r): WebScreen(route: r)
             }
         }
-        .task(id: auth.uid ?? "-") { await prepare() }
+        // Waits for the restored sign-in, then reloads only when the signed-in account changes: never because the
+        // hourly Firebase token refresh changed the script (the page keeps its own session fresh), and never on a
+        // return to the screen (same pattern as WarmWebPage in Features/MyTravel/MyTravelWarm.swift).
+        .task(id: auth.ready ? (auth.uid ?? "-") : "?") {
+            guard auth.ready else { return }
+            await prepare()
+        }
     }
 
     @MainActor
     private func prepare() async {
+        let uid = auth.uid ?? ""
+        if authScript != nil && loadedUid == uid { return }   // same account: keep the page as it is
         await WebSession.prepareStore(uid: auth.uid)
         let script = await WebSession.authScript()
+        guard (auth.uid ?? "") == uid else { return }   // the account changed meanwhile; the newer task takes over
         if authScript == nil {
             authScript = script
-        } else if script != authScript {
+            loadedUid = uid
+        } else if loadedUid != uid {
             authScript = script
+            loadedUid = uid
             loading = true
             reloadToken += 1   // signed in or out natively: load the page again with the new sign-in
         }

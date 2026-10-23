@@ -23,6 +23,9 @@ struct CountryPageView: View {
             VStack(alignment: .leading, spacing: 16) {
                 TravelerArticlesSection(kind: .country, placeName: name)
                     .padding(.bottom, 4)
+                // Web PlaceStories: the travelers' tips come right after the articles row (Oct 23 2026).
+                TravelerTipsSection(scope: TipScope(kind: .country, name: name),
+                                    insets: EdgeInsets(top: 0, leading: Theme.pagePadding, bottom: 0, trailing: Theme.pagePadding))
                 if name != "Mexico" {
                     Text("Explore Kosher life & travel across \(name)")
                         .font(.footnote.weight(.semibold))
@@ -65,6 +68,7 @@ struct CountryPageView: View {
         .refreshable { await feed.refresh() }
         .task { await store.load() }
         .task { await feed.loadIfNeeded() }
+        .task { await TravelerTipsStore.shared.fetch() }
         .task(id: auth.uid) { await BucketList.shared.bind(uid: auth.uid) }
         .onChange(of: tab) { _, _ in todoCategory = nil }
         .sheet(item: $selected) { item in

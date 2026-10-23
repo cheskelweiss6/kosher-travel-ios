@@ -1,0 +1,5 @@
+h1-denver:area:us:denver
+h2-denver-grocery:area:us:denver/hub:grocery
+h3-cancun:area:dest:cancun
+h4-wyoming:state:wyoming
+h5-aruba:country:aruba

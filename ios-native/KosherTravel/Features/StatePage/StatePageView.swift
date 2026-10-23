@@ -30,6 +30,9 @@ struct StatePageView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     TravelerArticlesSection(kind: .state, placeName: name)
                         .padding(.bottom, 4)
+                    // Web PlaceStories: the travelers' tips come right after the articles row (Oct 23 2026).
+                    TravelerTipsSection(scope: TipScope(kind: .state, name: name, stateCode: TravelerRules.stateCode(name)),
+                                        insets: EdgeInsets(top: 0, leading: Theme.pagePadding, bottom: 0, trailing: Theme.pagePadding))
                     tabStrip.id("tabs")
                     // Zmanim for the state's main city (Cheskel, Oct 21 2026)
                     ZmanimCard(place: ZmanimPlace(state: name), compact: true)
@@ -63,6 +66,7 @@ struct StatePageView: View {
             await parks.load()
         }
         .task { await feed.loadIfNeeded() }
+        .task { await TravelerTipsStore.shared.fetch() }
         .task(id: auth.uid) { await BucketList.shared.bind(uid: auth.uid) }
         .onChange(of: tab) { _, _ in todoCategory = nil }
         .sheet(item: $selected) { item in
