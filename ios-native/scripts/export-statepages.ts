@@ -10,8 +10,12 @@ import { CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS } from '../../src/caribbe
 import { DB_DESTINATIONS } from '../../src/database';
 import { DEFAULT_TRAVEL_HERO } from '../../src/cityHeroPhotos';
 import { buildSearchIndex } from '../../src/searchIndex';
-import { getNewThingsToDoFor } from '../../src/attractionsDatabase';
+import { getNewThingsToDoFor, newThingsReady } from '../../src/attractionsDatabase';
 import * as fs from 'fs';
+
+// The website loads NEW_THINGS_TO_DO with a lazy import (attractionsDatabase.ts newThingsReady); wait for it, or every
+// Things to Do list and the search index miss those places (Aruba showed 11 instead of the website's 20).
+async function main() {
 
 const { PREMIUM_STATES, PREMIUM_CITIES, US_CITIES, WORLD_DESTINATIONS, PREMIUM_CARIBBEAN, CURATED_ATTRACTIONS } = deps;
 const SITE = 'https://www.yourkoshertravel.com';
@@ -188,3 +192,5 @@ const entries = idx.filter((e: any) => e.dest && REGIONS.has(e.dest.region)).map
 const sfile = (process.argv[2] || 'ios-native/KosherTravel/Features/StatePage/statepages.json').replace('statepages.json', 'statesearch.json');
 fs.writeFileSync(sfile, JSON.stringify({ generatedAt: new Date().toISOString(), dests, entries }));
 console.log('search entries', entries.length, 'dests', dests.length, 'bytes', fs.statSync(sfile).size);
+}
+newThingsReady.then(main).catch((e: any) => { console.error(e); process.exit(1); });

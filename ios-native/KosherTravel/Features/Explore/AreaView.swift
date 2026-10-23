@@ -17,16 +17,11 @@ struct AreaView: View {
     @State private var selected: PlaceItem?
     @State private var showMap = false
     @State private var openStory: String?
-    @State private var expanded = Set<PlaceCategory>()
     @State private var routed = false
-    @State private var activeChip: PlaceCategory?
     @State private var openHub: CityHub?
-    @State private var webSection: WebRoute?
     @State private var scrollToGuides = false
     @State private var addingGuide = false
-    @State private var confirmUnsave = false
     @State private var todoHubPhoto: String?
-    @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(AuthStore.self) private var auth
     private let bucket = BucketList.shared
 
@@ -74,6 +69,10 @@ struct AreaView: View {
                 if !traveler.isEmpty {
                     addedByTravelers.padding(.horizontal, Theme.pagePadding).padding(.top, 14)
                 }
+                // Web PlaceStories ends with the travelers' tips about this city (Oct 23 2026).
+                TravelerTipsSection(scope: TipScope(kind: .city, name: page.name,
+                                                    region: page.stateName.isEmpty ? page.country : page.stateName),
+                                    insets: EdgeInsets(top: 14, leading: Theme.pagePadding, bottom: 0, trailing: Theme.pagePadding))
                 // Web: Zmanim for this city, computed on the phone (compact card), right after the articles.
                 ZmanimCard(place: ZmanimPlace(id: page.destId, name: page.name,
                                               state: page.stateName.isEmpty ? page.country : page.stateName),
@@ -105,46 +104,17 @@ struct AreaView: View {
         }
         }
         .background(Color.white)
-        .confirmationDialog("Remove \(page.name) from your saved places?", isPresented: $confirmUnsave, titleVisibility: .visible) {
-            Button("Remove", role: .destructive) { bucket.toggle(page.destId) }
-            Button("Cancel", role: .cancel) {}
-        }
         .sheet(isPresented: $addingGuide) {
             AddTourGuideSheet(page: page) { g in
                 TourGuideStore.shared.add(g)
                 ShellRouter.shared.showToast("Tour Guide \"\(g.guideName)\" added successfully!")
             }
         }
+        // Website: Back, Save and Plan Trip sit on the hero photo (CityHeroBar), so the iOS bar is hidden here.
+        // The title stays for the long-press back menu; the edge swipe still goes back.
         .navigationTitle(page.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                // Web: Save / Saved heart (the bucket list shown in My Travel).
-                let saved = bucket.contains(page.destId)
-                // Cheskel's rule (Oct 23 9:20): every removal asks first, in red.
-                Button { if saved { confirmUnsave = true } else { bucket.toggle(page.destId) } } label: {
-                    // Website (App.tsx 10058-10068): a pill with the heart and the words "Save" / "Saved".
-                    Label(saved ? "Saved" : "Save", systemImage: saved ? "heart.fill" : "heart")
-                        .labelStyle(.titleAndIcon)
-                        .foregroundStyle(Color.navy)
-                }
-                .sensoryFeedback(.success, trigger: saved)
-                // The native-only Map button is gone (the website's city header has none); "<key>/map" links still open it.
-                Button {
-                    // Website: setWizardCity(name) + the planner tab, i.e. "Plan a trip" with the city in "Where to?".
-                    ShellRouter.shared.plannerTripCity = page.name
-                    ShellRouter.shared.open(tab: "planner")
-                } label: {
-                    // Website: "Plan" on a phone, "Plan Trip" on wider screens.
-                    Label(sizeClass == .regular ? "Plan Trip" : "Plan", systemImage: "sparkles")
-                        .labelStyle(.titleAndIcon)
-                        .font(.subheadline.weight(.bold))
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(Color.navy)
-                .accessibilityLabel("Plan a trip to \(page.name)")
-            }
-        }
+        .toolbar(.hidden, for: .navigationBar)
+        .background(PopGestureEnabler().frame(width: 0, height: 0))
         .refreshable { await loadLive(page, force: true) }
         .task(id: auth.uid) { await bucket.bind(uid: auth.uid) }
         .task(id: baseKey) {
@@ -153,6 +123,7 @@ struct AreaView: View {
             todoHubPhoto = await CityTodoStore.shared.entry(for: page.key)?.attractions.first?.photo
             await loadLive(page, force: false)
         }
+        .task { await TravelerTipsStore.shared.fetch() }
         .sheet(item: $selected) { item in
             PlaceDetailView(item: item, onOpenStory: { id in openStoryLater(id) }, onReviewsChanged: { key, list in
                 updateSummary(key, list)
@@ -168,9 +139,6 @@ struct AreaView: View {
         }
         .navigationDestination(item: $openHub) { hub in
             subPage(hub, page: page)
-        }
-        .navigationDestination(item: $webSection) { route in
-            WebScreen(route: route)
         }
     }
 
@@ -326,10 +294,11 @@ struct AreaView: View {
     @ViewBuilder
     private func subPage(_ hub: CityHub, page: CityPage) -> some View {
         subPageBody(hub, page: page)
-            .environment(\.cityHero, AnyView(heroBlock(page)))
-            // Web breadcrumb: "Denver / Restaurants" (just the city on pages without a crumb word).
+            // Web: the hero (with the "Denver / Restaurants" back pill, Save and Plan) tops every sub-page.
+            .environment(\.cityHero, AnyView(heroBlock(page, crumb: hub.crumb)))
             .navigationTitle(hub.crumb.isEmpty ? page.name : "\(page.name) / \(hub.crumb)")
-            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
+            .background(PopGestureEnabler().frame(width: 0, height: 0))
     }
 
     @ViewBuilder
@@ -349,43 +318,19 @@ struct AreaView: View {
         } else if hub == .todo {
             CityThingsToDoView(page: page, attractions: sections(page).first { $0.category == .todo }?.items ?? [],
                                listedNames: page.listedNames, onSelect: { selected = $0 })
-        } else if CityHub.nativePages.contains(hub) {
+        } else {
             CityHubPage(hub: hub, page: page, sections: sections(page),
                         summary: { summary(for: $0) }, onSelect: { selected = $0 },
                         onReviewsChanged: { updateSummary($0, $1) })
-        } else {
-            listSubPage(hub, page: page)
         }
-    }
-
-    @ViewBuilder
-    private func listSubPage(_ hub: CityHub, page: CityPage) -> some View {
-        let secs = sections(page).filter { hub.categories.contains($0.category) }
-        ScrollView {
-            CitySubPageHero()
-            LazyVStack(alignment: .leading, spacing: 0) {
-                if hub == .hasidic {
-                    hasidicCard(page.hasidic)
-                } else if secs.isEmpty {
-                    EmptyNote(title: "Nothing listed in \(page.name) yet", detail: "Know a kosher place here? Share it in a story.",
-                              systemImage: "mappin.and.ellipse")
-                        .padding(.horizontal, Theme.pagePadding)
-                        .padding(.top, 16)
-                }
-                ForEach(secs) { section in
-                    sectionView(section, page: page)
-                }
-                if hub == .shuls, let e = page.eruv { eruvCard(e) }
-            }
-            .padding(.bottom, 36)
-        }
-        .background(Color.white)
-        .navigationBarTitleDisplayMode(.inline)
     }
 
     // MARK: hero (web: full-width photo, region / state / country pills, the name and the description over it)
 
-    private func heroBlock(_ page: CityPage) -> some View {
+    private func heroBlock(_ page: CityPage, crumb: String = "") -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            CityHeroBar(cityName: page.name, destId: page.destId, crumb: crumb)
+            Spacer(minLength: 12)
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
                 if !page.area.isEmpty {
@@ -416,235 +361,23 @@ struct AreaView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .padding(16)
+        .accessibilityElement(children: .combine)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 4)
+        .padding(.bottom, 16)
         .frame(maxWidth: .infinity, minHeight: 280, alignment: .bottomLeading)
         .background {
+            // The photo runs up under the status bar, as on the website (pt = the safe-area inset).
             RemoteImage(url: page.photo, maxPixel: 1600, venue: true)
                 .overlay {
                     LinearGradient(colors: [.black.opacity(0.75), .black.opacity(0.6), .black.opacity(0.95)],
                                    startPoint: .top, endPoint: .bottom)
                 }
-        }
-        .clipped()
-        .accessibilityElement(children: .combine)
-    }
-
-    @ViewBuilder
-    private func facts(_ page: CityPage) -> some View {
-        let airport = [page.airport, page.airportDistance].filter { !$0.isEmpty }.joined(separator: " · ")
-        let rows: [FactRow] = [
-            FactRow(icon: "airplane", text: airport),
-            FactRow(icon: "cloud.sun", text: page.weather),
-        ].filter { !$0.text.isEmpty }
-        if !rows.isEmpty {
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 0) {
-                    ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
-                        if i > 0 { Rectangle().fill(Color.hairline).frame(width: 0.5).padding(.vertical, 10) }
-                        factCell(row, oneLine: true).frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
-                        if i > 0 { Divider().overlay(Color.hairline) }
-                        factCell(row, oneLine: false)
-                    }
-                }
-            }
-            .hairline(radius: 14)
+                .ignoresSafeArea(edges: .top)
+                .clipped()
         }
     }
-
-    private func factCell(_ row: FactRow, oneLine: Bool) -> some View {
-        HStack(spacing: 10) {
-            Image(systemName: row.icon)
-                .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(Color.navy)
-            Text(row.text)
-                .font(.footnote.weight(.medium))
-                .foregroundStyle(Color.navy)
-                .fixedSize(horizontal: oneLine, vertical: !oneLine)
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 11)
-    }
-
-    // MARK: chip bar
-
-    private func chipBar(_ secs: [CitySection], proxy: ScrollViewProxy) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(secs) { s in
-                    Button {
-                        activeChip = s.category
-                        withAnimation(.easeInOut(duration: 0.3)) { proxy.scrollTo("sec-\(s.id)", anchor: .top) }
-                    } label: {
-                        HStack(spacing: 5) {
-                            Image(systemName: s.category.systemImage).font(.system(size: 12, weight: .regular))
-                            Text(s.category.chip).font(.footnote.weight(.semibold))
-                            if s.items.count > 0 {
-                                Text("\(s.items.count)").font(.caption2.weight(.semibold)).foregroundStyle(activeChip == s.category ? Color.white.opacity(0.8) : Color.textSecondary)
-                            }
-                        }
-                        .foregroundStyle(activeChip == s.category ? Color.white : Color.navy)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(activeChip == s.category ? Color.navy : Color.white, in: Capsule())
-                        .overlay(Capsule().strokeBorder(activeChip == s.category ? Color.navy : Color.hairline, lineWidth: 1))
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("\(s.category.title), \(s.items.count)")
-                }
-            }
-            .padding(.horizontal, Theme.pagePadding)
-            .padding(.vertical, 10)
-        }
-        .background(Color.white)
-        .overlay(alignment: .bottom) { Rectangle().fill(Color.hairline).frame(height: 0.5) }
-        .sensoryFeedback(.selection, trigger: activeChip)
-    }
-
-    // MARK: sections
-
-    private static let listLimit = 6
-
-    @ViewBuilder
-    private func sectionView(_ section: CitySection, page: CityPage) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Anchor for the chip bar: tall enough that the pinned bar does not cover the section title.
-            Color.clear.frame(height: 52).id("sec-\(section.id)")
-            SectionHeader(title: section.category.title, count: section.items.count)
-                .padding(.horizontal, Theme.pagePadding)
-            if section.category == .takeout {
-                Text("These are local Chabad-organized meal packages, tourist catering, or home-cooked delivery services rather than commercial restaurants. Ideal for Shabbos and midweek dining!")
-                    .font(.footnote).foregroundStyle(Color.textSecondary)
-                    .padding(.horizontal, Theme.pagePadding)
-            }
-            if section.category == .traveler {
-                Text("Added by travelers in their stories and approved by Kosher Travel.")
-                    .font(.footnote).foregroundStyle(Color.textSecondary)
-                    .padding(.horizontal, Theme.pagePadding)
-            }
-            if section.category.usesCards {
-                cards(section.items)
-            } else {
-                list(section)
-            }
-            if section.category == .mikvah, let eruv = page.eruv {
-                eruvCard(eruv)
-                    .padding(.horizontal, Theme.pagePadding)
-                    .padding(.top, section.items.isEmpty ? 0 : 6)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func list(_ section: CitySection) -> some View {
-        let all = section.items
-        let open = expanded.contains(section.category)
-        let shown = open ? all : Array(all.prefix(Self.listLimit))
-        VStack(alignment: .leading, spacing: 0) {
-            ForEach(shown) { item in
-                Button { selected = item } label: {
-                    CityPlaceRow(item: item, summary: summary(for: item))
-                }
-                .buttonStyle(.plain)
-                .contextMenu { contextActions(item) }
-                if item.id != shown.last?.id { Divider().overlay(Color.hairline).padding(.leading, 68) }
-            }
-            if all.count > Self.listLimit {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        if open { expanded.remove(section.category) } else { expanded.insert(section.category) }
-                    }
-                } label: {
-                    HStack(spacing: 6) {
-                        Text(open ? "Show fewer" : "Show all \(all.count)")
-                        Image(systemName: open ? "chevron.up" : "chevron.down").font(.caption.weight(.semibold))
-                    }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.navy)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 11)
-                    .hairline(radius: 12)
-                }
-                .buttonStyle(.plain)
-                .padding(.top, 8)
-            }
-        }
-        .padding(.horizontal, Theme.pagePadding)
-    }
-
-    private func cards(_ items: [PlaceItem]) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .top, spacing: 12) {
-                ForEach(items) { item in
-                    Button { selected = item } label: {
-                        CityPlaceCard(item: item, summary: summary(for: item))
-                    }
-                    .buttonStyle(.plain)
-                    .contextMenu { contextActions(item) }
-                    .containerRelativeFrame(.horizontal) { len, _ in Layout.peekWidth(len, min: 210, spacing: 12) }
-                }
-            }
-            .scrollTargetLayout()
-        }
-        .contentMargins(.horizontal, Theme.pagePadding, for: .scrollContent)
-        .scrollTargetBehavior(.viewAligned)
-    }
-
-    @ViewBuilder
-    private func contextActions(_ item: PlaceItem) -> some View {
-        if let tel = item.phoneURL {
-            Link(destination: tel) { Label("Call", systemImage: "phone") }
-        }
-        if let d = item.directionsURL, !item.venue.address.isEmpty {
-            Link(destination: d) { Label("Directions", systemImage: "arrow.triangle.turn.up.right.diamond") }
-        }
-        if let w = item.websiteURL {
-            Link(destination: w) { Label("Website", systemImage: "safari") }
-        }
-        if let m = item.appleMapsURL {
-            ShareLink(item: m, subject: Text(item.venue.name), message: Text(item.shareText)) {
-                Label("Share", systemImage: "square.and.arrow.up")
-            }
-        }
-    }
-
-    private func eruvCard(_ e: EruvInfo) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Label(e.name.isEmpty ? "Eruv" : e.name, systemImage: "circle.dashed")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Color.navy)
-            Text(e.description).font(.footnote).foregroundStyle(Color.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-            if !e.boundary.isEmpty {
-                Text("Boundary: \(e.boundary)").font(.footnote).foregroundStyle(Color.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            if !e.notes.isEmpty {
-                Text(e.notes).font(.footnote).foregroundStyle(Color.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            Text("Check the eruv is up before Shabbat.").font(.caption).foregroundStyle(Color.textTertiary)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .hairline(radius: 14)
-    }
-
-    private func hasidicCard(_ text: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Color.clear.frame(height: 24)
-            SectionHeader(title: "Jewish Community")
-            Text(text).font(.subheadline).foregroundStyle(Color.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(.horizontal, Theme.pagePadding)
-    }
-
-    // MARK: live data
 
     private func summary(for item: PlaceItem) -> PlaceReviewSummary? {
         guard let key = item.reviewKey, let summaries else { return nil }
@@ -736,150 +469,6 @@ struct AreaView: View {
     }
 }
 
-/// One listing in a list: photo or category icon, name, hechsher or type, address, reviews line.
-struct CityPlaceRow: View {
-    let item: PlaceItem
-    let summary: PlaceReviewSummary?
-    @ScaledMetric(relativeTo: .subheadline) private var thumb: CGFloat = 56
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            Group {
-                if let p = item.photos.first {
-                    RemoteImage(url: p, maxPixel: 240, venue: true, category: item.photoCategory)
-                } else if PhotoFallback.category(item.photoCategory) != nil {
-                    RemoteImage(url: "", maxPixel: 240, venue: true, category: item.photoCategory)
-                } else {
-                    Image(systemName: item.systemImage)
-                        .font(.system(size: 18, weight: .regular))
-                        .foregroundStyle(Color.navy)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color.white)
-                }
-            }
-            .frame(width: thumb, height: thumb)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .hairline(radius: 12)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.venue.name)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.navy)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                if item.travelerCategory != nil {
-                    Text([item.venue.kind, item.venue.kashrus].filter { !$0.isEmpty }.joined(separator: " · "))
-                        .font(.caption).foregroundStyle(Color.textSecondary).lineLimit(1)
-                } else if !item.subtitle.isEmpty {
-                    Text(item.subtitle).font(.caption).foregroundStyle(Color.textSecondary).lineLimit(1)
-                }
-                if !item.venue.address.isEmpty {
-                    Text(item.venue.address).font(.caption).foregroundStyle(Color.textSecondary).lineLimit(1)
-                } else if !item.venue.description.isEmpty {
-                    Text(item.venue.description).font(.caption).foregroundStyle(Color.textSecondary).lineLimit(1)
-                }
-                if let summary {
-                    if summary.count > 0 {
-                        HStack(spacing: 4) {
-                            Image(systemName: "star.fill").font(.system(size: 10)).foregroundStyle(Color.navy)
-                            Text(String(format: "%.1f", summary.avg)).font(.caption.weight(.semibold)).foregroundStyle(Color.navy)
-                            Text("· \(summary.count) review\(summary.count == 1 ? "" : "s")").font(.caption).foregroundStyle(Color.textSecondary)
-                        }
-                    } else {
-                        Text("No reviews yet").font(.caption).foregroundStyle(Color.textTertiary)
-                    }
-                }
-            }
-            Spacer(minLength: 0)
-            Image(systemName: "chevron.right")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(Color.textTertiary)
-        }
-        .padding(.vertical, 10)
-        .contentShape(Rectangle())
-        .accessibilityElement(children: .combine)
-        .accessibilityHint("Opens details")
-    }
-}
-
-/// A photo card for things to do, hotels and rentals.
-struct CityPlaceCard: View {
-    let item: PlaceItem
-    let summary: PlaceReviewSummary?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            RemoteImage(url: item.photos.first ?? "", maxPixel: 700, venue: true, category: item.photoCategory)
-                .aspectRatio(4 / 3, contentMode: .fit)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .overlay(alignment: .topLeading) {
-                    if item.photos.isEmpty && PhotoFallback.category(item.photoCategory) == nil {
-                        Image(systemName: item.systemImage)
-                            .font(.system(size: 14, weight: .regular))
-                            .foregroundStyle(Color.navy)
-                            .padding(8)
-                    }
-                }
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.venue.name)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.navy)
-                    .lineLimit(2, reservesSpace: true)
-                    .multilineTextAlignment(.leading)
-                let line = [item.venue.price ?? "", item.venue.description].first { !$0.isEmpty } ?? item.venue.address
-                if !line.isEmpty {
-                    Text(line).font(.caption).foregroundStyle(Color.textSecondary).lineLimit(2)
-                        .multilineTextAlignment(.leading)
-                }
-                if let summary, summary.count > 0 {
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.fill").font(.system(size: 10)).foregroundStyle(Color.navy)
-                        Text(String(format: "%.1f", summary.avg)).font(.caption.weight(.semibold)).foregroundStyle(Color.navy)
-                        Text("· \(summary.count)").font(.caption).foregroundStyle(Color.textSecondary)
-                    }
-                }
-            }
-            .padding(.horizontal, 2)
-        }
-        .contentShape(Rectangle())
-        .accessibilityElement(children: .combine)
-        .accessibilityHint("Opens details")
-    }
-}
-
-struct FactRow: Identifiable {
-    var id: String { icon }
-    let icon: String
-    let text: String
-}
-
-/// Compact row with call / website / directions buttons (kept for other screens; the city page uses CityPlaceRow).
-struct VenueRow: View {
-    let venue: Venue
-    let systemImage: String
-    @ScaledMetric(relativeTo: .subheadline) private var icon: CGFloat = 34
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: systemImage)
-                .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(Color.navy)
-                .frame(width: icon, height: icon)
-                .hairline(radius: 10)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(venue.name).font(.subheadline.weight(.semibold)).foregroundStyle(Color.navy)
-                if !venue.kashrus.isEmpty {
-                    Text(venue.kashrus).font(.caption).foregroundStyle(Color.textSecondary)
-                }
-                if !venue.address.isEmpty {
-                    Text(venue.address).font(.caption).foregroundStyle(Color.textSecondary).lineLimit(2)
-                }
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(.vertical, 10)
-    }
-}
-
 /// The city page's photo cards (web App.tsx city hub), in the website's order.
 enum CityHub: String, Identifiable, Hashable {
     case restaurants, grocery, chabad, shuls, todo, hotels, shabbat, hasidic, rentals, businesses, resources, guides, experience, traveler
@@ -939,9 +528,6 @@ enum CityHub: String, Identifiable, Hashable {
         }
     }
 
-    /// Sub-pages with their own native page in the website's layout (CityHubPage).
-    static let nativePages: Set<CityHub> = [.grocery, .chabad, .shuls, .hotels, .rentals, .businesses, .resources, .hasidic]
-
     /// The listing sections a native sub-page shows.
     var categories: [PlaceCategory] {
         switch self {
@@ -956,16 +542,6 @@ enum CityHub: String, Identifiable, Hashable {
         case .resources: return [.resource]
         case .traveler: return [.traveler]
         default: return []
-        }
-    }
-
-    /// Hubs the app still shows as the live page (web activeCitySubCategory names).
-    var webSection: String {
-        switch self {
-        case .shabbat: return "shabbat"
-        case .guides: return "guides"
-        case .experience: return "experience"
-        default: return rawValue
         }
     }
 }
