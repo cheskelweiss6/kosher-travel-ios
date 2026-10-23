@@ -139,8 +139,11 @@ struct CityRestaurantsView: View {
     let cityName: String
     let summary: (PlaceItem) -> PlaceReviewSummary?
     let onSelect: (PlaceItem) -> Void
+    /// Hands back a place's reviews (placeKey, list) after its Reviews sheet closes, so the cards' counts catch up.
+    var onReviewsChanged: ((String, [PlaceReview]) -> Void)? = nil
 
     @State private var tab: DietType = .meat
+    @State private var reviewsFor: PlaceItem?
     @Environment(\.openURL) private var openURL
     private let store = ProfileStore.shared
 
@@ -153,6 +156,13 @@ struct CityRestaurantsView: View {
 
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
+                // Web: the in-page header above the Meat / Dairy / Parve tabs (App.tsx 11196-11197).
+                HStack(spacing: 8) {
+                    Image(systemName: "fork.knife").font(.system(size: 17)).foregroundStyle(Color.navy)
+                    Text("Kosher Restaurants").font(.subheadline.weight(.black)).foregroundStyle(Color.navy)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isHeader)
                 Picker("Kind", selection: $tab) {
                     ForEach(DietType.allCases) { t in
                         Text("\(t.rawValue) \(visible.filter { DietType.of($0.venue) == t }.count)").tag(t)
@@ -160,6 +170,7 @@ struct CityRestaurantsView: View {
                 }
                 .pickerStyle(.segmented)
                 .accessibilityIdentifier("restaurants-diet")
+                Divider().overlay(Color.hairline)
 
                 if !items.isEmpty {
                     KosherFilterChip(hidden: hiddenItems.count, noun: "restaurants")
@@ -185,6 +196,7 @@ struct CityRestaurantsView: View {
         }
         .background(Color.white)
         .sensoryFeedback(.selection, trigger: tab)
+        .cityCardReviewsSheet($reviewsFor, onChanged: onReviewsChanged)
     }
 
     private func note(_ title: String, _ detail: String) -> some View {
@@ -228,10 +240,9 @@ struct CityRestaurantsView: View {
                     .hairline(radius: 8)
                     .frame(maxWidth: 150, alignment: .trailing)
             }
-            RemoteImage(url: item.photos.first ?? "", maxPixel: 900, venue: true, category: item.photoCategory)
-                .frame(maxWidth: .infinity)
-                .frame(height: 128)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            CityCardGallery(name: v.name, photos: CityCardPhotos.forItem(item, city: cityName),
+                            defaultCategory: CityCardPhotos.defaultCategory(name: v.name, category: "restaurant"),
+                            onTap: { onSelect(item) })
             VStack(alignment: .leading, spacing: 6) {
                 if !v.address.isEmpty {
                     Label(v.address, systemImage: "mappin")
@@ -248,7 +259,7 @@ struct CityRestaurantsView: View {
             Divider().overlay(Color.hairline)
             FlowActions {
                 chip("View Details", "arrow.right") { onSelect(item) }
-                chip(reviewsLabel(summary(item)), "star") { onSelect(item) }
+                chip(CityCardReviews.label(summary(item)), "star") { reviewsFor = item }
                 if let d = item.directionsURL { chip("Directions", "location") { openURL(d) } }
                 if let w = item.websiteURL { chip("Website", "globe", on: true) { openURL(w) } }
             }
@@ -261,21 +272,9 @@ struct CityRestaurantsView: View {
         .accessibilityElement(children: .contain)
     }
 
-    @ViewBuilder private func rating(_ item: PlaceItem) -> some View {
-        if let s = summary(item), s.count > 0 {
-            HStack(spacing: 3) {
-                Image(systemName: "star.fill").font(.system(size: 10))
-                Text(String(format: "%.1f", s.avg)).font(.caption.weight(.semibold))
-                Text("(\(s.count))").font(.caption).foregroundStyle(Color.textSecondary)
-            }
-            .foregroundStyle(Color.navy)
-        }
-    }
-
-    /// Web reviewsLabel: "Reviews" with none, else "N review(s)".
-    private func reviewsLabel(_ s: PlaceReviewSummary?) -> String {
-        guard let s, s.count > 0 else { return "Reviews" }
-        return "\(s.count) review\(s.count == 1 ? "" : "s")"
+    /// Web PlaceRating under the name; it opens the Reviews sheet.
+    private func rating(_ item: PlaceItem) -> some View {
+        CityCardRating(summary: summary(item)) { reviewsFor = item }
     }
 
     private func chip(_ title: String, _ icon: String, on: Bool = false, action: @escaping () -> Void) -> some View {

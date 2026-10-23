@@ -1,12 +1,16 @@
 import SwiftUI
 
-/// The website's listing card on a city sub-page (grocery, Chabad, shuls, hotels, rentals, businesses,
-/// resources, catering): badges, rating, photo, detail lines, and the action chips.
+/// The website's listing card on a city sub-page (grocery, Chabad, shuls, hotels, rentals, businesses, resources,
+/// catering): the icon box, name, badges and rating line, the swipeable photo gallery, detail lines, and the action chips.
+/// `isStatic` is the website's plain card (rentals, businesses, resources, catering, Chabad takeout): no tap, no photo,
+/// no View Details, Reviews or Directions; only its link.
 struct CityListingCard: View {
     struct Line: Identifiable {
         let icon: String
         let label: String?
         let text: String
+        /// Makes the line a link (a phone number to call).
+        var url: URL? = nil
         var id: String { (label ?? icon) + text }
     }
 
@@ -19,60 +23,125 @@ struct CityListingCard: View {
     var linkLabel: String = "Website"
     var showReviews = true
     var showDirections = true
-    /// One more chip the website has on some cards (hotels: "Show Radius").
+    /// A small button under the name (hotels: "Show Radius", App.tsx 12667-12675).
     var extra: (title: String, icon: String, action: () -> Void)? = nil
+    /// The pill at the top right (hotels: the price; Chabad: "Shabbat Meals").
+    var trailing: String? = nil
+    var isStatic = false
+    /// The city page's name: the website passes it to the photo gallery.
+    var city: String = ""
     let summary: PlaceReviewSummary?
     let onSelect: () -> Void
+    /// Opens the Reviews sheet (the rating line and the Reviews chip). Without it they open the place sheet.
+    var onReviews: (() -> Void)? = nil
 
     @Environment(\.openURL) private var openURL
 
     var body: some View {
+        if isStatic {
+            content.padding(16).background(Color.white).hairline(radius: 16)
+                .accessibilityElement(children: .contain)
+        } else {
+            content
+                .padding(16)
+                .background(Color.white)
+                .hairline(radius: 16)
+                .contentShape(Rectangle())
+                .onTapGesture { onSelect() }
+                .accessibilityElement(children: .contain)
+        }
+    }
+
+    private var openReviews: () -> Void { onReviews ?? onSelect }
+
+    private var trailingPill: String? {
+        if let trailing, !trailing.isEmpty { return trailing }
+        if item.category == .hotel, let price = item.venue.price, !price.isEmpty { return price }
+        return nil
+    }
+
+    private var content: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top, spacing: 8) {
-                VStack(alignment: .leading, spacing: 4) {
-                    if !badges.isEmpty {
-                        HStack(spacing: 6) {
-                            ForEach(badges, id: \.self) { b in
-                                Text(b.uppercased())
-                                    .font(.caption2.weight(.heavy))
-                                    .tracking(0.6)
-                                    .foregroundStyle(Color.navy)
-                                    .padding(.horizontal, 7).padding(.vertical, 3)
-                                    .hairline(radius: 6)
-                            }
-                        }
-                    }
+                if !isStatic {
+                    Image(systemName: item.systemImage)
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.navy)
+                        .frame(width: 32, height: 32)
+                        .background(Color.surface, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .hairline(radius: 10)
+                }
+                VStack(alignment: .leading, spacing: 3) {
                     Text(item.venue.name)
                         .font(.subheadline.weight(.bold))
                         .foregroundStyle(Color.navy)
                         .multilineTextAlignment(.leading)
-                    if let s = summary, s.count > 0 {
-                        HStack(spacing: 3) {
-                            Image(systemName: "star.fill").font(.system(size: 10))
-                            Text(String(format: "%.1f", s.avg)).font(.caption.weight(.semibold))
-                            Text("(\(s.count))").font(.caption).foregroundStyle(Color.textSecondary)
+                    if let e = extra {
+                        Button(action: e.action) {
+                            Label(e.title.uppercased(), systemImage: e.icon)
+                                .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                                .tracking(1)
+                                .foregroundStyle(Color.navy)
+                                .padding(.horizontal, 8).padding(.vertical, 4)
+                                .background(Color.surface, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                                .frame(minHeight: 36)
+                                .contentShape(Rectangle())
                         }
-                        .foregroundStyle(Color.navy)
+                        .buttonStyle(.plain)
+                    }
+                    if !badges.isEmpty {
+                        HStack(spacing: 6) {
+                            ForEach(Array(badges.enumerated()), id: \.offset) { i, b in
+                                if i == 0 && !isStatic {
+                                    Text(b.uppercased())
+                                        .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                                        .tracking(1)
+                                        .foregroundStyle(Color.navy)
+                                } else {
+                                    Text(b.uppercased())
+                                        .font(.caption2.weight(.heavy))
+                                        .tracking(0.6)
+                                        .foregroundStyle(Color.navy)
+                                        .padding(.horizontal, 7).padding(.vertical, 3)
+                                        .hairline(radius: 6)
+                                }
+                            }
+                        }
+                    }
+                    if !isStatic, showReviews, item.reviewKey != nil {
+                        CityCardRating(summary: summary, onOpen: openReviews)
                     }
                 }
                 Spacer(minLength: 0)
-                if let price = item.venue.price, !price.isEmpty, item.category == .hotel {
-                    Text(price).font(.caption.weight(.bold)).foregroundStyle(Color.navy)
+                if let t = trailingPill {
+                    Text(t).font(.caption.weight(.bold)).foregroundStyle(Color.navy)
+                        .multilineTextAlignment(.trailing)
                         .padding(.horizontal, 8).padding(.vertical, 4).hairline(radius: 8)
                 }
             }
-            if showPhoto {
-                RemoteImage(url: item.photos.first ?? "", maxPixel: 900, venue: true, category: item.photoCategory)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 128)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            if showPhoto && !isStatic {
+                CityCardGallery(name: item.venue.name,
+                                photos: CityCardPhotos.forItem(item, city: city),
+                                defaultCategory: CityCardPhotos.defaultCategory(name: item.venue.name,
+                                                                                category: CityCardPhotos.webCategory(item.category)),
+                                onTap: onSelect)
             }
             if !lines.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(lines) { l in
                         HStack(alignment: .top, spacing: 6) {
                             Image(systemName: l.icon).font(.caption).foregroundStyle(Color.textTertiary).frame(width: 14).padding(.top, 2)
-                            if let label = l.label {
+                            if let u = l.url {
+                                Button { openURL(u) } label: {
+                                    if let label = l.label {
+                                        (Text(label + " ").fontWeight(.semibold) + Text(l.text))
+                                    } else {
+                                        Text(l.text).fontWeight(.semibold)
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .foregroundStyle(Color.navy)
+                            } else if let label = l.label {
                                 (Text(label + " ").fontWeight(.semibold).foregroundColor(Color.navy) + Text(l.text))
                             } else {
                                 Text(l.text)
@@ -105,27 +174,27 @@ struct CityListingCard: View {
                 .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .strokeBorder(n.strong ? Color.textTertiary : Color.hairline, lineWidth: n.strong ? 2 : 1))
             }
-            Divider().overlay(Color.hairline)
-            FlowActions {
-                chip("View Details", "arrow.right") { onSelect() }
-                if showReviews, item.reviewKey != nil { chip(Self.reviewsLabel(summary), "star") { onSelect() } }
-                if showDirections, let d = item.directionsURL { chip("Directions", "location") { openURL(d) } }
-                if let w = item.websiteURL { chip(linkLabel, "globe", on: true) { openURL(w) } }
-                if let e = extra { chip(e.title, e.icon) { e.action() } }
+            if isStatic {
+                if let w = item.websiteURL {
+                    Divider().overlay(Color.hairline)
+                    HStack {
+                        Spacer(minLength: 0)
+                        chip(linkLabel, "globe", on: true) { openURL(w) }
+                    }
+                }
+            } else {
+                Divider().overlay(Color.hairline)
+                FlowActions {
+                    chip("View Details", "arrow.right") { onSelect() }
+                    if showReviews, item.reviewKey != nil { chip(CityCardReviews.label(summary), "star") { openReviews() } }
+                    if showDirections, let d = item.directionsURL { chip("Directions", "location") { openURL(d) } }
+                    if let w = item.websiteURL { chip(linkLabel, "globe", on: true) { openURL(w) } }
+                }
             }
         }
-        .padding(16)
-        .background(Color.white)
-        .hairline(radius: 16)
-        .contentShape(Rectangle())
-        .onTapGesture { onSelect() }
-        .accessibilityElement(children: .contain)
     }
 
-    static func reviewsLabel(_ s: PlaceReviewSummary?) -> String {
-        guard let s, s.count > 0 else { return "Reviews" }
-        return "\(s.count) review\(s.count == 1 ? "" : "s")"
-    }
+    static func reviewsLabel(_ s: PlaceReviewSummary?) -> String { CityCardReviews.label(s) }
 
     private func chip(_ title: String, _ icon: String, on: Bool = false, action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -193,15 +262,23 @@ struct CityHubPage: View {
     let sections: [CitySection]
     let summary: (PlaceItem) -> PlaceReviewSummary?
     let onSelect: (PlaceItem) -> Void
+    /// Hands back a place's reviews (placeKey, list) after its Reviews sheet closes, so the cards' counts catch up.
+    var onReviewsChanged: ((String, [PlaceReview]) -> Void)? = nil
 
     private let prefs = ProfileStore.shared
     @State private var addingChabadRestaurant = false
     @State private var radiusHotel: PlaceItem?
+    @State private var reviewsFor: PlaceItem?
 
     private func items(_ c: PlaceCategory) -> [PlaceItem] { sections.first { $0.category == c }?.items ?? [] }
+    /// A saved need that is filtering right now (saved and "My kosher filters" on).
     private func need(_ n: String) -> Bool {
         guard let p = prefs.kosherPrefs, p.filtersOn else { return false }
         return p.needs.contains(n)
+    }
+    /// A saved need, whether the filters are on or off (the website shows its chip either way).
+    private func saved(_ n: String) -> Bool {
+        prefs.kosherPrefs?.needs.contains(n) ?? false
     }
     private static let grid = [GridItem(.adaptive(minimum: 300), spacing: 14)]
 
@@ -218,6 +295,7 @@ struct CityHubPage: View {
         .sheet(item: $radiusHotel) { h in
             HotelRadiusMap(hotel: h, cityName: page.name, places: sections.flatMap(\.items))
         }
+        .cityCardReviewsSheet($reviewsFor, onChanged: onReviewsChanged)
     }
 
     @ViewBuilder private var content: some View {
@@ -237,17 +315,23 @@ struct CityHubPage: View {
     private func card(_ item: PlaceItem, badges: [String] = [], lines: [CityListingCard.Line] = [], tags: [String] = [],
                       notice: (title: String, text: String, strong: Bool)? = nil, link: String = "Website",
                       photo: Bool = true, reviews: Bool = true, directions: Bool = true,
-                      extra: (title: String, icon: String, action: () -> Void)? = nil) -> some View {
+                      extra: (title: String, icon: String, action: () -> Void)? = nil,
+                      trailing: String? = nil, isStatic: Bool = false) -> some View {
         CityListingCard(item: item, badges: badges, showPhoto: photo, lines: lines, tags: tags, notice: notice,
                         linkLabel: link, showReviews: reviews, showDirections: directions, extra: extra,
-                        summary: summary(item), onSelect: { onSelect(item) })
+                        trailing: trailing, isStatic: isStatic, city: page.name,
+                        summary: summary(item), onSelect: { onSelect(item) },
+                        onReviews: { reviewsFor = item })
     }
 
     private func addr(_ v: Venue) -> [CityListingCard.Line] {
         v.address.isEmpty ? [] : [.init(icon: "mappin", label: nil, text: v.address)]
     }
-    private func phone(_ v: Venue, label: String? = nil) -> [CityListingCard.Line] {
-        v.phone.isEmpty ? [] : [.init(icon: "phone", label: label, text: v.phone)]
+    private func phone(_ v: Venue, label: String? = nil, tappable: Bool = false) -> [CityListingCard.Line] {
+        guard !v.phone.isEmpty else { return [] }
+        let digits = v.phone.filter { $0.isNumber || $0 == "+" }
+        let url = tappable && digits.count >= 7 ? URL(string: "tel:\(digits)") : nil
+        return [.init(icon: "phone", label: label, text: v.phone, url: url)]
     }
     private func line(_ icon: String, _ label: String?, _ text: String?) -> [CityListingCard.Line] {
         guard let text, !text.isEmpty else { return [] }
@@ -284,9 +368,9 @@ struct CityHubPage: View {
         } else {
             LazyVGrid(columns: Self.grid, spacing: 14) {
                 ForEach(list) { c in
-                    card(c, badges: ["Chabad Center"] + (c.venue.shabbatMeals == true ? ["Shabbat Meals"] : []),
+                    card(c, badges: ["Chabad Center"],
                          lines: addr(c.venue) + line("person", "Rabbi:", c.venue.rabbi) + phone(c.venue, label: "Phone:"),
-                         link: "Contact")
+                         link: "Contact", trailing: c.venue.shabbatMeals == true ? "Shabbat Meals" : nil)
                 }
             }
         }
@@ -300,8 +384,8 @@ struct CityHubPage: View {
                     card(m, badges: ["Travel Food Services"],
                          lines: addr(m.venue)
                             + [.init(icon: "checkmark.shield", label: "Kashrus:", text: m.venue.kashrus.isEmpty ? "Chabad Local Rabbi" : m.venue.kashrus)]
-                            + phone(m.venue),
-                         link: "Order meals", photo: false, reviews: false, directions: false)
+                            + phone(m.venue, tappable: true),
+                         link: "Order meals", photo: false, reviews: false, directions: false, isStatic: true)
                 }
             }
         }
@@ -347,6 +431,7 @@ struct CityHubPage: View {
     @ViewBuilder private var shuls: some View {
         let all = items(.shul)
         let minyan = all.filter { CityNeeds.dailyMinyan($0.venue) }
+        let wantsMinyan = saved("Daily minyan nearby")
         let filterOn = need("Daily minyan nearby")
         let list = (filterOn && !minyan.isEmpty) ? minyan : all
         CityHubHeader(title: "Shuls & Jewish Infrastructure", count: "\(all.count) listed")
@@ -354,7 +439,7 @@ struct CityHubPage: View {
             CityEmptyBox(title: "No synagogues or eruv registered yet.",
                          detail: "There are no recorded active synagogues, community minyanim, or Eruv boundaries in our system for \(page.name). Try the AI Planner for adjacent communities, regional Shabbat minyan lists, and family lodging options.")
         }
-        if filterOn && !all.isEmpty {
+        if wantsMinyan && !all.isEmpty {
             if minyan.isEmpty {
                 CityNoteBox(text: "No shul here lists a daily minyan yet, so all shuls are shown. Call ahead to check.")
             } else {
@@ -380,7 +465,6 @@ struct CityHubPage: View {
             VStack(alignment: .leading, spacing: 6) {
                 Label("Eruv Information", systemImage: "circle.dashed").font(.subheadline.weight(.heavy)).foregroundStyle(Color.navy)
                 VStack(alignment: .leading, spacing: 4) {
-                    if !e.name.isEmpty { Text(e.name).font(.footnote.weight(.semibold)).foregroundStyle(Color.navy) }
                     if !e.description.isEmpty { Text(e.description).font(.footnote).foregroundStyle(Color.textSecondary) }
                     Label("Always verify active Eruv status with the local rabbi or Chabad house hotlines before Shabbat.", systemImage: "exclamationmark.triangle")
                         .font(.caption.weight(.semibold)).foregroundStyle(Color.navy)
@@ -474,7 +558,7 @@ struct CityHubPage: View {
                 let v = r.venue
                 card(r, lines: addr(v) + line("text.alignleft", nil, v.description) + line("sparkles", "Kosher Amenities:", v.features)
                         + phone(v) + line("envelope", nil, v.email) + line("lightbulb", "Traveler Note:", v.notes),
-                     tags: v.tags ?? [], link: "Book Rental", reviews: false)
+                     tags: v.tags ?? [], link: "Book Rental", photo: false, reviews: false, directions: false, isStatic: true)
             }
         }
     }
@@ -487,7 +571,7 @@ struct CityHubPage: View {
                 let v = b.venue
                 card(b, badges: v.kind.isEmpty ? [] : [v.kind],
                      lines: addr(v) + line("text.alignleft", nil, v.description) + phone(v) + line("lightbulb", "Traveler Note:", v.notes),
-                     tags: v.tags ?? [], link: "Visit Site", photo: false, reviews: false)
+                     tags: v.tags ?? [], link: "Visit Site", photo: false, reviews: false, directions: false, isStatic: true)
             }
         }
     }
@@ -499,7 +583,7 @@ struct CityHubPage: View {
             ForEach(list) { r in
                 let v = r.venue
                 card(r, badges: v.kind.isEmpty ? [] : [v.kind], lines: line("text.alignleft", nil, v.description),
-                     link: "Open Resource", photo: false, reviews: false, directions: false)
+                     link: "Open Resource", photo: false, reviews: false, directions: false, isStatic: true)
             }
         }
     }
@@ -521,7 +605,7 @@ struct CityHubPage: View {
                     let v = c.venue
                     card(c, lines: addr(v) + line("text.alignleft", nil, v.description) + line("clock", "Hours:", v.hours)
                             + phone(v) + line("envelope", nil, v.email) + line("lightbulb", "Traveler Note:", v.notes),
-                         link: "Order Online", photo: false, reviews: false)
+                         link: "Order Online", photo: false, reviews: false, directions: false, isStatic: true)
                 }
             }
         }

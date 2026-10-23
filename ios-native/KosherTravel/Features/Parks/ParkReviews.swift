@@ -11,7 +11,8 @@ enum ParkReviewService {
     static let photosMax = 3
 
     static func save(placeId: String, placeName: String, uid: String, name: String, photo: String,
-                     rating: Int, text: String, photoUrls: [String]) async throws -> Bool {
+                     rating: Int, text: String, photoUrls: [String],
+                     placeKind: String = "park", destId: String = "") async throws -> Bool {
         guard FirebaseBoot.isConfigured else { throw URLError(.cannotConnectToHost) }
         let id = PlaceReviewService.reviewId(placeId: placeId, uid: uid)
         let ref = Firestore.firestore().collection(PlaceReviewService.collection).document(id)
@@ -27,8 +28,8 @@ enum ParkReviewService {
             "placeKey": PlaceKey.key(placeId),
             "placeId": String(placeId.prefix(200)),
             "placeName": place,
-            "placeKind": "park",
-            "destId": "",
+            "placeKind": placeKind,
+            "destId": String(destId.prefix(80)),
             "userId": uid,
             "userName": who,
             "userPhoto": String(photo.prefix(2000)),
@@ -43,8 +44,8 @@ enum ParkReviewService {
             for owner in PlaceReviewService.notifyUids where owner != uid {
                 let note: [String: Any] = [
                     "kind": "review", "actorUid": uid, "actorName": who, "actorPhoto": String(photo.prefix(2000)),
-                    "reviewId": id, "placeId": String(placeId.prefix(200)), "placeName": place, "placeKind": "park",
-                    "destId": "", "rating": stars, "text": String(trimmed.prefix(140)),
+                    "reviewId": id, "placeId": String(placeId.prefix(200)), "placeName": place, "placeKind": placeKind,
+                    "destId": String(destId.prefix(80)), "rating": stars, "text": String(trimmed.prefix(140)),
                     "createdAt": FieldValue.serverTimestamp(), "read": false,
                 ]
                 Firestore.firestore().collection("users").document(owner).collection("notifications")
@@ -100,6 +101,9 @@ private struct ParkPickedPhoto: Identifiable {
 struct ParkReviewsSection: View {
     let placeId: String
     let placeName: String
+    /// The website's placeKind and destId for the review documents ("park", none for parks; a city card passes its own).
+    var placeKind: String = "park"
+    var destId: String = ""
     var onCount: ((Int) -> Void)? = nil
 
     @Environment(AuthStore.self) private var auth
@@ -118,9 +122,12 @@ struct ParkReviewsSection: View {
     @State private var lightbox: ParkPhotoID?
     @FocusState private var focused: Bool
 
-    init(placeId: String, placeName: String, onCount: ((Int) -> Void)? = nil) {
+    init(placeId: String, placeName: String, placeKind: String = "park", destId: String = "",
+         onCount: ((Int) -> Void)? = nil) {
         self.placeId = placeId
         self.placeName = placeName
+        self.placeKind = placeKind
+        self.destId = destId
         self.onCount = onCount
     }
 
@@ -447,7 +454,8 @@ struct ParkReviewsSection: View {
             let name = !auth.displayName.isEmpty ? auth.displayName
                 : (auth.email.split(separator: "@").first.map(String.init) ?? "Traveler")
             let isNew = try await ParkReviewService.save(placeId: placeId, placeName: placeName, uid: uid, name: name,
-                                                         photo: auth.photoURL, rating: rating, text: text, photoUrls: urls)
+                                                         photo: auth.photoURL, rating: rating, text: text, photoUrls: urls,
+                                                         placeKind: placeKind, destId: destId)
             writing = false
             rating = 0
             text = ""
