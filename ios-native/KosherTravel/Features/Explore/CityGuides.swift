@@ -90,8 +90,6 @@ struct CityGuidesView: View {
             .padding(.bottom, 36)
         }
         .background(Color.white)
-        .navigationTitle("Travel Guides")
-        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $adding) {
             AddTourGuideSheet(page: page) { g in
                 store.add(g)

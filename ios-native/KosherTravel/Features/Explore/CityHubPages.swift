@@ -210,8 +210,6 @@ struct CityHubPage: View {
             .padding(.bottom, 36)
         }
         .background(Color.white)
-        .navigationTitle(hub.title)
-        .navigationBarTitleDisplayMode(.inline)
     }
 
     @ViewBuilder private var content: some View {

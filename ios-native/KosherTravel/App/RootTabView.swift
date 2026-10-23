@@ -40,6 +40,11 @@ struct RootTabView: View {
         }
         // Shared links (universal links) and the Google sign-in callback.
         .onOpenURL { url in _ = DeepLinks.handle(url) }
+        // Universal links (www.yourkoshertravel.com, apple-app-site-association): SwiftUI hands most to onOpenURL;
+        // this catches the ones delivered as a browsing activity.
+        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+            if let url = activity.webpageURL { _ = DeepLinks.handle(url) }
+        }
         // Every link a native screen opens goes through one opener (maps chooser, Safari in-app, affiliate rewrite).
         .environment(\.openURL, OpenURLAction { url in LinkOpener.handle(url) })
         .onAppear {

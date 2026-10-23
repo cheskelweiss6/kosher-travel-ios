@@ -184,8 +184,6 @@ struct CityRestaurantsView: View {
             .padding(.bottom, 36)
         }
         .background(Color.white)
-        .navigationTitle("Kosher Restaurants")
-        .navigationBarTitleDisplayMode(.inline)
         .sensoryFeedback(.selection, trigger: tab)
     }
 

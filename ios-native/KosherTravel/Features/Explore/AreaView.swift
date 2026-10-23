@@ -65,6 +65,9 @@ struct AreaView: View {
                 TravelerArticlesSection(kind: .city, placeName: page.name,
                                         region: page.stateName.isEmpty ? page.country : page.stateName)
                     .padding(.top, 14)
+                if !traveler.isEmpty {
+                    addedByTravelers.padding(.horizontal, Theme.pagePadding).padding(.top, 14)
+                }
                 VStack(alignment: .leading, spacing: 14) {
                     facts(page)
                     CityNeedsBlock(page: page, sections: sections(page))
@@ -88,7 +91,7 @@ struct AreaView: View {
                 let saved = bucket.contains(page.destId)
                 Button { bucket.toggle(page.destId) } label: {
                     Image(systemName: saved ? "heart.fill" : "heart")
-                        .foregroundStyle(saved ? Color.alert : Color.navy)
+                        .foregroundStyle(Color.navy)
                 }
                 .sensoryFeedback(.success, trigger: saved)
                 .accessibilityLabel(saved ? "Saved" : "Save")
@@ -156,7 +159,6 @@ struct AreaView: View {
         if has(.resource) { out.append(.resources) }
         out.append(.guides)
         if page.area == "Caribbean" || page.area == "Europe" { out.append(.experience) }
-        if has(.traveler) { out.append(.traveler) }
         return out
     }
 
@@ -181,7 +183,7 @@ struct AreaView: View {
         let photo = hubPhoto(hub, page: page)
         return Button {
             switch hub {
-            case .shabbat, .experience:
+            case .shabbat:
                 webSection = WebRoute.city(page.name, sub: page.subtitle, section: hub.webSection)
             default:
                 openHub = hub
@@ -225,6 +227,14 @@ struct AreaView: View {
 
     @ViewBuilder
     private func subPage(_ hub: CityHub, page: CityPage) -> some View {
+        subPageBody(hub, page: page)
+            // Web breadcrumb: "Denver / Restaurants" (just the city on pages without a crumb word).
+            .navigationTitle(hub.crumb.isEmpty ? page.name : "\(page.name) / \(hub.crumb)")
+            .navigationBarTitleDisplayMode(.inline)
+    }
+
+    @ViewBuilder
+    private func subPageBody(_ hub: CityHub, page: CityPage) -> some View {
         if hub == .restaurants {
             CityRestaurantsView(items: sections(page).first { $0.category == .restaurant }?.items ?? [],
                                 cityName: page.name,
@@ -232,6 +242,11 @@ struct AreaView: View {
                                 onSelect: { selected = $0 })
         } else if hub == .guides {
             CityGuidesView(page: page)
+        } else if hub == .experience {
+            CityExperienceView(page: page)
+        } else if hub == .todo {
+            CityThingsToDoView(page: page, attractions: sections(page).first { $0.category == .todo }?.items ?? [],
+                               onSelect: { selected = $0 })
         } else if CityHub.nativePages.contains(hub) {
             CityHubPage(hub: hub, page: page, sections: sections(page),
                         summary: { summary(for: $0) }, onSelect: { selected = $0 })
@@ -261,7 +276,6 @@ struct AreaView: View {
             .padding(.bottom, 36)
         }
         .background(Color.white)
-        .navigationTitle(hub.title)
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -548,6 +562,41 @@ struct AreaView: View {
         print("[KT] city \(page.destId): traveler places=\(p.count) reviewed places=\(r?.count ?? -1)")
     }
 
+    /// Web PlaceStories "Added by travelers": approved places travelers sent in, under the articles row.
+    private var addedByTravelers: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Added by travelers").font(.footnote.weight(.heavy)).foregroundStyle(Color.navy)
+            ForEach(traveler) { tp in
+                HStack(spacing: 12) {
+                    Image(systemName: tp.systemImage).font(.system(size: 17)).foregroundStyle(.white)
+                        .frame(width: 40, height: 40)
+                        .background(Color.navy, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(tp.venue.name).font(.subheadline.weight(.bold)).foregroundStyle(Color.navy).lineLimit(1)
+                        Text([tp.venue.kind, tp.venue.kashrus, tp.venue.address].filter { !$0.isEmpty }.joined(separator: " · "))
+                            .font(.caption).foregroundStyle(Color.textSecondary).lineLimit(1)
+                        Text("ADDED BY A TRAVELER").font(.system(size: 10, weight: .bold)).tracking(0.5)
+                            .foregroundStyle(Color.navy)
+                            .padding(.horizontal, 6).padding(.vertical, 2)
+                            .background(Color.surface, in: Capsule())
+                            .padding(.top, 2)
+                    }
+                    Spacer(minLength: 0)
+                    let digits = tp.venue.phone.filter { $0.isNumber || $0 == "+" }
+                    if digits.count >= 7, let tel = URL(string: "tel:\(digits)") {
+                        Link("Call", destination: tel).font(.caption.weight(.bold)).foregroundStyle(Color.navy)
+                            .frame(minWidth: 44, minHeight: 44)
+                    }
+                }
+                .padding(12)
+                .background(Color.white)
+                .hairline(radius: 16)
+                .contentShape(Rectangle())
+                .onTapGesture { selected = tp }
+            }
+        }
+    }
+
     private func applyRoute(_ page: CityPage) {
         guard !routed else { return }
         routed = true
@@ -752,6 +801,22 @@ enum CityHub: String, Identifiable, Hashable {
         case .guides: return "Verified kosher travel guides, walking tours, and excursions in \(page.name)."
         case .experience: return "Travel stories and community experiences in \(page.name)."
         case .traveler: return "Places travelers tagged in \(page.name)."
+        }
+    }
+
+    /// The website's breadcrumb word after the city name (App.tsx back button).
+    var crumb: String {
+        switch self {
+        case .restaurants: return "Restaurants"
+        case .grocery: return "Groceries"
+        case .chabad: return "Chabad"
+        case .shuls: return "Synagogues"
+        case .todo: return "Things to Do"
+        case .hotels: return "Hotels"
+        case .shabbat: return "Shabbat"
+        case .guides: return "Travel Guides"
+        case .experience: return "Travel Experience"
+        default: return ""
         }
     }
 
