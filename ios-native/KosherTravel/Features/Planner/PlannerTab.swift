@@ -390,8 +390,8 @@ struct PlannerTab: View {
                 let cards = cards(for: msg)
                 if !cards.isEmpty { destinationCards(cards, away: msg.away ?? [:]) }
                 if let articles = articlesFor(index: index) { articlesRow(articles) }
-                if PlannerActions.showsBar(for: msg, index: index, messages: store.messages, settled: settled, cards: cards(for: msg)) {
-                    PlannerActionBar(message: msg, index: index, messages: store.messages, cards: cards(for: msg)) { text in
+                if PlannerActions.showsBar(for: msg, index: index, messages: store.messages, settled: settled, cards: cards) {
+                    PlannerActionBar(message: msg, index: index, messages: store.messages, cards: cards) { text in
                         store.send(text)
                     }
                 }
