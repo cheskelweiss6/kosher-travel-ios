@@ -5,9 +5,9 @@ import SwiftUI
 /// every detail (Cheskel's parity rule); until then the shell shows the live screen, so nothing is missing.
 enum ShellRoutes {
     /// State pages: native lacks most tabs (Things to Do, parks and their sheets, grocery, shuls, Chabad, hotels, guides).
-    static let nativeStatePage = false
+    static var nativeStatePage: Bool { previewNative }
     /// Caribbean / Central America country pages: native lacks the tabs and the travel-time chips.
-    static let nativeCountryPage = false
+    static var nativeCountryPage: Bool { previewNative }
     /// City pages: the web is a hub with sub-pages (Restaurants Meat/Dairy/Parve, Shabbat, Kivrei, Tour Guides…).
     static var nativeCityPage: Bool { previewNative }
     /// QA: a launch route ending in "#native" shows the native rebuild of a still-embedded screen.
