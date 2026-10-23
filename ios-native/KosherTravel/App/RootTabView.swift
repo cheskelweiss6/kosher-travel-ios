@@ -47,6 +47,19 @@ struct RootTabView: View {
         }
         // Every link a native screen opens goes through one opener (maps chooser, Safari in-app, affiliate rewrite).
         .environment(\.openURL, OpenURLAction { url in LinkOpener.handle(url) })
+        // My Travel is the live site's page: load it in the background right after launch and again after a
+        // sign-in or sign-out, so the tab opens instantly (MyTravelWarm.swift). Waits for Firebase to report the
+        // sign-in first, so the page is never loaded (and its stored data wiped) for a signed-out moment at launch.
+        .task(id: auth.ready ? (auth.uid ?? "-") : "?") {
+            guard auth.ready else { return }
+            try? await Task.sleep(nanoseconds: 400_000_000)   // after the first screen is up
+            await WarmWebPage.myTravel.warm(uid: auth.uid)
+        }
+        // The Stories feed too, so its first open shows posts instead of placeholders.
+        .task {
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            await StoriesStore.shared.loadIfNeeded()
+        }
         .onAppear {
             router.auth = auth
             ToastWindow.install()
