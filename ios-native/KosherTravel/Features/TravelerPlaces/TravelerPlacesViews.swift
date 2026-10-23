@@ -45,14 +45,25 @@ struct FromTravelersLink: View {
     var onOpenStory: ((String) -> Void)? = nil
     /// On a photo (the Cities & Areas card): light grey words, white link.
     var onPhoto = false
+    /// Web (Oct 23 2026): a place the app doesn't list reads "Added by a traveler"; an app listing travelers tagged or
+    /// named, and a town card, read "From travelers".
+    var lead = "Added by a traveler"
 
-    init(sight: SharedSight, onOpenStory: ((String) -> Void)? = nil) {
+    init(sight: SharedSight, label: String = "Added by a traveler", onOpenStory: ((String) -> Void)? = nil) {
         posts = sight.posts
+        lead = label
         self.onOpenStory = onOpenStory
     }
     init(town: TravelerTown, onPhoto: Bool = false, onOpenStory: ((String) -> Void)? = nil) {
         posts = town.posts
+        lead = "From travelers"
         self.onPhoto = onPhoto
+        self.onOpenStory = onOpenStory
+    }
+    /// An app listing that live posts tag or name (the AI server's index `listings`).
+    init(posts: [String], label: String = "From travelers", onOpenStory: ((String) -> Void)? = nil) {
+        self.posts = posts
+        lead = label
         self.onOpenStory = onOpenStory
     }
 
@@ -60,7 +71,7 @@ struct FromTravelersLink: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            Text("From travelers")
+            Text(lead)
                 .lineLimit(1)
             if let first = posts.first {
                 Text("·").accessibilityHidden(true)
@@ -505,12 +516,57 @@ struct TravelerPlaceExtra: View {
     let item: PlaceItem
     var onOpenStory: ((String) -> Void)? = nil
     private var store: SharedSights { SharedSights.shared }
+    private var index: TravelerTipsStore { TravelerTipsStore.shared }
 
     var body: some View {
-        if let s = store.sight(for: item), !s.posts.isEmpty || s.link != nil {
+        // Web (Oct 23 2026): a traveler's own place reads "Added by a traveler"; an app listing travelers tagged or
+        // named reads "From travelers" (also from the AI server's index), plus up to 3 tips about this place.
+        let given = item.id.hasPrefix(SharedSight.placeIdPrefix)
+        let s = store.sight(for: item)
+        let sightShown = s.map { !$0.posts.isEmpty || $0.link != nil } ?? false
+        let _ = index.kick()
+        let posts = given ? [] : index.listingPosts(item.venue.name)
+        let listingShown = !sightShown && !posts.isEmpty
+        let tips = Array(index.tips(for: TipScope(kind: .place, name: item.venue.name)).prefix(3))
+        if sightShown || listingShown || !tips.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                FromTravelersLink(sight: s, onOpenStory: onOpenStory)
-                if s.link != nil {
+                if sightShown, let s {
+                    FromTravelersLink(sight: s, label: given ? "Added by a traveler" : "From travelers", onOpenStory: onOpenStory)
+                }
+                if listingShown {
+                    FromTravelersLink(posts: posts, label: "From travelers", onOpenStory: onOpenStory)
+                }
+                if !tips.isEmpty {
+                    if sightShown || listingShown { Divider().overlay(Color.hairline).padding(.vertical, 4) }
+                    Label { Text("Tips from travelers").foregroundStyle(Color.primary) } icon: {
+                        Image(systemName: "lightbulb").foregroundStyle(Color.navy)
+                    }
+                    .font(.footnote.weight(.black))
+                    ForEach(tips) { t in
+                        Button { if !t.postId.isEmpty { onOpenStory?(t.postId) } } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("\u{201C}\(t.text)\u{201D}")
+                                    .font(.subheadline)
+                                    .foregroundStyle(Color.primary)
+                                    .multilineTextAlignment(.leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text((t.author.isEmpty ? "A traveler" : t.author) + (t.when.isEmpty ? "" : ", visited \(t.when)"))
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(Color.textSecondary)
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            .hairline(radius: 16)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(onOpenStory == nil)
+                    }
+                    Text("Travelers\u{2019} own words, not checked by the app.")
+                        .font(.caption2)
+                        .foregroundStyle(Color.textTertiary)
+                }
+                if sightShown, let s, s.link != nil {
                     TravelerCommissionNote()
                     HStack {
                         Spacer(minLength: 0)

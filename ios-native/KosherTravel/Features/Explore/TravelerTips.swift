@@ -43,10 +43,27 @@ final class TravelerTipsStore {
     static let url = URL(string: "https://kosher-travel-ai.sites.tab.bot/api/traveler-index")!
 
     private(set) var tips: [TravelerTip] = []
+    /// Index `listings`: app listings live posts tag or name (name, postId).
+    private(set) var listings: [(name: String, postId: String)] = []
     @ObservationIgnored private var fetchedAt: Date?
     @ObservationIgnored private var running: Task<Void, Never>?
 
-    private struct Index: Decodable { var tips: [TravelerTip]? }
+    private struct Listing: Decodable { var name: String?; var postId: String? }
+    private struct Index: Decodable { var tips: [TravelerTip]?; var listings: [Listing]? }
+
+    /// Starts a read when none has happened yet (safe to call from a view's body, like SharedSights.ensureLoaded).
+    func kick() {
+        guard fetchedAt == nil, running == nil else { return }
+        Task { await fetch() }
+    }
+
+    /// The web's listingPosts: live posts that tag or name this app listing.
+    func listingPosts(_ name: String) -> [String] {
+        guard !name.isEmpty else { return [] }
+        var out: [String] = []
+        for l in listings where Self.sameName(l.name, name) && !out.contains(l.postId) { out.append(l.postId) }
+        return out
+    }
 
     /// Like the website: read at most every 3 minutes; a failed read keeps the last list.
     func fetch() async {
@@ -59,6 +76,10 @@ final class TravelerTipsStore {
                   (res.1 as? HTTPURLResponse)?.statusCode == 200,
                   let idx = try? JSONDecoder().decode(Index.self, from: res.0), let list = idx.tips else { return }
             self?.tips = list
+            self?.listings = (idx.listings ?? []).compactMap { l in
+                guard let n = l.name, let p = l.postId, !n.isEmpty, !p.isEmpty else { return nil }
+                return (name: n, postId: p)
+            }
             self?.fetchedAt = Date()
         }
         running = job

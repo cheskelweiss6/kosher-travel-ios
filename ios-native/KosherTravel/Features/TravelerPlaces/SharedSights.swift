@@ -400,7 +400,9 @@ enum TravelerDerive {
         var photo: String
     }
 
-    static func sights(_ posts: [Doc], muted: Set<String> = []) -> [SharedSight] {
+    /// `textPlaces`: the AI server's index `places` (/api/traveler-index): map spots a post's words name (Oct 23 2026,
+    /// web deriveTravelerSights textPlaces), filed as extra tagged places of that post.
+    static func sights(_ posts: [Doc], muted: Set<String> = [], textPlaces: [Doc] = []) -> [SharedSight] {
         var bySrc: [String: Row] = [:]
         var order = 0
         let R = TravelerRules.self
@@ -488,6 +490,24 @@ enum TravelerDerive {
                 let st = stops.first { x in arr(x["mediaIdx"]).contains { idx($0) == i } }
                 add(s, Tag(name: n, lat: m["lat"], lng: m["lng"], src: k, area: "", kind: "", category: nil, link: m["placeLink"],
                            photo: photoOf(s, i)), st, true)
+            }
+            // places the post's text names (web, Oct 23 2026): only map spots the server found by name near the post's town
+            let sid = R.str(s["id"])
+            for tp in textPlaces where R.str(tp["postId"]) == sid {
+                let src = R.str(tp["src"])
+                guard src.range(of: "^osm:[NWR][0-9]+$", options: .regularExpression) != nil else { continue }
+                let cid = R.str(tp["cityId"])
+                var st: Doc? = cid.isEmpty ? nil : stops.first { R.str($0["cityId"]) == cid }
+                if st == nil, !cid.isEmpty {
+                    st = ["cityId": cid, "cityName": R.str(tp["cityName"]), "citySub": R.str(tp["citySub"])]
+                }
+                let pl: Doc = [
+                    "name": R.str(tp["name"]), "category": R.str(tp["category"]) == "hotel" ? "hotel" : "todo",
+                    "cityName": R.str(tp["cityName"]),
+                    "geo": ["lat": tp["lat"] ?? NSNull(), "lng": tp["lng"] ?? NSNull(), "src": src,
+                            "area": R.str(tp["area"]), "kind": R.str(tp["kind"])] as Doc,
+                ]
+                tagged(s, pl, st)
             }
         }
 
@@ -757,8 +777,11 @@ final class SharedSights {
     // MARK: reading
 
     private nonisolated static func load(muted: Set<String>) async -> ([SharedSight], [TravelerTown])? {
+        // The AI server's index (places a post's words name) is read beside the posts, with a 3-second limit.
+        async let index = indexPlaces()
         if let posts = try? await readLivePosts() {
-            return (TravelerDerive.sights(posts, muted: muted), TravelerDerive.towns(posts, muted: muted))
+            let textPlaces = await index
+            return (TravelerDerive.sights(posts, muted: muted, textPlaces: textPlaces), TravelerDerive.towns(posts, muted: muted))
         }
         // The posts could not be read: the sights saved in `places` stand in (web fetchSharedPlaces).
         if let saved = try? await PlaceFirestore.query("places", [.init(field: "status", value: "live"), .init(field: "source", value: "osm")], limit: 1000) {
@@ -775,6 +798,16 @@ final class SharedSights {
             return (list, [])
         }
         return nil
+    }
+
+    /// `places` of https://kosher-travel-ai.sites.tab.bot/api/traveler-index (web fetchTravelerIndex), [] when slow or down.
+    private nonisolated static func indexPlaces() async -> [TravelerDerive.Doc] {
+        var req = URLRequest(url: URL(string: "https://kosher-travel-ai.sites.tab.bot/api/traveler-index")!, timeoutInterval: 3)
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        guard let res = try? await URLSession.shared.data(for: req), (res.1 as? HTTPURLResponse)?.statusCode == 200,
+              let j = try? JSONSerialization.jsonObject(with: res.0) as? [String: Any],
+              let places = j["places"] as? [[String: Any]] else { return [] }
+        return places
     }
 
     /// Sights saved before the city was stored go under the nearest app city within 80 km (web withCity).
