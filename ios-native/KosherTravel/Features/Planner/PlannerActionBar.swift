@@ -18,6 +18,10 @@ struct PlannerActionBar: View {
     @State private var showCalendar = false
     @State private var copied = false
     @State private var made = 0
+    @Environment(AuthStore.self) private var auth
+    /// Save to My Travel / Add to Bucket List (Oct 23 2026): the same Firestore data the website writes.
+    @State private var savedTripId: String?
+    @State private var bucketBusy: String?
 
     private var plan: ChatMessage { PlannerActions.plan(for: index, messages: messages) ?? message }
 
@@ -51,6 +55,12 @@ struct PlannerActionBar: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) { copied = false }
                 }
                 chip("Add to Calendar", "calendar.badge.plus") { showCalendar = true }
+                chip(savedTripId == nil ? "Save to My Travel" : "Saved", savedTripId == nil ? "bookmark" : "checkmark") { saveTrip() }
+                if let t = bucketTarget(places) {
+                    let inList = PlannerTrips.inBucket(t.id)
+                    chip(bucketBusy == t.name ? "Adding\u{2026}" : (inList ? "In your Bucket List" : "Add to Bucket List"),
+                         inList ? "checkmark" : "heart") { addToBucket(t) }
+                }
                 chip("Packing list", "suitcase") {
                     onAsk("Make a packing list for this trip")
                 }
@@ -69,7 +79,9 @@ struct PlannerActionBar: View {
         }
         .sheet(isPresented: $showMaps) {
             PlannerMapsSheet(places: places, title: tripTitle,
-                             days: PlannerActions.dayRoutes(plan.content, places: PlannerActions.places(for: plan, messages: messages, cards: cards)))
+                             days: PlannerActions.dayRoutes(plan.content, places: PlannerActions.places(for: plan, messages: messages, cards: cards)),
+                             inBucket: { p in PlannerTrips.inBucket(PlannerTrips.bucketId(name: p.name, city: p.city, destId: nil)) },
+                             onBucket: { p in addToBucket(BucketTarget(name: p.name, city: p.city, area: p.area, kind: p.kind, destId: nil, photo: "")) })
         }
         .sheet(isPresented: $showCalendar) {
             PlannerCalendarEditor(event: PlannerCalendarDraft.make(messages: messages, plan: plan, title: tripTitle,
@@ -91,6 +103,69 @@ struct PlannerActionBar: View {
         if let file = PlannerPDF.make(content: plan.content, title: tripTitle, filters: PlannerText.filters(from: messages), places: all) {
             made += 1
             pdf = file
+        }
+    }
+
+    // MARK: Save to My Travel / Add to Bucket List
+
+    struct BucketTarget {
+        let name: String
+        let city: String
+        let area: String
+        let kind: String
+        let destId: String?
+        let photo: String
+        var id: String { PlannerTrips.bucketId(name: name, city: city, destId: destId) }
+    }
+
+    /// One destination answer (its card), or an answer about one place: the chip saves it.
+    private func bucketTarget(_ places: [PlannerMapPlace]) -> BucketTarget? {
+        if cards.count == 1, let c = cards.first {
+            return BucketTarget(name: c.name, city: "", area: c.subtitle, kind: "city", destId: PlannerTrips.destId(fromCard: c.id), photo: c.photo)
+        }
+        if cards.isEmpty, places.count == 1, let p = places.first {
+            return BucketTarget(name: p.name, city: p.city, area: p.area, kind: p.kind, destId: nil, photo: "")
+        }
+        return nil
+    }
+
+    private func viewMyTravel() -> ShellToast.Action {
+        ShellToast.Action(label: "View") {
+            ShellRouter.shared.toast = nil
+            ShellRouter.shared.selectedTab = .myTravel
+        }
+    }
+
+    private func saveTrip() {
+        if savedTripId != nil {
+            ShellRouter.shared.selectedTab = .myTravel
+            return
+        }
+        ShellRouter.shared.requireSignIn("Sign in to save trips to My Travel") {
+            guard savedTripId == nil, let uid = auth.uid else { return }
+            savedTripId = PlannerTrips.save(uid: uid, messages: messages, plan: plan, title: tripTitle)
+            made += 1
+            ShellRouter.shared.showToast("Saved to My Travel", seconds: 4, action: viewMyTravel())
+        }
+    }
+
+    private func addToBucket(_ t: BucketTarget) {
+        guard bucketBusy == nil else { return }
+        if PlannerTrips.inBucket(t.id) {
+            ShellRouter.shared.showToast("Already in your Bucket List", seconds: 3, action: viewMyTravel())
+            return
+        }
+        ShellRouter.shared.requireSignIn("Sign in to keep a Bucket List") {
+            guard let uid = auth.uid else { return }
+            bucketBusy = t.name
+            Task { @MainActor in
+                let added = await PlannerTrips.addToBucket(uid: uid, name: t.name, city: t.city, area: t.area, kind: t.kind,
+                                                           destId: t.destId, photo: t.photo, messages: messages)
+                bucketBusy = nil
+                made += 1
+                ShellRouter.shared.showToast(added ? "Added to your Bucket List" : "Already in your Bucket List", seconds: 4,
+                                             action: viewMyTravel())
+            }
         }
     }
 
@@ -456,6 +531,9 @@ struct PlannerMapsSheet: View {
     let places: [PlannerMapPlace]
     let title: String
     var days: [PlannerDayRoute] = []
+    /// Add to Bucket List on each place (Oct 23 2026).
+    var inBucket: ((PlannerMapPlace) -> Bool)? = nil
+    var onBucket: ((PlannerMapPlace) -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
     @State private var copied = false
 
@@ -504,6 +582,7 @@ struct PlannerMapsSheet: View {
 
                 Section {
                     ForEach(places) { p in
+                        HStack(spacing: 2) {
                         Button { PlannerMaps.open(p.googleURL) } label: {
                             HStack(spacing: 12) {
                                 Image(systemName: icon(p.kind))
@@ -521,7 +600,23 @@ struct PlannerMapsSheet: View {
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+                        if let onBucket {
+                            let saved = inBucket?(p) ?? false
+                            Button { onBucket(p) } label: {
+                                Image(systemName: saved ? "checkmark" : "heart")
+                                    .font(.body)
+                                    .foregroundStyle(Color.navy)
+                                    .frame(width: 44, height: 44)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.borderless)
+                            .accessibilityLabel(saved ? "\(p.name) is in your Bucket List" : "Add \(p.name) to your Bucket List")
+                        }
+                        }
                         .contextMenu {
+                            if let onBucket {
+                                Button { onBucket(p) } label: { Label("Add to Bucket List", systemImage: "heart") }
+                            }
                             Button { PlannerMaps.open(p.googleURL) } label: { Label("Google Maps", systemImage: "map") }
                             Button { PlannerMaps.open(p.appleURL) } label: { Label("Apple Maps", systemImage: "map.fill") }
                             Button { PlannerMaps.open(PlannerMaps.directions(p.query)) } label: {
