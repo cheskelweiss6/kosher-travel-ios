@@ -134,6 +134,11 @@ struct PlannerTab: View {
                 }
             }
             .scrollDismissesKeyboard(.interactively)
+            // Cheskel (Oct 23 2026: "How do I get out of the AI planner page?"): a tap on the chat closes the keyboard,
+            // so the tab bar is always reachable (links in answers still open: the tap is simultaneous).
+            .simultaneousGesture(TapGesture().onEnded {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            })
             .environment(\.openURL, OpenURLAction { url in handleLink(url) })
             .safeAreaInset(edge: .bottom, spacing: 0) { PlannerComposer(store: store) }
             .onChange(of: store.sendCount) { _, _ in
@@ -680,6 +685,13 @@ struct PlannerComposer: View {
                     .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .strokeBorder(Color(red: 203 / 255, green: 213 / 255, blue: 225 / 255), lineWidth: 1))
                     .accessibilityLabel("Message the AI Planner")
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("Done") { focused = false }
+                                .fontWeight(.semibold)
+                        }
+                    }
                 if store.isGenerating || store.typingId != nil {
                     Button {
                         if store.isGenerating { store.stop() } else { store.typingId = nil }
@@ -717,6 +729,7 @@ struct PlannerComposer: View {
         guard canSend, !store.isGenerating else { return }
         let text = draft
         draft = ""
+        focused = false   // the answer and the tab bar show again after sending
         store.send(text)
     }
 }

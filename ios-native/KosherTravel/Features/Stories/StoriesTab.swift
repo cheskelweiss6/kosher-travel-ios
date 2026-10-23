@@ -162,7 +162,7 @@ struct StoriesTab: View {
             EmptyNote(title: "No \(showArticles ? "articles" : "posts") tagged \(tag) yet", systemImage: "tag")
         } else {
             EmptyNote(title: showArticles ? "No articles yet" : "No photos from travelers yet",
-                      detail: "Travelers' trips show here once they are checked.",
+                      detail: "Travelers' trips show here as soon as they are posted.",
                       systemImage: "photo.on.rectangle")
         }
     }
