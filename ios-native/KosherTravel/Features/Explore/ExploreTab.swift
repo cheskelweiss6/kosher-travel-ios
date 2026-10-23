@@ -19,6 +19,7 @@ struct ExploreTab: View {
         let r = full.hasSuffix("#native") ? String(full.dropLast(7)) : full
         if r == "usa" { path = [.unitedStates] }
         else if r == "caribbean" { path = [.caribbean] }
+        else if r == "centralamerica" { path = [.mexicoCentralAmerica] }
         else if r.hasPrefix("state:") { path = [.unitedStates, .state(String(r.dropFirst(6)))] }
         else if r.hasPrefix("country:") { path = [.caribbean, .country(String(r.dropFirst(8)))] }
         else if r.hasPrefix("area:") { path = [.area(String(r.dropFirst(5)))] }

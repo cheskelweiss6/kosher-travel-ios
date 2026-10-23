@@ -57,22 +57,31 @@ struct UnitedStatesView: View {
 /// times from …", then every island and country (Central America included) as a round photo with its city count, name
 /// and description, and a travel-time chip under it.
 struct CaribbeanView: View {
+    /// Oct 23 2026: the same page also shows Mexico & Central America, which are no longer under the Caribbean.
+    var region: String = TravelRegions.caribbean
     @Environment(ExploreStore.self) private var explore
     @Environment(StoryFeed.self) private var feed
     @State private var query = ""
     private var store: StatePageStore { StatePageStore.shared }
 
+    private var isCaribbean: Bool { region == TravelRegions.caribbean }
+    private var scope: SPSearchScope { isCaribbean ? .caribbean : .mexicoCentralAmerica }
+
     private var tiles: [SPRegionTile] {
-        if !store.caribbean.isEmpty { return store.caribbean }
-        return explore.caribbean.map { SPRegionTile(id: $0.id, name: $0.name, image: $0.image, description: $0.description,
-                                                   cityCount: $0.cities.count, lat: $0.lat, lng: $0.lng) }
+        let all: [SPRegionTile]
+        if !store.caribbean.isEmpty { all = store.caribbean }
+        else {
+            all = explore.caribbean.map { SPRegionTile(id: $0.id, name: $0.name, image: $0.image, description: $0.description,
+                                                       cityCount: $0.cities.count, lat: $0.lat, lng: $0.lng) }
+        }
+        return all.filter { TravelRegions.contains(region: region, country: $0.name, storedRegion: TravelRegions.caribbean) }
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Explore Featured Islands & Countries")
+                    Text(isCaribbean ? "Explore Featured Islands & Countries" : "Explore Featured Countries")
                         .font(.headline)
                         .foregroundStyle(Color.navy)
                         .accessibilityAddTraits(.isHeader)
@@ -100,17 +109,17 @@ struct CaribbeanView: View {
         }
         .overlay {
             if !query.trimmingCharacters(in: .whitespaces).isEmpty {
-                RegionSearchResults(scope: .caribbean, query: $query)
+                RegionSearchResults(scope: scope, query: $query)
             }
         }
         .background(Color.white)
-        .navigationTitle("Caribbean")
+        .navigationTitle(region)
         .navigationBarTitleDisplayMode(.large)
-        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Caribbean")
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search \(region)")
         .refreshable { await feed.refresh() }
         .task { await feed.loadIfNeeded() }
         .task { await store.load() }
-        .onAppear { if let carried = SPSearchIndex.shared.carry.removeValue(forKey: "Caribbean") { query = carried } }
+        .onAppear { if let carried = SPSearchIndex.shared.carry.removeValue(forKey: region) { query = carried } }
     }
 }
 

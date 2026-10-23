@@ -334,7 +334,7 @@ struct AreaView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
                 if !page.area.isEmpty {
-                    Text(page.area.uppercased())
+                    Text(TravelRegions.label(region: page.area, country: page.country).uppercased())
                         .font(.system(size: 10, weight: .heavy))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 10)

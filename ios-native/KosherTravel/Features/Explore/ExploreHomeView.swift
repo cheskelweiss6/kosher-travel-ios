@@ -110,10 +110,13 @@ struct ExploreHomeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     NavigationLink(value: ExploreRoute.unitedStates) {
-                        RegionCard(title: "United States", tag: "North America", asset: "RegionUSA")
+                        RegionCard(title: "United States", tag: "50 States", asset: "RegionUSA")
                     }
                     NavigationLink(value: ExploreRoute.caribbean) {
                         RegionCard(title: "Caribbean", tag: "Tropical", asset: "RegionCaribbean")
+                    }
+                    NavigationLink(value: ExploreRoute.mexicoCentralAmerica) {
+                        RegionCard(title: "Mexico & Central America", tag: "8 Countries", asset: "RegionCentralAmerica")
                     }
                 }
                 .buttonStyle(.plain)
@@ -224,7 +227,7 @@ struct RegionCard: View {
                     Text(title)
                         .font(.title3.weight(.heavy))
                         .foregroundStyle(.white)
-                        .lineLimit(1)
+                        .lineLimit(2)
                         .minimumScaleFactor(0.8)
                 }
                 .padding(12)
