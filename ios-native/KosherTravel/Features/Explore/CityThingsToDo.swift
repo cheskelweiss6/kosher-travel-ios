@@ -14,8 +14,8 @@ struct CityExperience: Identifiable, Hashable {
     var item: PlaceItem?
     /// A place travelers tagged in their posts (shown first under Top Attractions).
     var sight: SharedSight? = nil
-    /// The photo gallery's fallbackPhoto (website: verifiedFallbackPhoto || photo).
-    var fallbackPhoto: String = ""
+    /// The card's swipeable photos, as the website's PlacePhotosGallery resolves them (empty: just `photo`).
+    var photos: [String] = []
 }
 
 /// The city's Things to Do page (DeepExperiencesView.tsx): category chips, the cards, and the website's loading,
@@ -68,7 +68,7 @@ struct CityThingsToDoView: View {
                 }
                 return CityExperience(name: t.name, shortDescription: t.description, exactLocation: t.location,
                                       photo: t.photo, bookingLink: t.website, gpsDirections: "", aiTips: "", item: item,
-                                      fallbackPhoto: t.fallbackPhoto)
+                                      photos: t.gallery)
             }
         }
         return attractions.map { a in
@@ -95,6 +95,8 @@ struct CityThingsToDoView: View {
 
     var body: some View {
         ScrollView {
+          VStack(spacing: 0) {
+            CitySubPageHero()
             VStack(alignment: .leading, spacing: 20) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
@@ -152,6 +154,7 @@ struct CityThingsToDoView: View {
             .padding(.horizontal, Theme.pagePadding)
             .padding(.top, 12)
             .padding(.bottom, 36)
+          }
         }
         .background(Color.white)
         .task(id: active) { await load() }
@@ -173,9 +176,9 @@ struct CityThingsToDoView: View {
 
     private func card(_ exp: CityExperience) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            RemoteImage(url: exp.photo.isEmpty ? exp.fallbackPhoto : exp.photo, maxPixel: 900, venue: true)
-                .frame(maxWidth: .infinity).frame(height: 192)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            CityCardGallery(name: exp.name, photos: exp.photos.isEmpty ? [exp.photo] : exp.photos,
+                            height: 192, cornerRadius: 12, onTap: { select(exp) })
+                .frame(maxWidth: .infinity)
             HStack(alignment: .top, spacing: 10) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(exp.name).font(.title3.weight(.heavy)).foregroundStyle(Color.navy)

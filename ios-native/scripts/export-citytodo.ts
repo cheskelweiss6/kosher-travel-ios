@@ -2,7 +2,10 @@
 //   cities["us:<id>" | "dest:<id>"] = { a: Top Attractions in the website's order, t: travelTips }
 // Each attraction keeps only what the website's card shows (DeepExperiencesView staticTopAttractions):
 //   n name, d description (shortDescription), l location (exactLocation), w website (bookingLink, "N/A" left out),
-//   p photo (the card's PlacePhotosGallery gets photos: [p]), vp verifiedPhoto (its fallbackPhoto, kept when it differs from p).
+//   g the card's photo gallery: PlacePhotosGallery's own resolution for this card (name, city = destination.name,
+//     category "attraction", fallbackPhoto = verifiedPhoto || photo, photos = [photo]), "" = the navy no-photo tile.
+//     Same lines as export-cardphotos.ts webGallery (contributed photos and the live park-photo lookup are not data;
+//     the lookup never runs here because these cards always pass photos).
 // The destination object is the one the website's city page gets: App.tsx buildBaseDestinations (the live
 // /api/destinations answers 404), found by id; getEnrichedAttractions runs on it after NEW_THINGS_TO_DO has loaded.
 // Run: sh ios-native/scripts/export-citytodo.sh   (add "--check miami denver <id>" to print names for a spot check)
@@ -10,7 +13,11 @@ import { deps } from './export-statepages-deps';
 import * as F from './export-citytodo.gen';
 import { CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS } from '../../src/caribbeanData';
 import { DB_DESTINATIONS } from '../../src/database';
-import { getEnrichedAttractions, newThingsReady } from '../../src/attractionsDatabase';
+import { getEnrichedAttractions, newThingsReady, getCuratedAttractionPhoto } from '../../src/attractionsDatabase';
+import { resolveLocationPhotos } from '../../src/locationPhotos';
+import { isValidImageUrl, getHotelFallbackPhoto } from '../../src/cityHeroPhotos';
+import { NO_PHOTO_PLACEHOLDER } from '../../src/photoPlaceholder';
+import { categoryDefaultPhoto, isPlaceholderPhoto, CATEGORY_DEFAULT_PHOTOS } from '../../src/categoryDefaults';
 import * as fs from 'fs';
 
 const { PREMIUM_CITIES, WORLD_DESTINATIONS } = deps;
@@ -23,6 +30,49 @@ const photo = (u: any): string => {
   if (s.startsWith('/')) return SITE + s;
   return /^https?:\/\//.test(s) ? s : '';
 };
+
+
+// components/PlacePhotosGallery.tsx basePhotos, line for line (as export-cardphotos.ts webGallery).
+function webGallery(name: string, city: string, category: string, fallbackPhoto: string | undefined, providedPhotos: string[] | undefined): string[] {
+  const verifiedFallbackPhoto = (fallbackPhoto && isValidImageUrl(fallbackPhoto)) ? fallbackPhoto : null;
+  const dbCuratedPhoto = getCuratedAttractionPhoto(name, city);
+  const curatedAttractionPhoto = verifiedFallbackPhoto || dbCuratedPhoto;
+  const notLegacySvgPlaceholder = (p: string) => !(p.startsWith('data:image/svg') && p !== NO_PHOTO_PLACEHOLDER);
+  const rawProvided = (providedPhotos || []).filter(isValidImageUrl).filter(notLegacySvgPlaceholder);
+  const rawDynamic: string[] = [];
+  const normCategory = (category || '').toLowerCase();
+  const normName = (name || '').toLowerCase();
+  const isChabad = normCategory.includes('chabad') || normName.includes('chabad');
+  const isHotelOrRestaurantCategory = normCategory.includes('hotel') || normCategory.includes('lodging') || normCategory.includes('restaurant');
+  const categoryDefault: string | null = categoryDefaultPhoto(category)
+    || (isChabad && !isHotelOrRestaurantCategory ? CATEGORY_DEFAULT_PHOTOS.chabad : null);
+  let basePhotos: string[] = [];
+  if (isChabad) {
+    if (rawProvided.length > 0) basePhotos = rawProvided;
+    else if (curatedAttractionPhoto && isValidImageUrl(curatedAttractionPhoto)) basePhotos = [curatedAttractionPhoto];
+    else basePhotos = [categoryDefault || NO_PHOTO_PLACEHOLDER];
+  } else if (curatedAttractionPhoto) {
+    const resolvedLocPhotos = resolveLocationPhotos(name, city, category).filter(isValidImageUrl);
+    const hasAuthenticNonUnsplash = [curatedAttractionPhoto, ...rawProvided, ...rawDynamic, ...(verifiedFallbackPhoto ? [verifiedFallbackPhoto] : [])].some(p => !p.includes('images.unsplash.com'));
+    const otherCandidates = [...rawProvided, ...rawDynamic, ...(verifiedFallbackPhoto ? [verifiedFallbackPhoto] : []), ...resolvedLocPhotos]
+      .filter(p => !hasAuthenticNonUnsplash || !p.includes('images.unsplash.com'));
+    const uniqueOthers = otherCandidates.filter(p => p !== curatedAttractionPhoto);
+    basePhotos = [curatedAttractionPhoto, ...uniqueOthers];
+  } else if (rawProvided.length > 0) basePhotos = rawProvided;
+  else if (rawDynamic.length > 0) basePhotos = rawDynamic;
+  else if (verifiedFallbackPhoto) basePhotos = [verifiedFallbackPhoto, ...resolveLocationPhotos(name, city, category).filter(isValidImageUrl)];
+  else {
+    const locPhotos = resolveLocationPhotos(name, city, category).filter(isValidImageUrl);
+    basePhotos = locPhotos.length > 0 ? locPhotos : [getHotelFallbackPhoto(name, city)];
+  }
+  basePhotos = basePhotos.filter(notLegacySvgPlaceholder);
+  if (basePhotos.length === 0) basePhotos = [categoryDefault || NO_PHOTO_PLACEHOLDER];
+  if (categoryDefault) {
+    const realPhotos = basePhotos.filter((p) => !isPlaceholderPhoto(p));
+    basePhotos = realPhotos.length > 0 ? realPhotos : [categoryDefault];
+  }
+  return basePhotos.map((p) => (isPlaceholderPhoto(p) ? '' : photo(p)));
+}
 
 (async () => {
   await newThingsReady;
@@ -43,12 +93,11 @@ const photo = (u: any): string => {
   for (const [key, dest] of keyed) {
     if (cities[key]) continue;
     const list = getEnrichedAttractions(dest).map((att: any) => {
-      const p = photo(att.photo);
-      const vp = photo(att.verifiedPhoto);
       const o: any = { n: str(att.name), d: str(att.description), l: str(att.location) };
       const w = str(att.website); if (w && w !== 'N/A') o.w = w;
-      if (p) o.p = p;
-      if (vp && vp !== p) o.vp = vp;
+      // DeepExperiencesView: fallbackPhoto = verifiedFallbackPhoto || photo; photos = [photo]
+      const fb = att.verifiedPhoto || att.photo || undefined;
+      o.g = webGallery(str(att.name), str(dest.name), 'attraction', fb, [att.photo]);
       return o;
     }).filter((o: any) => o.n);
     const tips = (Array.isArray(dest.travelTips) ? dest.travelTips : []).map(str).filter(Boolean);
