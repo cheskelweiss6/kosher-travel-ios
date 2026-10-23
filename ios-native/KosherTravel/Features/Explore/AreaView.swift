@@ -61,6 +61,7 @@ struct AreaView: View {
                 heroBlock(page)
                 VStack(alignment: .leading, spacing: 14) {
                     facts(page)
+                    CityNeedsBlock(page: page, sections: sections(page))
                     if hubs(page).isEmpty == false {
                         LazyVStack(spacing: 12) {
                             ForEach(hubs(page)) { hub in hubCard(hub, page: page) }
@@ -128,7 +129,8 @@ struct AreaView: View {
         let secs = sections(page)
         func has(_ c: PlaceCategory) -> Bool { secs.contains { $0.category == c && !$0.items.isEmpty } }
         var out: [CityHub] = []
-        if has(.restaurant) || has(.takeout) { out.append(.restaurants) }
+        // Web: the Restaurants card needs a public restaurant; Chabad takeout sits on the Chabad page.
+        if has(.restaurant) { out.append(.restaurants) }
         if has(.grocery) { out.append(.grocery) }
         if has(.chabad) { out.append(.chabad) }
         if has(.shul) { out.append(.shuls) }
@@ -210,6 +212,18 @@ struct AreaView: View {
 
     @ViewBuilder
     private func subPage(_ hub: CityHub, page: CityPage) -> some View {
+        if hub == .restaurants {
+            CityRestaurantsView(items: sections(page).first { $0.category == .restaurant }?.items ?? [],
+                                cityName: page.name,
+                                summary: { summary(for: $0) },
+                                onSelect: { selected = $0 })
+        } else {
+            listSubPage(hub, page: page)
+        }
+    }
+
+    @ViewBuilder
+    private func listSubPage(_ hub: CityHub, page: CityPage) -> some View {
         let secs = sections(page).filter { hub.categories.contains($0.category) }
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
@@ -364,6 +378,11 @@ struct AreaView: View {
             Color.clear.frame(height: 52).id("sec-\(section.id)")
             SectionHeader(title: section.category.title, count: section.items.count)
                 .padding(.horizontal, Theme.pagePadding)
+            if section.category == .takeout {
+                Text("These are local Chabad-organized meal packages, tourist catering, or home-cooked delivery services rather than commercial restaurants. Ideal for Shabbos and midweek dining!")
+                    .font(.footnote).foregroundStyle(Color.textSecondary)
+                    .padding(.horizontal, Theme.pagePadding)
+            }
             if section.category == .traveler {
                 Text("Added by travelers in their stories and approved by Kosher Travel.")
                     .font(.footnote).foregroundStyle(Color.textSecondary)
@@ -719,9 +738,9 @@ enum CityHub: String, Identifiable, Hashable {
     /// The listing sections a native sub-page shows.
     var categories: [PlaceCategory] {
         switch self {
-        case .restaurants: return [.restaurant, .takeout]
+        case .restaurants: return [.restaurant]
         case .grocery: return [.grocery]
-        case .chabad: return [.chabad]
+        case .chabad: return [.chabad, .takeout]
         case .shuls: return [.shul, .mikvah]
         case .todo: return [.todo]
         case .hotels: return [.hotel]

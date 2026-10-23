@@ -8,7 +8,7 @@ enum PlaceCategory: String, CaseIterable, Hashable {
     var title: String {
         switch self {
         case .restaurant: return "Kosher Restaurants"
-        case .takeout: return "Chabad Takeout and Prepared Meals"
+        case .takeout: return "Chabad Takeout & Prepared Meals"
         case .grocery: return "Kosher Grocery"
         case .chabad: return "Chabad"
         case .shul: return "Shuls"
