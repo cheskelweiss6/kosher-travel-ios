@@ -51,7 +51,7 @@ struct PlannerHistoryView: View {
                         } footer: {
                             Text(signedIn
                                  ? "Your chats are saved to your account and open on the website too."
-                                 : "Chats are saved on this iPhone. Sign in on the Profile tab to keep them on all your devices.")
+                                 : "Chats are saved on this iPhone. Sign in to keep them on all your devices.")
                         }
                     }
                     .listStyle(.insetGrouped)

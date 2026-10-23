@@ -139,7 +139,7 @@ struct TravelerView: View {
     }
 
     private func toggleFollow() {
-        guard let actor = StoryActor.from(auth) else { signInPrompt = "Sign in on the Profile tab to follow travelers."; return }
+        guard let actor = StoryActor.from(auth) else { ShellRouter.shared.requireSignIn("Sign in to follow travelers.") { toggleFollow() }; return }
         let was = store.following.contains(uid)
         store.setFollowing(uid, !was)
         if let f = followers { followers = max(0, f + (was ? -1 : 1)) }

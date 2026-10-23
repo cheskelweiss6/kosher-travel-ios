@@ -6,6 +6,7 @@ enum AppTab: Hashable {
 
 struct RootTabView: View {
     @Bindable private var router = ShellRouter.shared
+    @Environment(AuthStore.self) private var auth
 
     var body: some View {
         TabView(selection: $router.selectedTab) {
@@ -31,10 +32,17 @@ struct RootTabView: View {
         .sheet(item: $router.signIn) { mode in
             SignInSheet(mode: mode)
         }
+        .sheet(item: $router.deepLink) { target in
+            DeepLinkSheet(target: target)
+        }
+        // Shared links (universal links) and the Google sign-in callback.
+        .onOpenURL { url in _ = DeepLinks.handle(url) }
         // Every link a native screen opens goes through one opener (maps chooser, Safari in-app, affiliate rewrite).
         .environment(\.openURL, OpenURLAction { url in LinkOpener.handle(url) })
         .onAppear {
+            router.auth = auth
             ToastWindow.install()
+            NetworkWatch.start()
             if let route = LaunchRoute.current, route.hasPrefix("tab:") {
                 // "tab:<name>" or "tab:<name>/<screen>" (the tab's own view reads the rest)
                 switch route.dropFirst(4).split(separator: "/").first.map(String.init) ?? "" {

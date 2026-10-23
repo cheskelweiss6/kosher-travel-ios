@@ -14,6 +14,12 @@ final class ShellRouter {
     var plannerPrompt: String?
     /// The toast on screen (set through showToast).
     var toast: ShellToast?
+    /// The app's sign-in state (set by RootTabView), so the sign-in sheet can open over any screen.
+    @ObservationIgnored var auth: AuthStore?
+    /// The failure notice above the tab bar (web NoticeBar), set through notify.
+    var notice: ShellNotice?
+    /// A shared link to open over the current tab.
+    var deepLink: DeepLinkTarget?
 
     func open(tab name: String, prompt: String? = nil) {
         switch name {

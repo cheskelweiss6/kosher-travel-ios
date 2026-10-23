@@ -61,7 +61,7 @@ struct ProfileTab: View {
             await feed.loadIfNeeded()
         }
         .onAppear(perform: openLaunchRoute)
-        .onOpenURL { url in _ = GIDSignIn.sharedInstance.handle(url) }
+        // the Google sign-in callback is handled app-wide (RootTabView → DeepLinks.handle)
         .onChange(of: photoItem) { _, item in
             guard let item else { return }
             Task { await uploadPhoto(item) }

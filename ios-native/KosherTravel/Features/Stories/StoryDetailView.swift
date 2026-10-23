@@ -640,7 +640,7 @@ struct StoryDetailView: View {
     // MARK: actions
 
     private func toggleLike(_ p: StoryPost) {
-        guard let actor = StoryActor.from(auth) else { signInPrompt = "Sign in on the Profile tab to like posts."; return }
+        guard let actor = StoryActor.from(auth) else { ShellRouter.shared.requireSignIn("Sign in to like posts.") { toggleLike(p) }; return }
         guard !likeBusy else { return }
         let ex = extra
         let was = ex?.likedUserIds.contains(actor.uid) ?? false
@@ -660,7 +660,7 @@ struct StoryDetailView: View {
     }
 
     private func toggleSave(_ p: StoryPost) {
-        guard let uid = auth.uid else { signInPrompt = "Sign in on the Profile tab to save posts."; return }
+        guard let uid = auth.uid else { ShellRouter.shared.requireSignIn("Sign in to save posts.") { toggleSave(p) }; return }
         let was = store.saved.contains(p.id)
         store.setSaved(p.id, !was)
         saveBusy = true
@@ -677,7 +677,7 @@ struct StoryDetailView: View {
     }
 
     private func toggleFollow(uid: String, name: String, photo: String) {
-        guard let actor = StoryActor.from(auth) else { signInPrompt = "Sign in on the Profile tab to follow travelers."; return }
+        guard let actor = StoryActor.from(auth) else { ShellRouter.shared.requireSignIn("Sign in to follow travelers.") { toggleFollow(uid: uid, name: name, photo: photo) }; return }
         let was = store.following.contains(uid)
         store.setFollowing(uid, !was)
         followBusy = true
@@ -693,7 +693,7 @@ struct StoryDetailView: View {
     }
 
     private func report(_ reason: String) {
-        guard let uid = auth.uid else { signInPrompt = "Sign in on the Profile tab to report a post."; return }
+        guard let uid = auth.uid else { ShellRouter.shared.requireSignIn("Sign in to report a post.") { report(reason) }; return }
         Task {
             switch await StoryActions.reportPost(postId, reason: reason, uid: uid) {
             case .ok: note = "Thanks. The team will check it."

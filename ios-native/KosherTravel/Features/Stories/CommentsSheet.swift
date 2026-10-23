@@ -182,9 +182,11 @@ struct CommentsSheet: View {
         VStack(spacing: 0) {
             Divider().overlay(Color.hairline)
             if !auth.isSignedIn {
-                Label("Sign in on the Profile tab to comment.", systemImage: "person.crop.circle")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.textSecondary)
+                Button { ShellRouter.shared.requireSignIn("Sign in to comment.") } label: {
+                    Label("Sign in to comment", systemImage: "person.crop.circle")
+                }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.navy)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, Theme.pagePadding)
                     .padding(.vertical, 14)

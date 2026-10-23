@@ -7,9 +7,25 @@ struct WebRoute: Hashable, Identifiable {
     var screen: String
     var params: [String: String] = [:]
     var title: String
+    /// The query of a shared link (?shareKever=…, ?shareItinerary=…, ?contact=1), passed on so the page handles it as
+    /// it does on the website. Never a token.
+    var query: String? = nil
 
     var id: String {
-        screen + "|" + params.keys.sorted().map { "\($0)=\(params[$0] ?? "")" }.joined(separator: "&")
+        screen + "|" + params.keys.sorted().map { "\($0)=\(params[$0] ?? "")" }.joined(separator: "&") + "|" + (query ?? "")
+    }
+
+    /// The address the embedded screen loads.
+    var url: URL {
+        guard let query, !query.isEmpty, var c = URLComponents(url: WebSession.home, resolvingAgainstBaseURL: false) else { return WebSession.home }
+        c.percentEncodedQuery = query
+        return c.url ?? WebSession.home
+    }
+
+    func with(query: String?) -> WebRoute {
+        var r = self
+        r.query = query
+        return r
     }
 
     /// The JSON object handed to the page.

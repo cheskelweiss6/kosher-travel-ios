@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 import SafariServices
+import Network
 
 // MARK: - Presenting from anywhere
 
@@ -71,9 +72,15 @@ private struct ToastHost: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
             Spacer(minLength: 0)
+            if let notice = router.notice {
+                ShellNoticeView(notice: notice)
+                    .padding(.bottom, 64)   // above the tab bar
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.snappy, value: router.toast)
+        .animation(.snappy, value: router.notice)
     }
 }
 
@@ -325,5 +332,118 @@ extension LinkOpener {
         case nil: return .systemAction
         }
         return .handled
+    }
+}
+
+// MARK: - Sign in from anywhere (web: 'kt-need-signin' + the global AuthModal)
+
+extension ShellRouter {
+    /// Opens the native sign-in sheet over whatever is on screen (a tab, a sheet, a post), with an optional line
+    /// saying why; when the person signs in, `then` finishes what they started (the like, the save, the follow).
+    @MainActor
+    func requireSignIn(_ message: String? = nil, mode: SignInSheet.Mode = .signIn, then: (@MainActor () -> Void)? = nil) {
+        guard let auth else { signIn = mode; return }
+        if auth.isSignedIn { then?(); return }
+        if let message { showToast(message) }
+        let host = UIHostingController(rootView: SignInHost(mode: mode, then: then).environment(auth))
+        TopPresenter.present(host)
+    }
+}
+
+private struct SignInHost: View {
+    let mode: SignInSheet.Mode
+    let then: (@MainActor () -> Void)?
+    @Environment(AuthStore.self) private var auth
+    var body: some View {
+        SignInSheet(mode: mode)
+            .tint(Color.navy)
+            .onDisappear {
+                if auth.isSignedIn, let then { Task { @MainActor in then() } }
+            }
+    }
+}
+
+// MARK: - Failure notice above the tab bar (web: components/NoticeBar.tsx, notify.ts)
+
+struct ShellNotice: Identifiable, Equatable {
+    let id = UUID()
+    let text: String
+    var retry: (@MainActor () -> Void)?
+    static func == (a: ShellNotice, b: ShellNotice) -> Bool { a.id == b.id }
+}
+
+extension ShellRouter {
+    /// Every failed save, like or load: navy on white above the tab bar, optional Retry, closes after 5 s (9 s with Retry).
+    @MainActor
+    func notify(_ text: String, retry: (@MainActor () -> Void)? = nil) {
+        let n = ShellNotice(text: text, retry: retry)
+        notice = n
+        let secs: UInt64 = retry == nil ? 5 : 9
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: secs * 1_000_000_000)
+            if self.notice?.id == n.id { self.notice = nil }
+        }
+    }
+}
+
+struct ShellNoticeView: View {
+    let notice: ShellNotice
+    var body: some View {
+        HStack(spacing: 10) {
+            Text(notice.text)
+                .font(.subheadline)
+                .foregroundStyle(Color.navy)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if let retry = notice.retry {
+                Button("Retry") {
+                    ShellRouter.shared.notice = nil
+                    retry()
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.navy)
+            }
+            Button {
+                ShellRouter.shared.notice = nil
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.navy)
+                    .frame(width: 32, height: 32)
+            }
+            .accessibilityLabel("Close")
+        }
+        .padding(.leading, 16)
+        .padding(.trailing, 6)
+        .padding(.vertical, 6)
+        .background(Color.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.hairline, lineWidth: 1))
+        .shadow(color: Color.navy.opacity(0.08), radius: 10, y: 4)
+        .padding(.horizontal, 16)
+    }
+}
+
+// MARK: - Online / offline (web: App.tsx online/offline toasts)
+
+
+@MainActor
+enum NetworkWatch {
+    private static var monitor: NWPathMonitor?
+    private static var wasOnline = true
+
+    static func start() {
+        guard monitor == nil else { return }
+        let m = NWPathMonitor()
+        m.pathUpdateHandler = { @Sendable path in
+            let online = path.status == .satisfied
+            Task { @MainActor in changed(online) }
+        }
+        m.start(queue: DispatchQueue(label: "kt.network"))
+        monitor = m
+    }
+
+    private static func changed(_ online: Bool) {
+        guard online != wasOnline else { return }
+        wasOnline = online
+        ShellRouter.shared.showToast(online ? "You are back online! Synchronized." : "You are offline. Showing what was already loaded.", seconds: 3.5)
     }
 }

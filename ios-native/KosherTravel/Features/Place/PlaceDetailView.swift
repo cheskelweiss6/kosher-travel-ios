@@ -333,9 +333,11 @@ struct PlaceDetailView: View {
                 }
             }
         } else {
-            Label("Sign in on the Profile tab to write a review", systemImage: "person.crop.circle")
-                .font(.footnote)
-                .foregroundStyle(Color.textSecondary)
+            Button { ShellRouter.shared.requireSignIn("Sign in to write a review.") } label: {
+                Label("Sign in to write a review", systemImage: "person.crop.circle")
+            }
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(Color.navy)
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .hairline(radius: 14)

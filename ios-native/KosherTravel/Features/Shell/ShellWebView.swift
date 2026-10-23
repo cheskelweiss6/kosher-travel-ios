@@ -52,7 +52,7 @@ struct ShellWebView: UIViewRepresentable {
         #endif
         context.coordinator.webView = wv
         context.coordinator.reloadToken = reloadToken
-        wv.load(URLRequest(url: WebSession.home))
+        wv.load(URLRequest(url: route.url))
         return wv
     }
 
@@ -64,7 +64,7 @@ struct ShellWebView: UIViewRepresentable {
         let ucc = wv.configuration.userContentController
         ucc.removeAllUserScripts()
         install(scripts: ucc)
-        wv.load(URLRequest(url: WebSession.home))
+        wv.load(URLRequest(url: route.url))
     }
 
     static func dismantleUIView(_ wv: WKWebView, coordinator: Coordinator) {
