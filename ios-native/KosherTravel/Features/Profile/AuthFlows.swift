@@ -54,7 +54,8 @@ enum AuthFlows {
         }
         let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                        accessToken: result.user.accessToken.tokenString)
-        _ = try await Auth.auth().signIn(with: credential)
+        let signed = try await Auth.auth().signIn(with: credential)
+        if signed.additionalUserInfo?.isNewUser == true { UsernameGate.markNew(signed.user.uid) }
     }
 
     static func isGoogleCancel(_ error: Error) -> Bool {
@@ -107,6 +108,7 @@ enum AuthFlows {
         let display = "\(first) \(last)".trimmingCharacters(in: .whitespaces)
         let result = try await Auth.auth().createUser(withEmail: mail, password: password)
         let user = result.user
+        UsernameGate.markNew(user.uid)   // a new account chooses its username next (UsernameGate)
         if !display.isEmpty {
             let change = user.createProfileChangeRequest()
             change.displayName = display
@@ -223,7 +225,8 @@ final class AppleSignInCoordinator: NSObject, ASAuthorizationControllerDelegate,
     static func signIn() async throws {
         guard FirebaseBoot.isConfigured else { throw AuthFlowError(message: "Sign-in isn't available in this build.") }
         let credential = try await credential()
-        _ = try await Auth.auth().signIn(with: credential)
+        let signed = try await Auth.auth().signIn(with: credential)
+        if signed.additionalUserInfo?.isNewUser == true { UsernameGate.markNew(signed.user.uid) }
     }
 
     private func start() async throws -> AuthCredential {
