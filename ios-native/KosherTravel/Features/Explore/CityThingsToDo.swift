@@ -12,6 +12,8 @@ struct CityExperience: Identifiable, Hashable {
     var aiTips: String
     /// The listing behind a Top Attractions card, for the place sheet.
     var item: PlaceItem?
+    /// A place travelers tagged in their posts (shown first under Top Attractions).
+    var sight: SharedSight? = nil
 }
 
 /// The city's Things to Do page (DeepExperiencesView.tsx): category chips, the cards, and the website's loading,
@@ -20,7 +22,10 @@ struct CityExperience: Identifiable, Hashable {
 struct CityThingsToDoView: View {
     let page: CityPage
     let attractions: [PlaceItem]
+    /// Names the city already lists (attractions, hotels, shuls, Chabad, restaurants), to drop duplicates.
+    var listedNames: [String] = []
     let onSelect: (PlaceItem) -> Void
+    private let sights = SharedSights.shared
 
     static let categoryList = [
         "Top Attractions", "Hidden Gems", "Nature", "Hiking", "Beaches", "Water Sports",
@@ -47,7 +52,16 @@ struct CityThingsToDoView: View {
                            photo: a.photos.first ?? "", bookingLink: a.venue.website, gpsDirections: "", aiTips: "", item: a)
         }
     }
-    private var shown: [CityExperience] { active == "Top Attractions" ? top : fetched }
+    /// Website: travelers' sights and parks for this city join Top Attractions first.
+    private var citySights: [CityExperience] {
+        let region = page.stateName.isEmpty ? page.country : page.stateName
+        let list = sights.forCity(page.name, region: region).filter { $0.section == .todo || $0.section == .park }
+        return TravelerFilters.dedupe(list, existingNames: listedNames + attractions.map(\.venue.name)).map { s in
+            CityExperience(name: s.name, shortDescription: "", exactLocation: s.area, photo: s.photo ?? "",
+                           bookingLink: "", gpsDirections: "", aiTips: "", item: nil, sight: s)
+        }
+    }
+    private var shown: [CityExperience] { active == "Top Attractions" ? citySights + top : fetched }
 
     var body: some View {
         ScrollView {
@@ -107,10 +121,12 @@ struct CityThingsToDoView: View {
         }
         .background(Color.white)
         .task(id: active) { await load() }
+        .onAppear { sights.ensureLoaded() }
     }
 
     private func select(_ exp: CityExperience) {
         if let item = exp.item { onSelect(item); return }
+        if let s = exp.sight { onSelect(s.asPlaceItem(destId: page.destId, cityName: page.name)); return }
         let v = Venue(name: exp.name, address: exp.exactLocation, phone: "", website: exp.bookingLink == "N/A" ? "" : exp.bookingLink,
                       description: exp.shortDescription, photo: exp.photo, kashrus: "", kind: "Experience")
         onSelect(PlaceItem(id: "exp:\(exp.name)", category: .todo, venue: v, destId: page.destId, cityName: page.name))
@@ -127,6 +143,7 @@ struct CityThingsToDoView: View {
                     if !exp.exactLocation.isEmpty {
                         Label(exp.exactLocation, systemImage: "mappin").font(.caption.weight(.semibold)).foregroundStyle(Color.textSecondary)
                     }
+                    if let s = exp.sight { FromTravelersLink(sight: s).padding(.top, 2) }
                 }
                 Spacer(minLength: 0)
                 Label("EXPERIENCE", systemImage: "sparkles")
@@ -149,6 +166,20 @@ struct CityThingsToDoView: View {
                 .background(Color.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
             Divider().overlay(Color.hairline)
+            if let s = exp.sight {
+                TravelerActionsRow(sight: s)
+            } else {
+                actionRow(exp)
+            }
+        }
+        .padding(18)
+        .background(Color.white)
+        .hairline(radius: 16)
+        .contentShape(Rectangle())
+        .onTapGesture { select(exp) }
+    }
+
+    private func actionRow(_ exp: CityExperience) -> some View {
             HStack(spacing: 10) {
                 if !exp.bookingLink.isEmpty, exp.bookingLink != "N/A", let u = URL(string: exp.bookingLink) {
                     Button { openURL(u) } label: {
@@ -173,12 +204,6 @@ struct CityThingsToDoView: View {
                     .buttonStyle(.plain)
                 }
             }
-        }
-        .padding(18)
-        .background(Color.white)
-        .hairline(radius: 16)
-        .contentShape(Rectangle())
-        .onTapGesture { select(exp) }
     }
 
     @MainActor

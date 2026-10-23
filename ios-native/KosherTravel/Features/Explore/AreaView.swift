@@ -251,7 +251,7 @@ struct AreaView: View {
             CityExperienceView(page: page)
         } else if hub == .todo {
             CityThingsToDoView(page: page, attractions: sections(page).first { $0.category == .todo }?.items ?? [],
-                               onSelect: { selected = $0 })
+                               listedNames: page.listedNames, onSelect: { selected = $0 })
         } else if CityHub.nativePages.contains(hub) {
             CityHubPage(hub: hub, page: page, sections: sections(page),
                         summary: { summary(for: $0) }, onSelect: { selected = $0 })

@@ -19,6 +19,8 @@ struct CityListingCard: View {
     var linkLabel: String = "Website"
     var showReviews = true
     var showDirections = true
+    /// One more chip the website has on some cards (hotels: "Show Radius").
+    var extra: (title: String, icon: String, action: () -> Void)? = nil
     let summary: PlaceReviewSummary?
     let onSelect: () -> Void
 
@@ -109,6 +111,7 @@ struct CityListingCard: View {
                 if showReviews, item.reviewKey != nil { chip(Self.reviewsLabel(summary), "star") { onSelect() } }
                 if showDirections, let d = item.directionsURL { chip("Directions", "location") { openURL(d) } }
                 if let w = item.websiteURL { chip(linkLabel, "globe", on: true) { openURL(w) } }
+                if let e = extra { chip(e.title, e.icon) { e.action() } }
             }
         }
         .padding(16)
@@ -192,6 +195,8 @@ struct CityHubPage: View {
     let onSelect: (PlaceItem) -> Void
 
     private let prefs = ProfileStore.shared
+    @State private var addingChabadRestaurant = false
+    @State private var radiusHotel: PlaceItem?
 
     private func items(_ c: PlaceCategory) -> [PlaceItem] { sections.first { $0.category == c }?.items ?? [] }
     private func need(_ n: String) -> Bool {
@@ -210,6 +215,9 @@ struct CityHubPage: View {
             .padding(.bottom, 36)
         }
         .background(Color.white)
+        .sheet(item: $radiusHotel) { h in
+            HotelRadiusMap(hotel: h, cityName: page.name, places: sections.flatMap(\.items))
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -228,9 +236,10 @@ struct CityHubPage: View {
 
     private func card(_ item: PlaceItem, badges: [String] = [], lines: [CityListingCard.Line] = [], tags: [String] = [],
                       notice: (title: String, text: String, strong: Bool)? = nil, link: String = "Website",
-                      photo: Bool = true, reviews: Bool = true, directions: Bool = true) -> some View {
+                      photo: Bool = true, reviews: Bool = true, directions: Bool = true,
+                      extra: (title: String, icon: String, action: () -> Void)? = nil) -> some View {
         CityListingCard(item: item, badges: badges, showPhoto: photo, lines: lines, tags: tags, notice: notice,
-                        linkLabel: link, showReviews: reviews, showDirections: directions,
+                        linkLabel: link, showReviews: reviews, showDirections: directions, extra: extra,
                         summary: summary(item), onSelect: { onSelect(item) })
     }
 
@@ -297,16 +306,39 @@ struct CityHubPage: View {
             }
         }
         if items(.restaurant).isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
-                Label("Confirm a Chabad-run Restaurant?", systemImage: "lightbulb")
-                    .font(.subheadline.weight(.bold)).foregroundStyle(Color.navy)
-                Text("Sometimes Chabad houses operate standalone public restaurants, delis, or cafes that aren't shown in the search. If you can confirm they run a real public eatery here, share it in a story so travelers can find it.")
-                    .font(.footnote).foregroundStyle(Color.textSecondary)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "lightbulb").font(.title3).foregroundStyle(Color.navy)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Confirm a Chabad-run Restaurant?").font(.footnote.weight(.black)).foregroundStyle(Color.navy)
+                        Text("Sometimes Chabad houses operate standalone public restaurants, delis, or cafes that aren't shown in the search. If you can confirm they run a real public eatery here, click below to post it to our directory!")
+                            .font(.caption.weight(.semibold)).foregroundStyle(Color.textSecondary)
+                    }
+                }
+                Button { addingChabadRestaurant = true } label: {
+                    Label("Confirm & Post Chabad Restaurant", systemImage: "plus")
+                        .font(.caption.weight(.black))
+                        .frame(maxWidth: .infinity, minHeight: 40)
+                        .foregroundStyle(Color.navy)
+                        .background(Color.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Color.hairline, lineWidth: 1))
+                }
+                .buttonStyle(.plain)
             }
-            .padding(14)
+            .padding(16)
             .background(Color.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             .hairline(radius: 16)
             .padding(.top, 8)
+            .sheet(isPresented: $addingChabadRestaurant) {
+                let first = list.first?.venue
+                AddEstablishmentSheet(cityName: page.name, country: page.country.isEmpty ? "USA" : page.country,
+                    preset: .init(name: "Chabad of \(page.name) Kosher Cafe", category: "restaurant",
+                                  subCategory: "Cafe & Deli / Grill",
+                                  address: (first?.address).flatMap { $0.isEmpty ? nil : $0 } ?? "\(page.name) Chabad House",
+                                  kashrus: "Chabad of \(page.name) (Rabbi \((first?.rabbi).flatMap { $0.isEmpty ? nil : $0 } ?? "Raskin"))",
+                                  phone: first?.phone ?? "", website: first?.website ?? "",
+                                  description: "Active public kosher restaurant and food service facility run directly by the Chabad center."))
+            }
         }
     }
 
@@ -402,10 +434,13 @@ struct CityHubPage: View {
             let k = kitchen.count
             CityNoteBox(text: "Bringing your own food: \(k == 1 ? "the hotel" : "the \(k) hotels") that list a kitchen or fridge \(k == 1 ? "is" : "are") shown first.")
         }
-        if list.isEmpty {
-            CityEmptyBox(title: "No lodging listed yet.",
-                         detail: "No direct walk-to-synagogue lodging recommendations are indexed for this city yet.")
-        } else {
+        // Website: places to stay travelers tagged join right after the hotels, minus the city's own hotels.
+        let region = page.stateName.isEmpty ? page.country : page.stateName
+        let stays = TravelerFilters.notBuiltIn(SharedSights.shared.forCity(page.name, region: region).filter { $0.section == .stay },
+                                               existingNames: all.map(\.venue.name))
+        if list.isEmpty && stays.isEmpty {
+            CityNoteBox(text: "No direct walk-to-synagogue lodging recommendations are indexed for this city yet.")
+        } else if !list.isEmpty {
             LazyVGrid(columns: Self.grid, spacing: 14) {
                 ForEach(list) { h in
                     let v = h.venue
@@ -415,7 +450,15 @@ struct CityHubPage: View {
                         : (title: strong ? "Advance Kosher Coordination Required" : "Kosher Hospitality:", text: notes, strong: strong)
                     card(h, badges: ["Lodging"],
                          lines: line("text.alignleft", nil, v.description) + addr(v) + phone(v),
-                         notice: notice)
+                         notice: notice,
+                         extra: (title: "Show Radius", icon: "scope", action: { radiusHotel = h }))
+                }
+            }
+        }
+        if !stays.isEmpty {
+            LazyVGrid(columns: Self.grid, spacing: 14) {
+                ForEach(stays) { st in
+                    TravelerStayCard(sight: st, onOpen: { onSelect(st.asPlaceItem(destId: page.destId, cityName: page.name)) })
                 }
             }
         }
