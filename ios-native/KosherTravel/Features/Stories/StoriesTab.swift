@@ -12,6 +12,7 @@ struct StoriesTab: View {
     @State private var appliedRoute = false
     /// The composer is still the live screen, full screen with its own X (Get Inspired is pushed: StoriesRoute.web).
     @State private var webCover: WebRoute?
+    @State private var composing = false   // the native chooser + composer (NATIVE-COMPOSER)
 
     private static let tags = ["Shabbos", "Food", "Shul", "Family", "Nature", "Beach", "Hotels", "Yom Tov", "Cruise", "Tips"]
 
@@ -45,7 +46,7 @@ struct StoriesTab: View {
             .toolbar {
                 // Cheskel (Oct 23 2026): "the top left button should be to add posts" (the web's Share: new story composer)
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { webCover = .compose() } label: {
+                    Button { composing = true } label: {
                         Label("Share", systemImage: "plus")
                     }
                     .accessibilityLabel("Share your story")
@@ -67,6 +68,7 @@ struct StoriesTab: View {
                 await StorySafety.shared.load(uid: auth.uid)
             }
         }
+        .composeFlow(isPresented: $composing)
         .fullScreenCover(item: $webCover) { r in
             NavigationStack { WebScreen(route: r, fullScreen: true) }
         }

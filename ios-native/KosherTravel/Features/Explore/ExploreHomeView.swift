@@ -4,6 +4,7 @@ struct ExploreHomeView: View {
     @Environment(StoryFeed.self) private var feed
     @Environment(AuthStore.self) private var auth
     @State private var webCover: WebRoute?
+    @State private var composing = false   // the native chooser + composer (NATIVE-COMPOSER)
 
     var body: some View {
         ScrollView {
@@ -26,7 +27,7 @@ struct ExploreHomeView: View {
         .toolbar {
             // Web: "Share" (share your story) sits top-left on the Explore home only.
             ToolbarItem(placement: .topBarLeading) {
-                Button { webCover = .compose() } label: {
+                Button { composing = true } label: {
                     Label("Share", systemImage: "photo.badge.plus").labelStyle(.titleAndIcon)
                 }
                 .accessibilityLabel("Share your story")
@@ -39,6 +40,7 @@ struct ExploreHomeView: View {
             await ExploreNewsStore.shared.load(force: true)
         }
         .task { await feed.loadIfNeeded() }
+        .composeFlow(isPresented: $composing)
         .fullScreenCover(item: $webCover) { r in
             NavigationStack { WebScreen(route: r, fullScreen: true) }
         }
