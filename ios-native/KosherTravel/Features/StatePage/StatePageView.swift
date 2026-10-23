@@ -17,7 +17,7 @@ struct StatePageView: View {
     @State private var todoCategory: String?
     @State private var selected: PlaceItem?
     @State private var openStory: String?
-    @State private var compose: WebRoute?
+    @State private var composing = false
     @State private var addingGuide = false
     @State private var query = ""
     @State private var guides = TourGuideStore.shared
@@ -77,7 +77,7 @@ struct StatePageView: View {
             }
         }
         .navigationDestination(item: $openStory) { id in StoryDetailView(postId: id) }
-        .navigationDestination(item: $compose) { route in WebScreen(route: route) }
+        .composeFlow(isPresented: $composing, city: name, region: "United States")
     }
 
     private func openStoryAfterSheet(_ id: String) {
@@ -189,11 +189,10 @@ struct StatePageView: View {
     }
 
     /// web handleOpenShareTrip('United States', state): a guest signs in first ("Sign in to share your story"); a
-    /// signed-in traveler gets the story composer with the state filled in.
+    /// signed-in traveler gets the native Article / Inspiration chooser with the state preset.
     private func shareTrip() {
-        let route = WebRoute.compose(city: name, region: "United States")
-        if auth.isSignedIn { compose = route; return }
-        ShellRouter.shared.requireSignIn("Sign in to share your story") { compose = route }
+        if auth.isSignedIn { composing = true; return }
+        ShellRouter.shared.requireSignIn("Sign in to share your story") { composing = true }
     }
 
     private var stateGuides: [TourGuide] {
