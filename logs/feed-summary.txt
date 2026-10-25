@@ -1,0 +1,57 @@
+   8 [KT] city cancun: traveler places=0 reviewed places=0
+  28 [KT] city denver: traveler places=0 reviewed places=1
+   4 [KT] city mexico-city: traveler places=0 reviewed places=0
+  28 [KT] city new-york-city: traveler places=0 reviewed places=0
+  13 [KT] feed source=firestore docs=12 firebase=true
+ 142 [KT] feed source=firestore docs=13 firebase=true
+   4 [KT] launch route=area:dest:cancun
+   4 [KT] launch route=area:dest:cancun#native
+   4 [KT] launch route=area:dest:mexico-city
+   8 [KT] launch route=area:us:denver
+   4 [KT] launch route=area:us:denver/hub:grocery
+   4 [KT] launch route=area:us:denver/hub:grocery#native
+   4 [KT] launch route=area:us:denver/hub:guides#native
+   4 [KT] launch route=area:us:denver/place:2
+   4 [KT] launch route=area:us:denver#native
+   4 [KT] launch route=area:us:new-york-city
+   4 [KT] launch route=area:us:new-york-city/hub:chabad#native
+   4 [KT] launch route=area:us:new-york-city/hub:hotels#native
+   4 [KT] launch route=area:us:new-york-city/hub:restaurants#native
+   4 [KT] launch route=area:us:new-york-city/hub:shuls#native
+   4 [KT] launch route=area:us:new-york-city/map
+   4 [KT] launch route=area:us:new-york-city#native
+   4 [KT] launch route=caribbean
+   4 [KT] launch route=country:aruba
+   4 [KT] launch route=country:aruba#native
+   4 [KT] launch route=country:costa-rica
+   4 [KT] launch route=country:mexico#native
+   4 [KT] launch route=europe
+   4 [KT] launch route=home
+   4 [KT] launch route=kivrei
+   4 [KT] launch route=state:florida#native
+   4 [KT] launch route=state:new-york#native
+   4 [KT] launch route=state:wyoming
+   4 [KT] launch route=state:wyoming#native
+   4 [KT] launch route=tab:explore
+   4 [KT] launch route=tab:planner
+   4 [KT] launch route=tab:planner/builder
+   4 [KT] launch route=tab:planner/demo
+   4 [KT] launch route=tab:planner/kever
+   4 [KT] launch route=tab:profile
+   4 [KT] launch route=tab:profile/settings
+   4 [KT] launch route=tab:profile/signin
+   4 [KT] launch route=tab:profile/signup
+   4 [KT] launch route=tab:stories
+   4 [KT] launch route=tab:stories/inspiration
+   4 [KT] launch route=tab:stories/post:2ZoBguOlOWWseLUOqzdz
+   4 [KT] launch route=tab:stories/post:bhBmKIlbVDskdjVcYsRW
+   4 [KT] launch route=tab:stories/post:kxVZ5VNaRYmOpDU0Dqfg
+   4 [KT] launch route=tab:stories/post:kxVZ5VNaRYmOpDU0Dqfg/viewer:0
+   4 [KT] launch route=tab:stories/post:kxVZ5VNaRYmOpDU0Dqfg/viewer:1
+   4 [KT] launch route=tab:stories/post:kxVZ5VNaRYmOpDU0Dqfg/viewer:6
+   4 [KT] launch route=tab:stories/post:U3qfD0hbD42ROXeW3M9e
+   4 [KT] launch route=tab:stories/post:YTkhuCjwPL68oAfVoyai/comments
+   4 [KT] launch route=tab:stories/traveler:ZilNixJYqChwhgBopF7OHFcyIX13
+   4 [KT] launch route=usa
+  18 [KT] stories feed docs=12
+ 181 [KT] stories feed docs=13
