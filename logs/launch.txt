@@ -1,0 +1,1880 @@
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se 1-explore
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+--- iphone-se after 8 s:
+app process NOT running
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se e2-europe
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se e3-kivrei
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se e4-kever-plan
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se h1-denver
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se h2-denver-grocery
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se h3-cancun
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se h4-wyoming
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se h5-aruba
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se ma1-costa-rica
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se ma2-explore
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se c1-denver
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se c2-nyc
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se c3-place
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se c4-map
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se c5-mexico
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se a1-planner
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se a2-answer
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se a3-builder
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se p1-profile
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se p2-signin
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se p3-signup
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se p4-settings
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s1-denver-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s2-nyc-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s3-cancun-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s4-nyc-restaurants
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s5-nyc-chabad
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s6-nyc-shuls
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s7-nyc-hotels
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s8-denver-guides
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s9-denver-grocery
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se st1-usa
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se st2-caribbean
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se st3-newyork
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se st4-florida
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se st5-wyoming
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se st6-aruba
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se st7-mexico
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s1-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s2-inspiration
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s3-article
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s4-post-video
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s5-comments
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se s6-traveler
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se v1-article
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se v2-viewer-video
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se v3-viewer-video2
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se v4-viewer-photo
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se v5-pompeii-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se vb1-page-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-se vb2-costa-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 1-explore
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+--- iphone-16 after 8 s:
+app process NOT running
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 e2-europe
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 e3-kivrei
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 e4-kever-plan
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 h1-denver
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 h2-denver-grocery
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 h3-cancun
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 h4-wyoming
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 h5-aruba
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 ma1-costa-rica
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 ma2-explore
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 c1-denver
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 c2-nyc
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 c3-place
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 c4-map
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 c5-mexico
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 a1-planner
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 a2-answer
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 a3-builder
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 p1-profile
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 p2-signin
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 p3-signup
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 p4-settings
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s1-denver-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s2-nyc-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s3-cancun-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s4-nyc-restaurants
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s5-nyc-chabad
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s6-nyc-shuls
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s7-nyc-hotels
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s8-denver-guides
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s9-denver-grocery
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 st1-usa
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 st2-caribbean
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 st3-newyork
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 st4-florida
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 st5-wyoming
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 st6-aruba
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 st7-mexico
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s1-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s2-inspiration
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s3-article
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s4-post-video
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s5-comments
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 s6-traveler
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 v1-article
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 v2-viewer-video
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 v3-viewer-video2
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 v4-viewer-photo
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 v5-pompeii-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 vb1-page-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16 vb2-costa-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max 1-explore
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+--- iphone-16-pro-max after 8 s:
+app process NOT running
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max e2-europe
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max e3-kivrei
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max e4-kever-plan
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max h1-denver
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max h2-denver-grocery
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max h3-cancun
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max h4-wyoming
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max h5-aruba
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max ma1-costa-rica
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max ma2-explore
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max c1-denver
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max c2-nyc
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max c3-place
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max c4-map
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max c5-mexico
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max a1-planner
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max a2-answer
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max a3-builder
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max p1-profile
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max p2-signin
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max p3-signup
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max p4-settings
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s1-denver-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s2-nyc-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s3-cancun-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s4-nyc-restaurants
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s5-nyc-chabad
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s6-nyc-shuls
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s7-nyc-hotels
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s8-denver-guides
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s9-denver-grocery
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max st1-usa
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max st2-caribbean
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max st3-newyork
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max st4-florida
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max st5-wyoming
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max st6-aruba
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max st7-mexico
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s1-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s2-inspiration
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s3-article
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s4-post-video
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s5-comments
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max s6-traveler
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max v1-article
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max v2-viewer-video
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max v3-viewer-video2
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max v4-viewer-photo
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max v5-pompeii-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max vb1-page-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: iphone-16-pro-max vb2-costa-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad 1-explore
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+--- ipad after 8 s:
+app process NOT running
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad e2-europe
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad e3-kivrei
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad e4-kever-plan
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad h1-denver
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad h2-denver-grocery
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad h3-cancun
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad h4-wyoming
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad h5-aruba
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad ma1-costa-rica
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad ma2-explore
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad c1-denver
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad c2-nyc
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad c3-place
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad c4-map
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad c5-mexico
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad a1-planner
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad a2-answer
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad a3-builder
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad p1-profile
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad p2-signin
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad p3-signup
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad p4-settings
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s1-denver-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s2-nyc-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s3-cancun-native
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s4-nyc-restaurants
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s5-nyc-chabad
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s6-nyc-shuls
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s7-nyc-hotels
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s8-denver-guides
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s9-denver-grocery
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad st1-usa
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad st2-caribbean
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad st3-newyork
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad st4-florida
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad st5-wyoming
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad st6-aruba
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad st7-mexico
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s1-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s2-inspiration
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s3-article
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s4-post-video
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s5-comments
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad s6-traveler
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad v1-article
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad v2-viewer-video
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad v3-viewer-video2
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad v4-viewer-photo
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad v5-pompeii-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad vb1-page-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
+launch failed: ipad vb2-costa-feed
+An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+Simulator device failed to launch com.yourkoshertravel.app.
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
+	The request to open "com.yourkoshertravel.app" failed.
