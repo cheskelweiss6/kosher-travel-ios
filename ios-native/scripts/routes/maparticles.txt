@@ -1,1 +1,2 @@
 ma1-costa-rica:country:costa-rica
+ma2-explore:tab:explore

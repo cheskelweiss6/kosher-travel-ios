@@ -22,7 +22,7 @@ struct InspirationTile: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.navy)
                     .lineLimit(1)
-                Text(post.regionLine)
+                Text(post.cardRegionLine(shown: post.cityName.isEmpty ? post.title : post.cityName))
                     .font(.caption)
                     .foregroundStyle(Color.textSecondary)
                     .lineLimit(1)
