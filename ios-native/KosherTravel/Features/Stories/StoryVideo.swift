@@ -205,7 +205,11 @@ struct StoryVideoView: View {
             }
         }
         .clipped()
-        .task(id: "\(media.url)|\(media.thumb)") { await checkPoster() }
+        .task(id: "\(media.url)|\(media.thumb)") {
+            await checkPoster()
+            // the post was read again (e.g. after Edit post): a video on screen with no player starts now
+            if autoplay, live, player == nil { start() }
+        }
         .onGeometryChange(for: Bool.self) { proxy in
             StoryVideoView.halfVisible(proxy.frame(in: .global), in: CGRect(origin: .zero, size: UIScreen.main.bounds.size))
         } action: { visible in
@@ -396,7 +400,8 @@ struct StoryVideoView: View {
         }
         let begin = startTime
         endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { _ in
-            p.seek(to: begin, toleranceBefore: .zero, toleranceAfter: .zero)
+            let tol = CMTime(seconds: 0.1, preferredTimescale: 600)
+            p.seek(to: begin, toleranceBefore: tol, toleranceAfter: tol)
             p.play()
         }
         let report = onRatio
@@ -456,12 +461,53 @@ struct StoryVideoView: View {
             }
         }
         StoryVideoCenter.shared.claim(p)
-        if begin.seconds > 0, abs(p.currentTime().seconds - begin.seconds) > 0.25 {
-            p.seek(to: begin, toleranceBefore: .zero, toleranceAfter: .zero) { _ in p.play() }
+        player = p
+        if begin.seconds > 0.05, abs(p.currentTime().seconds - begin.seconds) > 0.25 {
+            playFromTrim(p, begin)
         } else {
             p.play()
         }
-        player = p
+        watchStart(p, begin)
+    }
+
+    /// Oct 25 2026 (Cheskel, Pompeii after a cover edit: "only shows a photo of the cover but no video playing"; the
+    /// only trimmed video in the app): a trimmed video seeks to its start only once the file is ready, with a small
+    /// tolerance (an exact-frame seek on a big remote .mov can hang), and plays when the seek ends either way.
+    private func playFromTrim(_ p: AVPlayer, _ begin: CMTime) {
+        Task { @MainActor in
+            var waited = 0
+            while player === p, p.currentItem?.status == .unknown, waited < 50 {
+                try? await Task.sleep(nanoseconds: 100_000_000)
+                waited += 1
+            }
+            guard player === p else { return }
+            let tol = CMTime(seconds: 0.1, preferredTimescale: 600)
+            p.seek(to: begin, toleranceBefore: tol, toleranceAfter: tol) { _ in
+                DispatchQueue.main.async { if player === p { p.play() } }
+            }
+        }
+    }
+
+    /// A start that never gets going (no frames after a few seconds) is nudged: play from the start of the kept part
+    /// with any tolerance, and if that also stalls, from the beginning of the file. Never leaves a still on screen.
+    private func watchStart(_ p: AVPlayer, _ begin: CMTime) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 3_500_000_000)
+            guard player === p, !userPaused, !failed, live else { return }
+            if p.timeControlStatus != .playing {
+                p.seek(to: begin, toleranceBefore: .positiveInfinity, toleranceAfter: .positiveInfinity) { _ in
+                    DispatchQueue.main.async { if player === p { p.play() } }
+                }
+                p.play()
+            }
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            guard player === p, !userPaused, !failed, live else { return }
+            if p.timeControlStatus != .playing {
+                p.seek(to: .zero) { _ in
+                    DispatchQueue.main.async { if player === p { p.play() } }
+                }
+            }
+        }
     }
 
     /// A real frame is on screen: show the video over the still.
