@@ -349,11 +349,25 @@ enum PlannerPDF {
         return ""
     }
 
+    /// The plan split so each day after the first starts a new page (Cheskel, Oct 25 2026: a neat PDF, one section per day).
+    /// The intro and Day 1 share the first page; "Places & Maps" follows the last day.
+    static func daySections(_ content: String) -> [String] {
+        var out: [String] = []
+        var cur: [String] = []
+        var seenDay = false
+        for line in content.components(separatedBy: "\n") {
+            let t = line.trimmingCharacters(in: .whitespaces)
+            let isDay = t.range(of: #"^(\*\*|#{1,3}\s*)Day\s*\d+"#, options: [.regularExpression, .caseInsensitive]) != nil
+            if isDay && seenDay && !cur.isEmpty { out.append(cur.joined(separator: "\n")); cur = [] }
+            if isDay { seenDay = true }
+            cur.append(line)
+        }
+        if !cur.isEmpty { out.append(cur.joined(separator: "\n")) }
+        return out.isEmpty ? [content] : out
+    }
+
     static func make(content: String, title: String, filters: TripFilters, places: [PlannerMapPlace]) -> PlannerPDFFile? {
-        let text = body(content, places: places)
-        let storage = NSTextStorage(attributedString: text)
-        let layout = NSLayoutManager()
-        storage.addLayoutManager(layout)
+        let sections = daySections(content)
 
         let heading = title.isEmpty ? "Trip plan" : "\(title) trip plan"
         let made = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .none)
@@ -373,24 +387,32 @@ enum PlannerPDF {
         let renderer = UIGraphicsPDFRenderer(bounds: page, format: format)
         let data = renderer.pdfData { ctx in
             var pageNo = 0
-            var nextGlyph = 0
-            let total = layout.numberOfGlyphs
-            repeat {
-                ctx.beginPage()
-                pageNo += 1
-                let top = pageNo == 1 ? firstTop : laterTop
-                drawChrome(ctx.cgContext, first: pageNo == 1, heading: heading, sub: sub, notice: notice, pageNo: pageNo)
-                let frame = CGRect(x: margin, y: top, width: width, height: page.height - top - bottom)
-                let container = NSTextContainer(size: frame.size)
-                container.lineFragmentPadding = 0
-                layout.addTextContainer(container)
-                let range = layout.glyphRange(for: container)
-                layout.drawBackground(forGlyphRange: range, at: frame.origin)
-                layout.drawGlyphs(forGlyphRange: range, at: frame.origin)
-                addLinks(layout, storage, container, range, frame.origin)
-                if range.length == 0 { break }
-                nextGlyph = NSMaxRange(range)
-            } while nextGlyph < total && pageNo < 60
+            for (i, section) in sections.enumerated() {
+                let text = body(section, places: i == sections.count - 1 ? places : [])
+                let storage = NSTextStorage(attributedString: text)
+                let layout = NSLayoutManager()
+                storage.addLayoutManager(layout)
+                var nextGlyph = 0
+                let total = layout.numberOfGlyphs
+                if total == 0 { continue }
+                repeat {
+                    ctx.beginPage()
+                    pageNo += 1
+                    let top = pageNo == 1 ? firstTop : laterTop
+                    drawChrome(ctx.cgContext, first: pageNo == 1, heading: heading, sub: sub, notice: notice, pageNo: pageNo)
+                    let frame = CGRect(x: margin, y: top, width: width, height: page.height - top - bottom)
+                    let container = NSTextContainer(size: frame.size)
+                    container.lineFragmentPadding = 0
+                    layout.addTextContainer(container)
+                    let range = layout.glyphRange(for: container)
+                    layout.drawBackground(forGlyphRange: range, at: frame.origin)
+                    layout.drawGlyphs(forGlyphRange: range, at: frame.origin)
+                    addLinks(layout, storage, container, range, frame.origin)
+                    if range.length == 0 { break }
+                    nextGlyph = NSMaxRange(range)
+                } while nextGlyph < total && pageNo < 60
+                if pageNo >= 60 { break }
+            }
         }
 
         let safeTitle = title.replacingOccurrences(of: #"[/\\:*?"<>|]"#, with: "", options: .regularExpression)

@@ -414,7 +414,8 @@ struct PlannerTab: View {
             if !typing {
                 let cards = cards(for: msg)
                 if !cards.isEmpty { destinationCards(cards, away: msg.away ?? [:]) }
-                if let articles = articlesFor(index: index) { articlesRow(articles) }
+                if let refs = serverArticles(index: index) { serverArticlesRow(refs) }
+                else if msg.articles == nil, let articles = articlesFor(index: index) { articlesRow(articles) }
                 if PlannerActions.showsBar(for: msg, index: index, messages: store.messages, settled: settled, cards: cards) {
                     PlannerActionBar(message: msg, index: index, messages: store.messages, cards: cards) { text in
                         store.send(text)
@@ -463,6 +464,73 @@ struct PlannerTab: View {
             }
         }
         return cache.articles[msgs[index].id]
+    }
+
+    // The chat server's article picks (Oct 25 2026), shown once: not again when the answer before had the same ones.
+    private func serverArticles(index: Int) -> [PlannerArticleRef]? {
+        let msgs = store.messages
+        guard index < msgs.count, let refs = msgs[index].articles, !refs.isEmpty else { return nil }
+        let ids = refs.map(\.id)
+        if let prev = msgs[..<index].last(where: { $0.isAssistant && ($0.articles?.isEmpty == false) }), prev.articles?.map(\.id) == ids { return nil }
+        return refs
+    }
+
+    private func serverArticlesRow(_ refs: [PlannerArticleRef]) -> some View {
+        let first = refs[0]
+        let label = first.scopeName.isEmpty ? "" : " in " + first.scopeName
+        return VStack(alignment: .leading, spacing: 6) {
+            (Text("Articles from travelers").foregroundStyle(Color.textSecondary) + Text(label).foregroundStyle(Color.navy))
+                .font(.caption.weight(.semibold))
+                .lineLimit(1)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(refs) { r in
+                        NavigationLink(value: ExploreRoute.story(r.id)) {
+                            HStack(spacing: 0) {
+                                Group {
+                                    if r.cover.isEmpty {
+                                        Image(systemName: "doc.text.image")
+                                            .font(.title3)
+                                            .foregroundStyle(Color.navy.opacity(0.55))
+                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                            .background(Color.navy.opacity(0.06))
+                                    } else {
+                                        RemoteImage(url: r.cover, maxPixel: 240)
+                                    }
+                                }
+                                .frame(width: 72, height: 72)
+                                .clipped()
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(r.title)
+                                        .font(.footnote.weight(.semibold))
+                                        .foregroundStyle(Color.navy)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.leading)
+                                    Text([r.author, r.place].filter { !$0.isEmpty }.joined(separator: " · "))
+                                        .font(.caption2)
+                                        .foregroundStyle(Color.textSecondary)
+                                        .lineLimit(1)
+                                }
+                                .padding(.horizontal, 10)
+                                Spacer(minLength: 0)
+                                Image(systemName: "chevron.right")
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle(Color.textTertiary)
+                                    .padding(.trailing, 10)
+                            }
+                            .frame(width: 236, height: 72)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .hairline(radius: 12)
+                        }
+                        .buttonStyle(.pressable)
+                        .accessibilityLabel("\(r.title) by \(r.author). Opens the article.")
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+            .padding(.horizontal, -16)
+        }
     }
 
     private func destinationCards(_ items: [PlannerPlace], away: [String: Int]) -> some View {

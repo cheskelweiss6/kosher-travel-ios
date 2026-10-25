@@ -13,6 +13,7 @@ enum PlannerAPI {
         var message: String
         var suggestions: [String]
         var away: [String: Int]
+        var articles: [PlannerArticleRef] = []
     }
 
     struct Failure: Error {
@@ -113,7 +114,8 @@ enum PlannerAPI {
         if let list = json["places"] as? [[String: Any]] {
             PlannerPlaceMemory.remember(list.prefix(40).compactMap { PlannerMapPlace(json: $0) }, forAnswer: text)
         }
-        return Answer(message: text, suggestions: Array(suggestions), away: away)
+        let articles = ((json["articles"] as? [[String: Any]]) ?? []).prefix(3).compactMap { PlannerArticleRef(json: $0) }
+        return Answer(message: text, suggestions: Array(suggestions), away: away, articles: Array(articles))
     }
 }
 
