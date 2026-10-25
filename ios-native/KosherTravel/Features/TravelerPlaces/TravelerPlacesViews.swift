@@ -559,7 +559,7 @@ struct TravelerPlaceExtra: View {
                             .hairline(radius: 16)
                             .contentShape(Rectangle())
                         }
-                        .buttonStyle(.pressable)
+                        .buttonStyle(.plain)
                         .disabled(onOpenStory == nil)
                     }
                     Text("Travelers\u{2019} own words, not checked by the app.")
