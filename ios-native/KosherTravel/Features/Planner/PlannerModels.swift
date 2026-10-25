@@ -73,6 +73,7 @@ struct ChatMessage: Codable, Identifiable, Hashable {
     var label: String?
     var filters: TripFilters?
     var away: [String: Int]?    // miles from the asked place, per other city the answer names
+    var articles: [PlannerArticleRef]?  // travelers' articles the chat server picked for this answer (Oct 25 2026)
 
     var isUser: Bool { role == "user" }
     var isAssistant: Bool { role == "assistant" }
@@ -103,6 +104,7 @@ struct ChatMessage: Codable, Identifiable, Hashable {
         if let label, !label.isEmpty { d["label"] = label }
         if let filters, !filters.isEmpty { d["filters"] = filters.dictionary }
         if let away, !away.isEmpty { d["away"] = away }
+        if let articles, !articles.isEmpty { d["articles"] = articles.map(\.dictionary) }
         return d
     }
 
@@ -126,6 +128,39 @@ struct ChatMessage: Codable, Identifiable, Hashable {
             }
             away = out.isEmpty ? nil : out
         }
+        if let list = d["articles"] as? [[String: Any]] {
+            let refs = list.prefix(3).compactMap { PlannerArticleRef(json: $0) }
+            articles = refs.isEmpty ? nil : refs
+        }
+    }
+}
+
+/// A traveler's article under a planner answer, picked by the chat server (Cheskel, Oct 25 2026: "Should also show
+/// articles of that place … also from the region"): the place asked first, then its country / US state, then its region.
+/// Saved on the message (web: Message.articles) so a reopened chat shows the same cards.
+struct PlannerArticleRef: Codable, Hashable, Identifiable {
+    var id: String
+    var title: String
+    var author: String
+    var cover: String
+    var place: String       // the article's stops ("Venice · Pompei · Rome")
+    var scope: String       // place | country | region
+    var scopeName: String   // "Rome", "Costa Rica", "Europe"
+
+    init?(json d: [String: Any]) {
+        guard let id = d["id"] as? String, !id.isEmpty, let title = d["title"] as? String, !title.isEmpty else { return nil }
+        self.id = id
+        self.title = String(title.prefix(120))
+        author = String(((d["author"] as? String) ?? "").prefix(60))
+        let c = (d["cover"] as? String) ?? ""
+        cover = c.hasPrefix("https://") ? c : ""
+        place = String((((d["where"] as? String) ?? (d["place"] as? String)) ?? "").prefix(120))
+        scope = (d["scope"] as? String) ?? "place"
+        scopeName = String(((d["scopeName"] as? String) ?? "").prefix(60))
+    }
+
+    var dictionary: [String: Any] {
+        ["id": id, "title": title, "author": author, "cover": cover, "where": place, "scope": scope, "scopeName": scopeName]
     }
 }
 

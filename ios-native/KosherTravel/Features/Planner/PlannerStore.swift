@@ -121,6 +121,7 @@ final class PlannerStore {
                 var msg = ChatMessage(role: "assistant", content: answer.message)
                 if !answer.suggestions.isEmpty { msg.suggestions = answer.suggestions }
                 if !answer.away.isEmpty { msg.away = answer.away }
+                if !answer.articles.isEmpty { msg.articles = answer.articles }
                 // The chat could have been switched meanwhile; the answer belongs to the chat that asked.
                 guard self.currentId == chatId || chatId == nil else { self.finish(my); return }
                 self.messages.append(msg)
