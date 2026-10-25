@@ -521,20 +521,27 @@ struct StoryFitImage: View {
         ZStack {
             backdrop ? Color.navy : Color.black
             if let image {
+                // Oct 25 2026: each picture is laid out inside a screen-sized box (Color.clear + overlay), so a filled
+                // picture can never grow the slide past the screen (a bare scaledToFill + maxWidth frame takes the
+                // picture's oversized size and pushed the slide off-center / zoomed in).
                 if backdrop {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .blur(radius: fill ? 0 : 22)
+                    Color.clear
+                        .overlay {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                                .blur(radius: fill ? 0 : 22)
+                        }
                         .opacity(fill ? 0 : 1)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .clipped()
                         .accessibilityHidden(true)
                 }
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: fill ? .fill : .fit)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                Color.clear
+                    .overlay {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: fill ? .fill : .fit)
+                    }
                     .clipped()
                     .transition(.opacity)
             }
@@ -629,38 +636,103 @@ struct StoryMediaViewer: View {
     }
 }
 
-/// A photo that fits the screen and zooms with a pinch or a double tap.
+/// A photo that opens whole (fitted, on black) and zooms with a pinch or a double tap; once zoomed it pans with a drag,
+/// and a swipe moves to the next photo only when it is back at its whole size.
+/// Oct 25 2026 (Cheskel: "The photos are also opening zoomed in"): the photo is laid out in an exact screen-sized box,
+/// every new photo starts at 1x, and zoom snaps back to whole when pinched below 1x.
 struct ZoomableRemoteImage: View {
     let url: String
+    var maxPixel: CGFloat = 2200
     @State private var image: UIImage?
+    @State private var failed = false
     @State private var scale: CGFloat = 1
     @State private var lastScale: CGFloat = 1
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
 
     var body: some View {
-        Group {
-            if let image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(scale)
-                    .gesture(
-                        MagnificationGesture()
-                            .onChanged { v in scale = min(4, max(1, lastScale * v)) }
-                            .onEnded { _ in lastScale = scale }
-                    )
-                    .onTapGesture(count: 2) {
-                        withAnimation(Motion.move) { scale = scale > 1 ? 1 : 2.5 }
-                        lastScale = scale
-                    }
-            } else {
-                ProgressView().tint(.white)
+        GeometryReader { geo in
+            let box = geo.size
+            ZStack {
+                Color.black
+                if let image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: box.width, height: box.height)
+                        .scaleEffect(scale)
+                        .offset(offset)
+                        .contentShape(Rectangle())
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { v in scale = min(4, max(1, lastScale * v)) }
+                                .onEnded { _ in
+                                    lastScale = scale
+                                    if scale <= 1.01 { reset() } else { clamp(box) }
+                                }
+                        )
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 4)
+                                .onChanged { v in
+                                    offset = CGSize(width: lastOffset.width + v.translation.width,
+                                                    height: lastOffset.height + v.translation.height)
+                                }
+                                .onEnded { _ in clamp(box) },
+                            including: scale > 1.01 ? .all : .subviews
+                        )
+                        .onTapGesture(count: 2) {
+                            withAnimation(Motion.move) {
+                                if scale > 1.01 {
+                                    scale = 1; lastScale = 1; offset = .zero; lastOffset = .zero
+                                } else {
+                                    scale = 2.5; lastScale = 2.5
+                                }
+                            }
+                        }
+                        .accessibilityLabel("Photo")
+                        .accessibilityHint("Double tap to zoom")
+                } else if failed {
+                    Image(systemName: "photo")
+                        .font(.system(size: 28, weight: .light))
+                        .foregroundStyle(.white.opacity(0.5))
+                } else {
+                    ProgressView().tint(.white)
+                }
             }
+            .frame(width: box.width, height: box.height)
+            .clipped()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task(id: url) {
-            if let hit = ImagePipeline.shared.cached(url, maxPixel: 2200) { image = hit; return }
-            image = await ImagePipeline.shared.load(url, maxPixel: 2200)
+            reset()
+            failed = false
+            if let hit = ImagePipeline.shared.cached(url, maxPixel: maxPixel) { image = hit; return }
+            image = await ImagePipeline.shared.load(url, maxPixel: maxPixel)
+            failed = image == nil
         }
+    }
+
+    private func reset() {
+        withAnimation(Motion.move) {
+            scale = 1; lastScale = 1; offset = .zero; lastOffset = .zero
+        }
+    }
+
+    /// The photo's size when it fits the box (the 1x size).
+    private func fitted(_ box: CGSize) -> CGSize {
+        guard let image, image.size.width > 0, image.size.height > 0, box.width > 0, box.height > 0 else { return box }
+        let r = min(box.width / image.size.width, box.height / image.size.height)
+        return CGSize(width: image.size.width * r, height: image.size.height * r)
+    }
+
+    /// Keep a zoomed photo's edges from being dragged into the middle of the screen.
+    private func clamp(_ box: CGSize) {
+        let f = fitted(box)
+        let mx = max(0, (f.width * scale - box.width) / 2)
+        let my = max(0, (f.height * scale - box.height) / 2)
+        withAnimation(Motion.move) {
+            offset = CGSize(width: min(mx, max(-mx, offset.width)), height: min(my, max(-my, offset.height)))
+        }
+        lastOffset = offset
     }
 }
 

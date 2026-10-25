@@ -150,6 +150,9 @@ struct InspirePostPage: View {
     @State private var linkingArticle = false
     /// Every photo / video opens whole (fit) over a blurred copy; the Fit button fills the screen (web InspireFeed).
     @State private var fill = false
+    /// Tapping a photo (or its expand button) opens it whole in the full-screen viewer: fitted on black, pinch / double tap
+    /// to zoom (Cheskel, Oct 25 2026: "The photos are also opening zoomed in" — the tap used to switch the slide to fill).
+    @State private var photoOpen: InspirePhotoOpen?
     @State private var ratios: [Int: Double] = [:]
     @State private var likeBusy = false
     @State private var followBusy = false
@@ -272,6 +275,17 @@ struct InspirePostPage: View {
             await blockOwner()
         }
         .storyDeleteConfirm(isPresented: $confirmDelete, article: false) { deletePost() }
+        // a photo opened from the feed: the whole photo on black, swipe between the post's photos and videos
+        .fullScreenCover(item: $photoOpen) { start in
+            StoryMediaViewer(media: media, index: start.index)
+        }
+        .onAppear {
+            // QA: tab:stories/post:<id>/viewer:<n> opens the full-screen photo viewer on slide n
+            if let r = LaunchRoute.current, let at = r.range(of: "post:\(post.id)/viewer:"),
+               let k = Int(r[at.upperBound...]), photoOpen == nil {
+                photoOpen = InspirePhotoOpen(index: k)
+            }
+        }
         // Edit: the post editor every post is written in, opened on this post; its X or Save closes it
         .fullScreenCover(item: $editRoute, onDismiss: {
             let id = post.id
@@ -297,7 +311,11 @@ struct InspirePostPage: View {
     /// A known shape close to the screen's just fills; otherwise the whole photo shows until Fit is tapped.
     private func fillsScreen(_ i: Int) -> Bool {
         guard ratios[i] != nil else { return false }
-        return !differs(i) || fill
+        if !differs(i) { return true }
+        // Oct 25 2026: a photo whose shape is off the screen's always shows whole in the feed (never zoomed in);
+        // only a video keeps the fit / fill toggle.
+        let list = media
+        return fill && list.indices.contains(i) && list[i].isVideo
     }
 
     /// The web's samePlace(): a photo's place that only repeats the post's own place or city adds nothing.
@@ -326,17 +344,20 @@ struct InspirePostPage: View {
                         .accessibilityLabel("Video \(i + 1)")
                     } else {
                         StoryFitImage(url: m.still, maxPixel: 1600, fill: fillsScreen(i)) { r in
-                            if ratios[i] == nil { ratios[i] = r }
+                            // the loaded photo's own shape (orientation applied) wins over the post's stored size,
+                            // which for many phone photos is the unrotated one and made a photo fill (zoom in) wrongly
+                            ratios[i] = r
                         }
                         .contentShape(Rectangle())
-                        .onTapGesture { if differs(i) { withAnimation(Motion.move) { fill.toggle() } } }
+                        .onTapGesture { photoOpen = InspirePhotoOpen(index: i) }
+                        .accessibilityAddTraits(.isButton)
                         .accessibilityLabel(m.placeName.isEmpty ? "Photo \(i + 1)" : m.placeName)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipped()
                 .tag(i)
-                .onAppear { if ratios[i] == nil, let r = knownRatio(m) { ratios[i] = r } }
+                .onAppear { if ratios[i] == nil, m.isVideo, let r = knownRatio(m) { ratios[i] = r } }
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
@@ -382,9 +403,14 @@ struct InspirePostPage: View {
                     glassIcon(StoryVideoSound.shared.on ? "speaker.wave.2" : "speaker.slash",
                               a11y: StoryVideoSound.shared.on ? "Sound off" : "Sound on") { toggleSound(cur) }
                 }
-                if differs(page) {
+                if let cur, !cur.isVideo {
+                    // a photo: open it whole, full screen, with pinch / double-tap zoom
+                    glassIcon("arrow.up.left.and.arrow.down.right", a11y: "Open the whole photo") {
+                        photoOpen = InspirePhotoOpen(index: page)
+                    }
+                } else if differs(page) {
                     glassIcon(fill ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right",
-                              a11y: fill ? "Show the whole \(cur?.isVideo == true ? "video" : "photo")" : "Fill the screen") {
+                              a11y: fill ? "Show the whole video" : "Fill the screen") {
                         withAnimation(Motion.move) { fill.toggle() }
                     }
                 }
@@ -776,4 +802,11 @@ struct InspireShopSheet: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
+}
+
+
+/// Which slide of a Get Inspired post the full-screen photo viewer opens on.
+struct InspirePhotoOpen: Identifiable {
+    let id = UUID()
+    let index: Int
 }
