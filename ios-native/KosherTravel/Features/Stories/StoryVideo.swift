@@ -86,6 +86,12 @@ struct StoryVideoView: View {
     @State private var remaining: Double = 0
     @State private var timeObserver: Any?
     @State private var controlObserver: NSKeyValueObservation?
+    /// the video failed to load (bad network, missing file): "Couldn't load video, tap to retry"
+    @State private var failed = false
+    @State private var failObserver: NSObjectProtocol?
+    /// a frame made from the video itself, when the post's cover picture is missing or all black (Oct 25 2026: a cover
+    /// grabbed before the video had painted was saved pure black, and the story showed a black screen)
+    @State private var poster: UIImage?
     @Environment(\.scenePhase) private var scenePhase
     private var sound: StoryVideoSound { .shared }
 
@@ -113,7 +119,16 @@ struct StoryVideoView: View {
 
     var body: some View {
         ZStack {
-            if !media.thumb.isEmpty {
+            if let poster {
+                ZStack {
+                    backdrop ? Color.navy : Color.black
+                    Image(uiImage: poster)
+                        .resizable()
+                        .aspectRatio(contentMode: fill ? .fill : .fit)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
+                }
+            } else if !media.thumb.isEmpty {
                 if fill {
                     RemoteImage(url: media.thumb, maxPixel: 1400)
                 } else {
@@ -144,9 +159,33 @@ struct StoryVideoView: View {
                     .contentShape(Rectangle())
                     .onTapGesture { togglePlay() }
                 controlsOverlay
+            } else if waiting {
+                spinner
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .allowsHitTesting(false)
+            }
+            if failed {
+                Button { retry() } label: {
+                    VStack(spacing: 10) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 26, weight: .semibold))
+                        Text("Couldn't load video, tap to retry")
+                            .font(.subheadline.weight(.semibold))
+                            .multilineTextAlignment(.center)
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .background(Color.black.opacity(0.55), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Couldn't load video. Tap to retry")
             }
         }
         .clipped()
+        .task(id: media.url) { await checkPoster() }
         .onGeometryChange(for: Bool.self) { proxy in
             StoryVideoView.halfVisible(proxy.frame(in: .global), in: CGRect(origin: .zero, size: UIScreen.main.bounds.size))
         } action: { visible in
@@ -168,21 +207,65 @@ struct StoryVideoView: View {
 
     /// Loading: the player is being made, the first frame is not ready, or playback is waiting for more data.
     private var waiting: Bool {
-        guard !userPaused else { return false }
-        if player == nil { return autoplay && live && !media.url.isEmpty }
+        guard !userPaused, !failed else { return false }
+        if player == nil { return (autoplay || wanted) && live && !media.url.isEmpty }
         return !ready || buffering
+    }
+
+    private var spinner: some View {
+        ProgressView()
+            .controlSize(.large)
+            .tint(.white)
+            .frame(width: 72, height: 72)
+            .background(.black.opacity(0.4), in: Circle())
+            .accessibilityLabel("Loading video")
+            .transition(.opacity)
+    }
+
+    private func retry() {
+        stop()
+        failed = false
+        wanted = true
+        start()
+    }
+
+    /// The post's cover picture is missing or all black: make one from the video itself.
+    private func checkPoster() async {
+        if !media.thumb.isEmpty, let img = await ImagePipeline.shared.load(media.thumb, maxPixel: 64), !StoryVideoView.isBlank(img) {
+            return
+        }
+        guard !media.url.isEmpty, let u = URL(string: media.url) else { return }
+        let gen = AVAssetImageGenerator(asset: AVURLAsset(url: u))
+        gen.appliesPreferredTrackTransform = true
+        gen.maximumSize = CGSize(width: 900, height: 900)
+        let at = CMTime(seconds: max(0.1, media.trimStart ?? 0.1), preferredTimescale: 600)
+        if let r = try? await gen.image(at: at) {
+            let img = UIImage(cgImage: r.image)
+            withAnimation(Motion.fade) { poster = img }
+        }
+    }
+
+    /// Every pixel (on a 16 x 16 copy) is black or nearly.
+    nonisolated static func isBlank(_ img: UIImage) -> Bool {
+        guard let cg = img.cgImage else { return false }
+        var px = [UInt8](repeating: 0, count: 4 * 16 * 16)
+        let drawn: Bool = px.withUnsafeMutableBytes { buf -> Bool in
+            guard let ctx = CGContext(data: buf.baseAddress, width: 16, height: 16, bitsPerComponent: 8, bytesPerRow: 64,
+                                      space: CGColorSpaceCreateDeviceRGB(),
+                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
+            ctx.draw(cg, in: CGRect(x: 0, y: 0, width: 16, height: 16))
+            return true
+        }
+        guard drawn else { return false }
+        var top: UInt8 = 0
+        for i in stride(from: 0, to: px.count, by: 4) { top = max(top, px[i], px[i + 1], px[i + 2]) }
+        return top < 6
     }
 
     private var controlsOverlay: some View {
         ZStack {
             if waiting {
-                ProgressView()
-                    .controlSize(.large)
-                    .tint(.white)
-                    .frame(width: 72, height: 72)
-                    .background(.black.opacity(0.4), in: Circle())
-                    .accessibilityLabel("Loading video")
-                    .transition(.opacity)
+                spinner
             } else if userPaused {
                 Image(systemName: "play.fill")
                     .font(.system(size: 30, weight: .semibold))
@@ -277,18 +360,30 @@ struct StoryVideoView: View {
         }
         let report = onRatio
         statusObserver = item.observe(\.status, options: [.initial, .new]) { it, _ in
+            if it.status == .failed {
+                DispatchQueue.main.async { failed = true; buffering = false }
+                return
+            }
             guard it.status == .readyToPlay else { return }
             let size = it.presentationSize
             DispatchQueue.main.async {
-                withAnimation(Motion.content) { ready = true }
                 if size.width > 0, size.height > 0 { report?(Double(size.width / size.height)) }
             }
         }
-        if controls {
-            controlObserver = p.observe(\.timeControlStatus, options: [.initial, .new]) { pl, _ in
-                let isWaiting = pl.timeControlStatus == .waitingToPlayAtSpecifiedRate
-                DispatchQueue.main.async { buffering = isWaiting }
+        failObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: item, queue: .main) { _ in
+            failed = true
+            buffering = false
+        }
+        // Oct 25 2026: the video is shown once it is really playing (frames on screen), not at "ready to play", when the
+        // layer can still be black; until then the still and a spinner show
+        controlObserver = p.observe(\.timeControlStatus, options: [.initial, .new]) { pl, _ in
+            let st = pl.timeControlStatus
+            DispatchQueue.main.async {
+                buffering = st == .waitingToPlayAtSpecifiedRate
+                if st == .playing, !ready { withAnimation(Motion.content) { ready = true } }
             }
+        }
+        if controls {
             let lo = max(0, media.trimStart ?? 0)
             let hi = media.trimEnd
             timeObserver = p.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { t in
@@ -318,6 +413,9 @@ struct StoryVideoView: View {
         timeObserver = nil
         controlObserver?.invalidate()
         controlObserver = nil
+        if let failObserver { NotificationCenter.default.removeObserver(failObserver) }
+        failObserver = nil
+        failed = false
         buffering = false
         userPaused = false
         progress = 0
