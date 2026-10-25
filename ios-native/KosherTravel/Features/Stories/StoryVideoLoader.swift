@@ -121,7 +121,8 @@ final class StoryVideoLoader {
             p.isMuted = true
             let start = max(0, m.trimStart ?? 0)
             if start > 0 {
-                p.seek(to: CMTime(seconds: start, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+                // the completion-handler form: inside this async Task the plain call is the async overload and needs await
+                p.seek(to: CMTime(seconds: start, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero) { _ in }
             }
             self.ahead[key] = p
             self.order.append(key)
