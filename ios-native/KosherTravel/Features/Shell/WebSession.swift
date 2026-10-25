@@ -86,6 +86,73 @@ enum WebSession {
         """
     }
 
+    /// Back inside the page (ShellWebNav): finds the page's own Back for the level it shows (the same rule as the
+    /// website's swipe-back in src/lib/nativeFeel.ts: a Back pill / chevron near the top left that is not covered by
+    /// another screen; also one scrolled away at the top of a long city page), tells the app whether there is one
+    /// ("navback"), and presses it when the app asks (`window.__ktNav.back()`). Our own origin only; changes nothing on
+    /// the page by itself.
+    static let backScript = """
+        (function(){try{
+          var h=location.hostname; if(h!=='www.yourkoshertravel.com'&&h!=='yourkoshertravel.com')return;
+          if(window.__ktNav)return;
+          var SEL='[data-kt-back], button[aria-label="Back"], button[aria-label^="Back "], button[aria-label^="Back to"]';
+          function scroller(e){
+            for(var p=e.parentElement;p&&p!==document.body&&p!==document.documentElement;p=p.parentElement){
+              var o=getComputedStyle(p).overflowY; if((o==='auto'||o==='scroll')&&p.scrollHeight>p.clientHeight+1)return p;
+            }
+            return null;
+          }
+          function overlayAt(x,y){
+            var hit=document.elementFromPoint(x,y);
+            for(var e=hit;e&&e!==document.body;e=e.parentElement){
+              var cs=getComputedStyle(e);
+              if(cs.position==='fixed'&&(parseInt(cs.zIndex,10)||0)>=20&&e.getBoundingClientRect().width>=window.innerWidth*0.8)return e;
+            }
+            return null;
+          }
+          function find(){
+            var c=[];
+            document.querySelectorAll(SEL).forEach(function(b){c.push(b);});
+            document.querySelectorAll('button svg.lucide-chevron-left, button svg.lucide-arrow-left').forEach(function(s){
+              var b=s.closest('button');
+              if(b&&!b.closest('[data-testid=inspire-post], .snap-x')&&!/previous|prev|earlier|month|week/i.test(b.getAttribute('aria-label')||''))c.push(b);
+            });
+            var best=null,top=1e9,cx=window.innerWidth/2,cy=window.innerHeight/2;
+            c.forEach(function(b){
+              if(b.disabled||/top/i.test(b.getAttribute('aria-label')||''))return;
+              var r=b.getBoundingClientRect();
+              if(!r.width||!r.height||r.left>160||r.top>190)return;
+              if(r.bottom>0){
+                var hit=document.elementFromPoint(r.left+r.width/2,Math.max(1,r.top+r.height/2));
+                if(!hit||!(hit===b||b.contains(hit)))return;
+              }else{
+                var s=scroller(b);
+                var y=s?r.top-s.getBoundingClientRect().top+s.scrollTop:r.top+window.scrollY;
+                if(y>400)return;
+                var mid=document.elementFromPoint(cx,cy);
+                if(!mid||!(s?s.contains(mid):!overlayAt(cx,cy)))return;
+              }
+              var key=r.bottom>0?r.top:1e6+r.top;
+              if(key<top){best=b;top=key;}
+            });
+            return best;
+          }
+          var last=null,timer=0;
+          function post(v){try{window.webkit.messageHandlers.ktShell.postMessage({type:'navback',back:v});}catch(e){}}
+          function check(){timer=0;var v=!!find();if(v!==last){last=v;post(v);}}
+          function soon(){if(!timer)timer=setTimeout(check,150);}
+          window.__ktNav={back:function(){var b=find();if(!b){soon();return false;}b.click();soon();return true;},has:function(){return !!find();}};
+          function start(){
+            try{new MutationObserver(soon).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['style','hidden','aria-hidden']});}catch(e){}
+            window.addEventListener('scroll',soon,{passive:true,capture:true});
+            window.addEventListener('resize',soon,{passive:true});
+            window.addEventListener('popstate',soon);
+            soon();
+          }
+          if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+        }catch(e){}})();
+        """
+
     /// The user script that tells the page it is inside the app and which screen to open.
     static func shellScript(_ route: WebRoute, fullScreen: Bool = false) -> String {
         let base = baseShellScript(route, fullScreen: fullScreen)

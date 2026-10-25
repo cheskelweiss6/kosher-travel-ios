@@ -260,7 +260,7 @@ struct WarmWebScreen: View {
             case .system(let u): LinkOpener.openSystem(u)
             case .story(let id): push = .story(id, comments: false)
             }
-        case .ready, .loaded, .failed, .title, .close:
+        case .ready, .loaded, .failed, .title, .close, .webBack:
             break   // state kept by the page object; a tab root has nothing to close
         }
     }

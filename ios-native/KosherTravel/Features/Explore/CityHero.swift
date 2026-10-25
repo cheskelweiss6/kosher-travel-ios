@@ -164,6 +164,9 @@ final class PopGestureDelegate: NSObject, UIGestureRecognizerDelegate {
 
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard let nav else { return false }
+        // A screen that hides its Back (an account step that is still working, an embedded page on an inner level)
+        // keeps the swipe from leaving it too, as iOS does when this delegate is not installed.
+        if nav.topViewController?.navigationItem.hidesBackButton == true { return false }
         return nav.viewControllers.count > 1 && nav.transitionCoordinator == nil
     }
 }
