@@ -1,0 +1,4 @@
+[KT] launch route=area:us:denver
+[KT] city denver: traveler places=0 reviewed places=1
+[KT] feed source=firestore docs=10 firebase=true
+[KT] stories feed docs=10
