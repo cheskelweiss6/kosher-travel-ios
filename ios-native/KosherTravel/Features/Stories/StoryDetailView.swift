@@ -324,7 +324,7 @@ struct StoryDetailView: View {
         let likes = extra?.likesCount ?? p.likesCount
         let saved = store.saved.contains(p.id)
         let uid = extra?.userId ?? ""
-        return HStack(spacing: 22) {
+        return HStack(spacing: 18) {
             Button { toggleLike(p) } label: {
                 HStack(spacing: 6) {
                     LikeHeartIcon(liked: liked, font: .title2)
@@ -361,14 +361,17 @@ struct StoryDetailView: View {
 
             Spacer(minLength: 0)
 
+            // Oct 25 2026 (Cheskel: "Why doesn't it say how many views"): always shown, same size as the other icons,
+            // from the same viewsCount the website shows (counted once per signed-in account, never the poster's own).
             let views = extra?.viewsCount ?? p.viewsCount
-            if views > 0 {
-                Label("\(views)", systemImage: "eye")
-                    .labelStyle(StoryTightLabelStyle())
-                    .font(.footnote)
-                    .foregroundStyle(Color.textSecondary)
-                    .accessibilityLabel("\(views) views")
+            HStack(spacing: 6) {
+                Image(systemName: "eye").font(.title2)
+                Text(StoryViewCount.compact(views)).font(.subheadline.weight(.semibold)).lineLimit(1).fixedSize()
             }
+            .foregroundStyle(Color.navy)
+            .frame(minHeight: 44)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(views) \(views == 1 ? "view" : "views")")
 
             Button { toggleSave(p) } label: {
                 Image(systemName: saved ? "bookmark.fill" : "bookmark")
@@ -829,5 +832,19 @@ struct StoryProductImage: View {
             if let hit = ImagePipeline.shared.cached(url, maxPixel: 500) { image = hit; return }
             image = await ImagePipeline.shared.load(url, maxPixel: 500)
         }
+    }
+}
+
+
+/// "124", "1.2K", "12K", "1.5M": the compact view count on the article / post action row.
+enum StoryViewCount {
+    static func compact(_ n: Int) -> String {
+        func one(_ v: Double, _ s: String) -> String {
+            let r = (v * 10).rounded() / 10
+            return (r >= 10 || r == r.rounded() ? String(Int(r.rounded())) : String(format: "%.1f", r)) + s
+        }
+        if n >= 1_000_000 { return one(Double(n) / 1_000_000, "M") }
+        if n >= 1_000 { return one(Double(n) / 1_000, "K") }
+        return String(max(n, 0))
     }
 }
