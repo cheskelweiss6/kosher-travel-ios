@@ -175,7 +175,7 @@ struct UsernamePage: View {
                 }
             }
             .interactiveDismissDisabled()
-            .sensoryFeedback(.success, trigger: savedTick)
+            .sensoryFeedback(Motion.Haptic.success, trigger: savedTick)
             .task(id: user) { await liveCheck() }
             .onAppear { focused = true }
         }

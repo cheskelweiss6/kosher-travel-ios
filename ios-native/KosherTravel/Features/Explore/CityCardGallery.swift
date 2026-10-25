@@ -239,7 +239,7 @@ struct CityCardGallery: View {
             guard let item else { return }
             Task { await add(item) }
         }
-        .sensoryFeedback(.selection, trigger: index)
+        .sensoryFeedback(Motion.Haptic.selection, trigger: index)
         .confirmationDialog("Delete this photo?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete photo", role: .destructive) { removeCurrent() }
             Button("Cancel", role: .cancel) {}
@@ -284,10 +284,10 @@ struct CityCardGallery: View {
 
     private func show(_ text: String) {
         toastTask?.cancel()
-        withAnimation(.easeOut(duration: 0.2)) { toast = text }
+        withAnimation(Motion.fade) { toast = text }
         toastTask = Task {
             try? await Task.sleep(nanoseconds: 3_000_000_000)
-            if !Task.isCancelled { withAnimation(.easeOut(duration: 0.2)) { toast = nil } }
+            if !Task.isCancelled { withAnimation(Motion.fade) { toast = nil } }
         }
     }
 }

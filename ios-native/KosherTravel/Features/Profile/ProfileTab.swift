@@ -162,7 +162,7 @@ struct ProfileTab: View {
                             .frame(maxWidth: .infinity, minHeight: 50)
                             .background(Color.navy, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .accessibilityIdentifier("profile-signin")
                     Button { signIn = .signUp } label: {
                         Text("Create an account")
@@ -172,7 +172,7 @@ struct ProfileTab: View {
                             .hairline(radius: 12)
                             .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
 
                 linkRows(signedIn: false)
@@ -284,7 +284,7 @@ struct ProfileTab: View {
             }
             Rectangle().fill(Color.hairline).frame(width: 1, height: 32)
             countCell(store.storiesLoaded ? store.stories.count : nil, store.stories.count == 1 ? "Post" : "Posts") {
-                withAnimation(.easeInOut(duration: 0.3)) { proxy.scrollTo("your-stories", anchor: .top) }
+                withAnimation(Motion.scroll) { proxy.scrollTo("your-stories", anchor: .top) }
             }
         }
         .padding(.vertical, 4)
@@ -388,7 +388,7 @@ struct ProfileTab: View {
                 }
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .accessibilityHint(canOpen ? "Opens it" : "")
     }
 

@@ -232,7 +232,7 @@ struct NameEditView: View {
         }
         .navigationTitle("Display name")
         .navigationBarTitleDisplayMode(.inline)
-        .sensoryFeedback(.success, trigger: saved)
+        .sensoryFeedback(Motion.Haptic.success, trigger: saved)
         .onAppear {
             if value.isEmpty { value = store.username.isEmpty ? auth.displayName : store.username }
         }
@@ -444,11 +444,13 @@ struct KosherPrefsView: View {
                         Text(item).foregroundStyle(Color.navy)
                         Spacer()
                         Image(systemName: on ? "checkmark.circle" : "circle")
+                            .contentTransition(.symbolEffect(.replace))
+                            .animation(Motion.select, value: on)
                             .foregroundStyle(on ? Color.navy : Color.textTertiary)
                     }
                     .contentShape(Rectangle())
                 }
-                .sensoryFeedback(.selection, trigger: on)
+                .sensoryFeedback(Motion.Haptic.selection, trigger: on)
                 .accessibilityAddTraits(on ? .isSelected : [])
             }
         }

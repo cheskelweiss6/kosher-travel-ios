@@ -26,7 +26,7 @@ struct StoriesTab: View {
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal, Theme.pagePadding)
-                    .sensoryFeedback(.selection, trigger: showArticles)
+                    .sensoryFeedback(Motion.Haptic.selection, trigger: showArticles)
 
                     // Cheskel (Oct 23 2026): "instead of a Following button should be like Instagram, the profiles of
                     // who I am following": round faces, a navy ring when they posted since you last looked
@@ -103,7 +103,7 @@ struct StoriesTab: View {
             }
             .padding(.horizontal, Theme.pagePadding)
         }
-        .sensoryFeedback(.selection, trigger: followingOnly)
+        .sensoryFeedback(Motion.Haptic.selection, trigger: followingOnly)
     }
 
     private var list: [StoryPost] {
@@ -149,7 +149,7 @@ struct StoriesTab: View {
                     NavigationLink(value: StoriesRoute.post(post.id)) {
                         StoryArticleCard(post: post, extra: store.extra(post.id), myUid: auth.uid)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
             .padding(.horizontal, Theme.pagePadding)
@@ -159,7 +159,7 @@ struct StoriesTab: View {
                     NavigationLink(value: StoriesRoute.post(post.id)) {
                         StoryInspirationTile(post: post, extra: store.extra(post.id), myUid: auth.uid)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
             .padding(.horizontal, Theme.pagePadding)

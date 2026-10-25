@@ -67,7 +67,7 @@ struct CityMapView: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
-        .sensoryFeedback(.selection, trigger: selection)
+        .sensoryFeedback(Motion.Haptic.selection, trigger: selection)
         .task { await locateAll() }
     }
 
@@ -150,7 +150,7 @@ struct CityMapView: View {
         guard let minLat = lats.min(), let maxLat = lats.max(), let minLng = lngs.min(), let maxLng = lngs.max() else { return }
         let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2, longitude: (minLng + maxLng) / 2)
         let span = MKCoordinateSpan(latitudeDelta: max(0.02, (maxLat - minLat) * 1.4), longitudeDelta: max(0.02, (maxLng - minLng) * 1.4))
-        withAnimation(.easeInOut(duration: 0.3)) { camera = .region(MKCoordinateRegion(center: center, span: span)) }
+        withAnimation(Motion.camera) { camera = .region(MKCoordinateRegion(center: center, span: span)) }
         centered = pts.count >= 3
     }
 }
@@ -169,6 +169,7 @@ private struct CityMapChip: View {
                 .padding(.vertical, 8)
                 .background(on ? Color.navy : Color.white, in: Capsule())
                 .overlay(Capsule().strokeBorder(on ? Color.navy : Color.hairline, lineWidth: 1))
+                .animation(Motion.select, value: on)
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(on ? .isSelected : [])

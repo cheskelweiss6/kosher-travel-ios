@@ -132,7 +132,7 @@ struct TravelerArticlesSection: View {
                         .background(Color.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color.hairline, style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                     .padding(.horizontal, Theme.pagePadding)
                 }
             } else {
@@ -140,7 +140,7 @@ struct TravelerArticlesSection: View {
                     HStack(spacing: 8) {
                         ForEach(list) { post in
                             NavigationLink(value: ExploreRoute.story(post.id)) { CompactArticleCard(post: post) }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                                 .accessibilityLabel("\(post.title). Opens the article.")
                         }
                         Button { compose = shareRoute } label: {
@@ -153,7 +153,7 @@ struct TravelerArticlesSection: View {
                             .background(Color.white, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .hairline(radius: 12)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                     .scrollTargetLayout()
                 }
@@ -167,7 +167,7 @@ struct TravelerArticlesSection: View {
                     HStack(alignment: .top, spacing: 10) {
                         ForEach(insp) { post in
                             NavigationLink(value: ExploreRoute.story(post.id)) { InspirationTile(post: post).frame(width: 120) }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                         }
                     }
                 }

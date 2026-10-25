@@ -171,7 +171,7 @@ struct TourGuideCardView: View {
             }
             Divider().overlay(Color.hairline)
             // Website (TourGuideCard.tsx): "Reviews (N)" toggles the shared reviews section open under the card.
-            Button { withAnimation(.snappy) { showReviews.toggle() } } label: {
+            Button { withAnimation(Motion.expand) { showReviews.toggle() } } label: {
                 Label((summary?.count ?? 0) > 0 ? "Reviews (\(summary?.count ?? 0))" : "Reviews", systemImage: "text.bubble")
                     .font(.caption.weight(.bold))
             }

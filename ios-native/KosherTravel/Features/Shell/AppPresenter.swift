@@ -69,18 +69,18 @@ private struct ToastHost: View {
         VStack {
             if let toast = router.toast {
                 ShellToastView(toast: toast)
-                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .transition(Motion.slide(.top))
             }
             Spacer(minLength: 0)
             if let notice = router.notice {
                 ShellNoticeView(notice: notice)
                     .padding(.bottom, 64)   // above the tab bar
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .transition(Motion.slide(.bottom))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(.snappy, value: router.toast)
-        .animation(.snappy, value: router.notice)
+        .animation(Motion.expand, value: router.toast)
+        .animation(Motion.expand, value: router.notice)
     }
 }
 

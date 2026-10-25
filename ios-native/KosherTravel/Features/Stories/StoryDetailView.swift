@@ -66,6 +66,7 @@ struct StoryDetailView: View {
             }
         }
         .background(Color.white)
+        .animation(Motion.content, value: post == nil)   // spinner -> post: a crossfade, never a wait
         .task {
             await store.ensure(postId)
             loading = false
@@ -121,10 +122,10 @@ struct StoryDetailView: View {
                     .padding(.vertical, 10)
                     .background(Color.navy, in: Capsule())
                     .padding(.bottom, 16)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .transition(Motion.slide(.bottom))
             }
         }
-        .animation(.easeOut(duration: 0.2), value: note)
+        .animation(Motion.expand, value: note)
         .task(id: note) {
             guard note != nil else { return }
             try? await Task.sleep(for: .seconds(3))
@@ -330,7 +331,7 @@ struct StoryDetailView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .sensoryFeedback(.impact(weight: .light), trigger: liked)
+            .sensoryFeedback(Motion.Haptic.tap, trigger: liked)
             .accessibilityLabel(liked ? "Unlike, \(likes) likes" : "Like, \(likes) likes")
 
             Button { showComments = true } label: {
@@ -368,6 +369,8 @@ struct StoryDetailView: View {
 
             Button { toggleSave(p) } label: {
                 Image(systemName: saved ? "bookmark.fill" : "bookmark")
+                    .contentTransition(.symbolEffect(.replace))
+                    .animation(Motion.select, value: saved)
                     .font(.title2)
                     .foregroundStyle(Color.navy)
                     .frame(minWidth: 32, minHeight: 44)
@@ -375,7 +378,7 @@ struct StoryDetailView: View {
             }
             .buttonStyle(.plain)
             .disabled(saveBusy)
-            .sensoryFeedback(.selection, trigger: saved)
+            .sensoryFeedback(Motion.Haptic.selection, trigger: saved)
             .accessibilityLabel(saved ? "Saved" : "Save")
 
             let canManage = StoryOwnerTools.canManage(ownerUid: uid, auth: auth)
