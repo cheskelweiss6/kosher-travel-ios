@@ -283,7 +283,7 @@ struct ParkReviewsSection: View {
                     .accessibilityAddTraits(rating == i ? .isSelected : [])
                 }
             }
-            .sensoryFeedback(.selection, trigger: rating)
+            .sensoryFeedback(Motion.Haptic.selection, trigger: rating)
             TextField("What was it like? (optional)", text: $text, axis: .vertical)
                 .lineLimit(3...8)
                 .font(.body)

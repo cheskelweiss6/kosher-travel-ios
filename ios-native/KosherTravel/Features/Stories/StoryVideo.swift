@@ -172,7 +172,7 @@ struct StoryVideoView: View {
             guard it.status == .readyToPlay else { return }
             let size = it.presentationSize
             DispatchQueue.main.async {
-                withAnimation(.easeOut(duration: 0.15)) { ready = true }
+                withAnimation(Motion.content) { ready = true }
                 if size.width > 0, size.height > 0 { report?(Double(size.width / size.height)) }
             }
         }
@@ -236,7 +236,7 @@ struct StoryFitImage: View {
             var img = ImagePipeline.shared.cached(url, maxPixel: maxPixel)
             if img == nil { img = await ImagePipeline.shared.load(url, maxPixel: maxPixel) }
             guard let img else { return }
-            withAnimation(.easeOut(duration: 0.2)) { image = img }
+            withAnimation(Motion.fade) { image = img }
             if img.size.width > 0, img.size.height > 0 { onRatio?(Double(img.size.width / img.size.height)) }
         }
     }
@@ -338,7 +338,7 @@ struct ZoomableRemoteImage: View {
                             .onEnded { _ in lastScale = scale }
                     )
                     .onTapGesture(count: 2) {
-                        withAnimation(.easeOut(duration: 0.2)) { scale = scale > 1 ? 1 : 2.5 }
+                        withAnimation(Motion.move) { scale = scale > 1 ? 1 : 2.5 }
                         lastScale = scale
                     }
             } else {

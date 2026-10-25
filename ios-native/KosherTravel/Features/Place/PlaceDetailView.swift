@@ -63,9 +63,9 @@ struct PlaceDetailView: View {
         }
         .background(Color.white)
         .safeAreaInset(edge: .bottom, spacing: 0) { footer }
-        .sensoryFeedback(.success, trigger: isSaved)
-        .sensoryFeedback(.success, trigger: copied)
-        .sensoryFeedback(.selection, trigger: photoIndex)
+        .sensoryFeedback(Motion.Haptic.success, trigger: isSaved)
+        .sensoryFeedback(Motion.Haptic.success, trigger: copied)
+        .sensoryFeedback(Motion.Haptic.selection, trigger: photoIndex)
         .onAppear { isSaved = PlaceSheetFavorites.isSaved(name) }
         .task { await locate() }
         .task { await loadReviews() }
@@ -177,7 +177,7 @@ struct PlaceDetailView: View {
     private func step(_ d: Int) {
         let n = gallery.count
         guard n > 1 else { return }
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) { photoIndex = (photoIndex + d + n) % n }
+        withAnimation(Motion.move) { photoIndex = (photoIndex + d + n) % n }
     }
 
     private func coverArrow(_ icon: String, label: String, action: @escaping () -> Void) -> some View {
@@ -201,10 +201,12 @@ struct PlaceDetailView: View {
         HStack(spacing: 8) {
             Button { toggleSave() } label: {
                 Image(systemName: isSaved ? "heart.fill" : "heart")
+                    .contentTransition(.symbolEffect(.replace))
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(isSaved ? Color.white : Color.navy)
                     .frame(width: 38, height: 38)
                     .background(isSaved ? Color.navy : Color.white.opacity(0.95), in: Circle())
+                    .animation(Motion.select, value: isSaved)
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
@@ -279,7 +281,7 @@ struct PlaceDetailView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(Array(photos.enumerated()), id: \.offset) { i, url in
-                        Button { withAnimation(.easeInOut(duration: 0.25)) { photoIndex = i } } label: {
+                        Button { withAnimation(Motion.move) { photoIndex = i } } label: {
                             RemoteImage(url: url, maxPixel: 300, venue: true, category: type.rawValue)
                                 .frame(width: 80, height: 56)
                                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -382,7 +384,7 @@ struct PlaceDetailView: View {
                         .buttonStyle(.plain)
                         Button { copyAddress() } label: {
                             HStack(spacing: 4) {
-                                Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.system(size: 10, weight: .bold))
+                                Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.system(size: 10, weight: .bold)).contentTransition(.symbolEffect(.replace)).animation(Motion.select, value: copied)
                                 Text(copied ? "Copied!" : "Copy GPS")
                             }
                             .font(.caption2.weight(.heavy))
@@ -909,7 +911,7 @@ struct PlaceDetailView: View {
                         .hairline(radius: 12)
                 }
                 .buttonStyle(.plain)
-                .sensoryFeedback(.success, trigger: addedToItinerary) { _, new in new }
+                .sensoryFeedback(Motion.Haptic.success, trigger: addedToItinerary) { _, new in new }
                 Button { askAI() } label: {
                     Label("Ask AI", systemImage: "message")
                         .font(.caption.weight(.bold))
@@ -928,10 +930,10 @@ struct PlaceDetailView: View {
 
     private func markForItinerary() {
         itineraryTimer?.cancel()
-        withAnimation(.easeInOut(duration: 0.35)) { addedToItinerary = true }
+        withAnimation(Motion.move) { addedToItinerary = true }
         itineraryTimer = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 3_000_000_000)
-            if !Task.isCancelled { withAnimation(.easeInOut(duration: 0.35)) { addedToItinerary = false } }
+            if !Task.isCancelled { withAnimation(Motion.fade) { addedToItinerary = false } }
         }
     }
 
@@ -1293,7 +1295,7 @@ struct PlaceReviewComposer: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
-                    .sensoryFeedback(.selection, trigger: rating)
+                    .sensoryFeedback(Motion.Haptic.selection, trigger: rating)
                 } header: {
                     Text(item.venue.name)
                 }
@@ -1324,7 +1326,7 @@ struct PlaceReviewComposer: View {
                     }
                 }
             }
-            .sensoryFeedback(.success, trigger: saved)
+            .sensoryFeedback(Motion.Haptic.success, trigger: saved)
         }
         .onAppear {
             if let e = existing { rating = e.rating; text = e.text }

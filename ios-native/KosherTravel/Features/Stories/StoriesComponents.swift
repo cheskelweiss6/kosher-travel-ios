@@ -226,10 +226,11 @@ struct StoryFollowPill: View {
             .frame(minHeight: 32)
             .background(following ? Color.white : Color.navy, in: Capsule())
             .overlay { Capsule().strokeBorder(following ? Color.hairline : Color.navy, lineWidth: 1) }
+            .animation(Motion.select, value: following)
         }
         .buttonStyle(.plain)
         .disabled(busy)
-        .sensoryFeedback(.selection, trigger: following)
+        .sensoryFeedback(Motion.Haptic.selection, trigger: following)
         .accessibilityLabel(following ? "Following. Double tap to unfollow." : "Follow")
         .confirmationDialog(confirmTitle, isPresented: $confirmUnfollow, titleVisibility: .visible) {
             Button("Unfollow", role: .destructive) { if following { action() } }
@@ -256,6 +257,7 @@ struct StoryChip: View {
             .frame(minHeight: 36)
             .background(selected ? Color.navy : Color.white, in: Capsule())
             .overlay { Capsule().strokeBorder(selected ? Color.navy : Color.hairline, lineWidth: 1) }
+            .animation(Motion.select, value: selected)
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)

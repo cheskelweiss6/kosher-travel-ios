@@ -109,7 +109,7 @@ struct CountryPageView: View {
                 // The country-wide card (curated sights across the whole country). The app has no city page for it, so
                 // it opens the country's Things to Do, which lists the same places.
                 if let wide = d.wide {
-                    SPCityCardView(card: wide, onOpenWide: { withAnimation { tab = "todo"; todoCategory = "all" } })
+                    SPCityCardView(card: wide, onOpenWide: { withAnimation(Motion.select) { tab = "todo"; todoCategory = "all" } })
                 }
                 ForEach(d.cities) { c in SPCityCardView(card: c) }
             }

@@ -220,7 +220,7 @@ struct WarmWebScreen: View {
                     .transition(.opacity)
             }
         }
-        .animation(.easeOut(duration: 0.15), value: page.ready)
+        .animation(Motion.content, value: page.ready)
         .navigationTitle(page.title ?? page.route.title)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $safari) { item in

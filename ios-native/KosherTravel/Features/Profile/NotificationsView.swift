@@ -44,6 +44,7 @@ struct NotificationsView: View {
                 ProgressView()
             }
         }
+        .animation(Motion.content, value: store.shownNotifs == nil)   // spinner -> list: a crossfade, never a wait
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.white)
         .navigationTitle("Notifications")

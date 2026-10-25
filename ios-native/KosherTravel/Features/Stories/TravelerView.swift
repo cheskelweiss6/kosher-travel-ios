@@ -51,7 +51,7 @@ struct TravelerView: View {
                                 NavigationLink { StoryDetailView(postId: p.id) } label: {
                                     StoryArticleCard(post: p, extra: store.extra(p.id), myUid: auth.uid)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                             }
                         }
                     }
@@ -65,7 +65,7 @@ struct TravelerView: View {
                                 NavigationLink { StoryDetailView(postId: p.id) } label: {
                                     StoryInspirationTile(post: p, extra: store.extra(p.id), myUid: auth.uid)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                             }
                         }
                     }

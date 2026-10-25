@@ -79,11 +79,12 @@ struct CityHeroBar: View {
                     .padding(.horizontal, 10)
                     .frame(minWidth: 32, minHeight: 32)
                     .glassPill(filled: saved)
+                    .animation(Motion.select, value: saved)
                     .frame(minWidth: 44, minHeight: 44)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .sensoryFeedback(.success, trigger: saved)
+                .sensoryFeedback(Motion.Haptic.success, trigger: saved)
                 .accessibilityLabel(saved ? "Saved. Remove \(cityName) from saved places" : "Save \(cityName)")
 
                 Button {

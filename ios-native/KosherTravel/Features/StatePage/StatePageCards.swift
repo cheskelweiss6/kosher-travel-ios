@@ -33,11 +33,11 @@ struct SPImage: View {
                 for source in list {
                     if let hit = ImagePipeline.shared.cached(source, maxPixel: maxPixel) { image = hit; return }
                     if let loaded = await ImagePipeline.shared.load(source, maxPixel: maxPixel) {
-                        withAnimation(.easeOut(duration: 0.2)) { image = loaded }
+                        withAnimation(Motion.fade) { image = loaded }
                         return
                     }
                 }
-                withAnimation(.easeOut(duration: 0.2)) { failed = true }
+                withAnimation(Motion.fade) { failed = true }
             }
             .accessibilityHidden(true)
     }
@@ -120,7 +120,7 @@ struct SPNavyButton: View {
             .contentShape(Rectangle())
             .frame(minHeight: 44)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 }
 
@@ -156,7 +156,7 @@ struct SPTabStrip: View {
                     ForEach(items) { item in
                         let on = item.id == selection
                         Button {
-                            withAnimation(.easeOut(duration: 0.2)) { selection = item.id }
+                            withAnimation(Motion.select) { selection = item.id }
                         } label: {
                             HStack(spacing: 6) {
                                 Text(item.title)
@@ -190,8 +190,8 @@ struct SPTabStrip: View {
             }
             .background(Color.navy.opacity(0.045), in: Capsule())
             .overlay(Capsule().stroke(Color.navy.opacity(0.08), lineWidth: 0.5))
-            .sensoryFeedback(.selection, trigger: selection)
-            .onChange(of: selection) { _, new in withAnimation { proxy.scrollTo(new, anchor: .center) } }
+            .sensoryFeedback(Motion.Haptic.selection, trigger: selection)
+            .onChange(of: selection) { _, new in withAnimation(Motion.scroll) { proxy.scrollTo(new, anchor: .center) } }
         }
     }
 }
@@ -311,15 +311,17 @@ struct SPCityCardView: View {
         let saved = bucket.contains(card.id)
         ZStack(alignment: .topTrailing) {
             if card.key.isEmpty {
-                Button { onOpenWide?() } label: { base }.buttonStyle(.plain)
+                Button { onOpenWide?() } label: { base }.buttonStyle(.pressableLarge)
             } else {
-                NavigationLink(value: ExploreRoute.area(card.key)) { base }.buttonStyle(.plain)
+                NavigationLink(value: ExploreRoute.area(card.key)) { base }.buttonStyle(.pressableLarge)
             }
             Button {
                 // Cheskel, Oct 23 2026: every delete is red and asks first.
                 if saved { confirmRemove = true } else { bucket.toggle(card.id) }
             } label: {
                 Image(systemName: saved ? "heart.fill" : "heart")
+                    .contentTransition(.symbolEffect(.replace))
+                    .animation(Motion.select, value: saved)
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(width: 34, height: 34)
@@ -331,7 +333,7 @@ struct SPCityCardView: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .sensoryFeedback(.success, trigger: saved)
+            .sensoryFeedback(Motion.Haptic.success, trigger: saved)
             .accessibilityLabel(saved ? "Saved: \(card.name)" : "Save \(card.name)")
             .confirmationDialog("Remove \(card.name) from your saved places?", isPresented: $confirmRemove, titleVisibility: .visible) {
                 Button("Remove", role: .destructive) { if bucket.contains(card.id) { bucket.toggle(card.id) } }
@@ -354,8 +356,8 @@ struct SPCityCardView: View {
         .frame(height: height)
         // web: the cards fade in as they appear
         .opacity(appeared || reduceMotion ? 1 : 0)
-        .offset(y: appeared || reduceMotion ? 0 : 10)
-        .onAppear { withAnimation(.easeOut(duration: 0.35)) { appeared = true } }
+        .offset(y: appeared || reduceMotion ? 0 : Motion.appearOffset)
+        .onAppear { withAnimation(Motion.appear) { appeared = true } }
     }
 
     private func badge(_ text: String, hub: String) -> some View {
@@ -370,7 +372,7 @@ struct SPCityCardView: View {
                 .frame(minHeight: 44)
                 .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .accessibilityLabel("\(card.name) \(text.capitalized)")
     }
 }
@@ -421,7 +423,7 @@ struct SPNoDestinations: View {
                         .submitLabel(.send)
                     // Web: the button only changes to "Submitted! ✓"; nothing is saved or sent.
                     SPNavyButton(title: submitted ? "Submitted! ✓" : "Submit") { submitted = true }
-                        .sensoryFeedback(.success, trigger: submitted)
+                        .sensoryFeedback(Motion.Haptic.success, trigger: submitted)
                 }
             }
         }
@@ -771,7 +773,7 @@ struct SPTodoTile: View {
             }
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 }
 
@@ -837,7 +839,7 @@ struct SPCategoryCard: View {
             .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Color.hairline, lineWidth: 1))
             .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 }
 

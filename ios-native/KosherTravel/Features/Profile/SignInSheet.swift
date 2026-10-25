@@ -87,7 +87,7 @@ struct SignInSheet: View {
                 }
             }
             .disabled(busy)
-            .sensoryFeedback(.success, trigger: signedIn)
+            .sensoryFeedback(Motion.Haptic.success, trigger: signedIn)
             .onChange(of: mode) { _, _ in error = nil; success = nil }
             .onChange(of: auth.isSignedIn) { _, now in if now { signedIn += 1; dismiss() } }
         }

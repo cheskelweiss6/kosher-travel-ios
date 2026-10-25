@@ -116,6 +116,8 @@ struct TermsAgreementSheet: View {
                 Button { agreed.toggle() } label: {
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: agreed ? "checkmark.square" : "square")
+                            .contentTransition(.symbolEffect(.replace))
+                            .animation(Motion.select, value: agreed)
                             .font(.title3)
                             .foregroundStyle(Color.navy)
                         Text("I agree to the Terms of Use and community rules (no objectionable content).")

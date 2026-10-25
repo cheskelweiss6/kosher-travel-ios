@@ -27,7 +27,7 @@ struct UnitedStatesView: View {
                                 NavigationLink(value: ExploreRoute.state(t.id)) {
                                     SPRegionCircle(tile: t, tenWords: true, caribbean: false)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.pressable)
                                 TravelChip(usState: t.name)
                             }
                         }
@@ -97,7 +97,7 @@ struct CaribbeanView: View {
                             NavigationLink(value: ExploreRoute.country(t.id)) {
                                 SPRegionCircle(tile: t, tenWords: false, caribbean: true)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             if let lat = t.lat, let lng = t.lng {
                                 TravelChip(at: lat, lng, us: false)
                             }

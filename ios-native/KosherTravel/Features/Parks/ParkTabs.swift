@@ -210,6 +210,7 @@ struct NationalParksTab: View {
                             .frame(minHeight: 36)
                             .background(on ? Color.navy : Color.white, in: Capsule())
                             .overlay { if !on { Capsule().strokeBorder(Color.hairline, lineWidth: 1) } }
+                            .animation(Motion.select, value: on)
                             .contentShape(Capsule())
                     }
                     .buttonStyle(.plain)
@@ -218,7 +219,7 @@ struct NationalParksTab: View {
             }
             .padding(.vertical, 4)
         }
-        .sensoryFeedback(.selection, trigger: filter)
+        .sensoryFeedback(Motion.Haptic.selection, trigger: filter)
     }
 
     @ViewBuilder
