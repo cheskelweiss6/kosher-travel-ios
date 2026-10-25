@@ -5,7 +5,7 @@ struct InspirationTile: View {
     let post: StoryPost
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            StoryCoverImage(post: post, maxPixel: 600)
+            StoryCoverImage(post: post, maxPixel: 600, warmVideo: true)
                 .aspectRatio(3 / 4, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .overlay(alignment: .topTrailing) {

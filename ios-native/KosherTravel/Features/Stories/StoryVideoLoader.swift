@@ -16,6 +16,8 @@ final class StoryVideoLoader {
 
     /// cellular or Low Data Mode: the small copy plays when it exists
     private(set) var cellular = false
+    /// the network has been read at least once (until then a card on screen does not start loading its video)
+    private var pathKnown = false
     private let monitor = NWPathMonitor()
     /// original url -> small copy url ("" = none)
     private var small: [String: String] = [:]
@@ -28,7 +30,10 @@ final class StoryVideoLoader {
     private init() {
         monitor.pathUpdateHandler = { [weak self] path in
             let slow = path.isExpensive || path.isConstrained
-            Task { @MainActor in self?.cellular = slow }
+            Task { @MainActor in
+                self?.cellular = slow
+                self?.pathKnown = true
+            }
         }
         monitor.start(queue: DispatchQueue(label: "kt.story.video.path"))
     }
@@ -111,6 +116,12 @@ final class StoryVideoLoader {
         return p
     }
 
+    /// Where a trimmed video starts (Oct 25 2026, Cheskel's Pompeii recording: about 5 s of spinner before the trimmed
+    /// video moved): never before the poster's start, and up to half a second after it, so the player lands on the next
+    /// keyframe and plays from there instead of downloading and decoding from the keyframe before the start.
+    static let trimBefore = CMTime.zero
+    static let trimAfter = CMTime(seconds: 0.5, preferredTimescale: 600)
+
     /// Start loading a video that is likely to be shown next (muted, paused). At most 3 are kept.
     func preload(_ m: StoryMediaInfo) {
         guard m.isVideo, !m.url.isEmpty, ahead[m.url] == nil else { return }
@@ -119,11 +130,6 @@ final class StoryVideoLoader {
             guard let src = await self.source(for: m), self.ahead[key] == nil else { return }
             let p = StoryVideoLoader.makePlayer(src, m)
             p.isMuted = true
-            let start = max(0, m.trimStart ?? 0)
-            if start > 0 {
-                // the completion-handler form: inside this async Task the plain call is the async overload and needs await
-                p.seek(to: CMTime(seconds: start, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero) { _ in }
-            }
             self.ahead[key] = p
             self.order.append(key)
             while self.order.count > 3 {
@@ -131,6 +137,30 @@ final class StoryVideoLoader {
                 self.ahead[old]?.replaceCurrentItem(with: nil)
                 self.ahead[old] = nil
             }
+            let start = max(0, m.trimStart ?? 0)
+            guard start > 0 else { return }
+            // a trimmed video: seek to its start once the file is ready (a seek before that is dropped), so the part that
+            // plays is the part being loaded
+            var waited = 0
+            while self.ahead[key] === p, p.currentItem?.status == .unknown, waited < 100 {
+                try? await Task.sleep(nanoseconds: 50_000_000)
+                waited += 1
+            }
+            guard self.ahead[key] === p, p.currentItem?.status == .readyToPlay else { return }
+            p.seek(to: CMTime(seconds: start, preferredTimescale: 600),
+                   toleranceBefore: StoryVideoLoader.trimBefore, toleranceAfter: StoryVideoLoader.trimAfter) { _ in }
+        }
+    }
+
+    /// A video card is on screen (Explore's Get Inspired and Stories & Articles rows): get its video ready before the tap.
+    /// On Wi-Fi it starts loading (same as the next post in Get Inspired); on cellular or Low Data Mode only the quick
+    /// check for its small copy runs, so a tap no longer waits for that check.
+    func warm(_ m: StoryMediaInfo) {
+        guard m.isVideo, !m.url.isEmpty else { return }
+        if cellular || !pathKnown {
+            Task { @MainActor in _ = await self.smallURL(for: m) }
+        } else {
+            preload(m)
         }
     }
 

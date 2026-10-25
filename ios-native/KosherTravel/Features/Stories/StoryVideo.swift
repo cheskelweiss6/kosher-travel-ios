@@ -400,8 +400,8 @@ struct StoryVideoView: View {
         }
         let begin = startTime
         endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { _ in
-            let tol = CMTime(seconds: 0.1, preferredTimescale: 600)
-            p.seek(to: begin, toleranceBefore: tol, toleranceAfter: tol)
+            // loop from the first keyframe at or just after the start (same landing as the first start)
+            p.seek(to: begin, toleranceBefore: .zero, toleranceAfter: CMTime(seconds: 0.5, preferredTimescale: 600))
             p.play()
         }
         let report = onRatio
@@ -471,38 +471,45 @@ struct StoryVideoView: View {
     }
 
     /// Oct 25 2026 (Cheskel, Pompeii after a cover edit: "only shows a photo of the cover but no video playing"; the
-    /// only trimmed video in the app): a trimmed video seeks to its start only once the file is ready, with a small
-    /// tolerance (an exact-frame seek on a big remote .mov can hang), and plays when the seek ends either way.
+    /// only trimmed video in the app): a trimmed video seeks to its start only once the file is ready, and plays when the
+    /// seek ends either way. Oct 25 2026 (his 12:03 PM recording: ~5 s of spinner before Pompeii moved): the seek lands
+    /// on the first keyframe at or just after the start (up to 0.5 s), instead of decoding from the keyframe before it,
+    /// and the readiness check runs every 50 ms.
     private func playFromTrim(_ p: AVPlayer, _ begin: CMTime) {
         Task { @MainActor in
             var waited = 0
-            while player === p, p.currentItem?.status == .unknown, waited < 50 {
-                try? await Task.sleep(nanoseconds: 100_000_000)
+            while player === p, p.currentItem?.status == .unknown, waited < 100 {
+                try? await Task.sleep(nanoseconds: 50_000_000)
                 waited += 1
             }
             guard player === p else { return }
-            let tol = CMTime(seconds: 0.1, preferredTimescale: 600)
-            p.seek(to: begin, toleranceBefore: tol, toleranceAfter: tol) { _ in
+            p.seek(to: begin, toleranceBefore: StoryVideoLoader.trimBefore, toleranceAfter: StoryVideoLoader.trimAfter) { _ in
                 DispatchQueue.main.async { if player === p { p.play() } }
             }
         }
     }
 
-    /// A start that never gets going (no frames after a few seconds) is nudged: play from the start of the kept part
-    /// with any tolerance, and if that also stalls, from the beginning of the file. Never leaves a still on screen.
+    /// No picture yet: no frame on screen and the clock has not moved past the start. (With the quick start the
+    /// player can say "playing" before it has a single frame, so that word alone is not proof.)
+    private func stuck(_ p: AVPlayer, _ begin: CMTime) -> Bool {
+        !ready && !(p.timeControlStatus == .playing && p.currentTime().seconds > begin.seconds + 0.2)
+    }
+
+    /// A start that never gets going (no frames after 2 s) is nudged: play from the first keyframe after the start of
+    /// the kept part, and if that also stalls, from the beginning of the file. Never leaves a still on screen.
     private func watchStart(_ p: AVPlayer, _ begin: CMTime) {
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 3_500_000_000)
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
             guard player === p, !userPaused, !failed, live else { return }
-            if p.timeControlStatus != .playing {
-                p.seek(to: begin, toleranceBefore: .positiveInfinity, toleranceAfter: .positiveInfinity) { _ in
+            if stuck(p, begin) {
+                p.seek(to: begin, toleranceBefore: .zero, toleranceAfter: .positiveInfinity) { _ in
                     DispatchQueue.main.async { if player === p { p.play() } }
                 }
                 p.play()
             }
             try? await Task.sleep(nanoseconds: 3_000_000_000)
             guard player === p, !userPaused, !failed, live else { return }
-            if p.timeControlStatus != .playing {
+            if stuck(p, begin) {
                 p.seek(to: .zero) { _ in
                     DispatchQueue.main.async { if player === p { p.play() } }
                 }
@@ -792,6 +799,8 @@ struct ZoomableRemoteImage: View {
 struct StoryCoverImage: View {
     let post: StoryPost
     var maxPixel: CGFloat = 600
+    /// Explore's video cards: the post's video gets ready while its card is on screen (see StoryVideoLoader.warm)
+    var warmVideo = false
     @State private var frame: UIImage?
 
     /// Oct 25 2026 (Cheskel's Pompeii post: the cover picked in Edit post did not show on Explore): the check runs again
@@ -810,6 +819,14 @@ struct StoryCoverImage: View {
             }
             .clipped()
             .task(id: coverKey) { await check() }
+            .onAppear { warm() }
+    }
+
+    private func warm() {
+        guard warmVideo, let v = post.media.first(where: { $0.isVideo }), !v.url.isEmpty else { return }
+        StoryVideoLoader.shared.warm(StoryMediaInfo(type: v.type, url: v.url, thumb: v.thumb, w: 0, h: 0, muted: false,
+                                                    trimStart: v.trimStart, trimEnd: nil, placeName: "", placeLink: "",
+                                                    placeUrl: "", coverTime: v.coverTime))
     }
 
     private func check() async {
