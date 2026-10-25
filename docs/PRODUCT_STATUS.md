@@ -342,3 +342,35 @@ Settings and safety
 Release safety
 - [ ] Website: tested on a preview first; Cheskel told before any push to main or AI-server republish.
 - [ ] iOS: exact head verified on a throwaway branch ("** BUILD SUCCEEDED **" and 0 "error:" lines) before [testflight].
+
+## Motion system (iOS native app, Oct 24 2026, Cheskel 9:14-9:15 PM: animation-only pass)
+
+One file holds every animation timing, spring, transition, press effect and haptic in the native app:
+`ios-native/KosherTravel/Design/Motion.swift`. Screens use its names (`Motion.fade`, `Motion.expand`, `.buttonStyle(.pressable)`,
+`Motion.Haptic.success` ...) and never write their own durations or springs.
+
+| Name | Value | Used for |
+|---|---|---|
+| `Motion.pressDuration` | 0.12 s | press-down feedback (starts the instant a finger lands) |
+| `Motion.quick` | 0.2 s | fades, small state changes |
+| `Motion.standard` | 0.3 s | expand/collapse, toasts, map camera, scroll-to |
+| `Motion.gentle` | 0.35 s | cards appearing the first time |
+| `Motion.pulseInterval` | 1/30 s | redraw rate of the planner's "typing" dots |
+| `Motion.fade` | easeOut 0.2 s | chip/heart/photo fade-ins (same with Reduce Motion) |
+| `Motion.select` | snappy 0.2 s | selected tab / filter chip / Follow / Save state |
+| `Motion.expand` | snappy 0.3 s | show more / reviews / sections, toasts and notes |
+| `Motion.move` | spring (response 0.35, damping 0.86) | photo paging, photo zoom, Fill/Fit, "Added to itinerary" |
+| `Motion.press` | spring (response 0.22, damping 0.78) | pressed cards and buttons |
+| `Motion.content` | easeOut 0.2 s | spinner -> content crossfade (never a wait) |
+| `Motion.scroll` | smooth 0.3 s (Reduce Motion: instant jump) | scroll to a section / newest comment |
+| `Motion.camera` | easeInOut 0.3 s (Reduce Motion: instant) | map camera moves |
+| `Motion.slide(edge)` | move + fade (Reduce Motion: fade only) | toasts, notices, notes |
+| `.pressable` / `.pressableLarge` | scale 0.97 / 0.985 + dim to 88% | cards, tiles, big buttons |
+
+Haptics (restrained, never on every tap): `Motion.Haptic.success` only after a real save/send/sign-in/AI answer;
+`.error` with a real failure; `.selection` when a tab/filter/rating/photo page changes; `.tap` (light) for like, send, open composer.
+
+Rules: animations never delay an action, block a tap or change navigation (taps fire at once; springs can be interrupted).
+System push/pop, swipe-back, sheets and tab switching stay exactly as iOS does them. Reduce Motion: slides, scaling, springs
+and scrolling become a short fade or an instant change. No loops, no confetti, no per-row animations in long lists.
+The website was not changed for this pass.
