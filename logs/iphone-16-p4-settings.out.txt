@@ -1,0 +1,3 @@
+[KT] launch route=tab:profile/settings
+[KT] stories feed docs=13
+[KT] feed source=firestore docs=13 firebase=true
