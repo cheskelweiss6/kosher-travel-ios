@@ -181,11 +181,12 @@ struct StoryInspirationTile: View {
 
 struct StoryVideoBadge: View {
     var body: some View {
-        Image(systemName: "play")
-            .font(.caption.weight(.bold))
+        // Oct 25 2026 (Cheskel: "I couldn't know if it's a photo or a video"): a filled play mark, a little bigger
+        Image(systemName: "play.fill")
+            .font(.system(size: 12, weight: .bold))
             .foregroundStyle(.white)
-            .frame(width: 28, height: 28)
-            .background(.black.opacity(0.45), in: Circle())
+            .frame(width: 30, height: 30)
+            .background(.black.opacity(0.55), in: Circle())
             .accessibilityLabel("Video")
     }
 }
