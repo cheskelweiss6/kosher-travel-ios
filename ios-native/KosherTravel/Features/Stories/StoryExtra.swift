@@ -76,6 +76,8 @@ struct StoryMediaInfo: Hashable {
     var placeName: String
     var placeLink: String
     var placeUrl: String
+    /// a smaller copy of a video for slow connections, when the post carries one (optional; Oct 25 2026)
+    var lowUrl: String = ""
     var isVideo: Bool { type == "video" }
     var still: String { isVideo ? thumb : (url.isEmpty ? thumb : url) }
     var small: String { thumb.isEmpty ? (isVideo ? "" : url) : thumb }
@@ -167,7 +169,7 @@ struct StoryExtra: Hashable {
                                     img: (m["thumb"] as? String) ?? ((m["img"] as? String) ?? ""))
         }
         media = Self.maps(d["media"]).map { (m: [String: Any]) -> StoryMediaInfo in
-            StoryMediaInfo(type: (m["type"] as? String) == "video" ? "video" : "image",
+            var info = StoryMediaInfo(type: (m["type"] as? String) == "video" ? "video" : "image",
                       url: (m["url"] as? String) ?? "",
                       thumb: (m["thumb"] as? String) ?? "",
                       w: Self.num(m["w"]) ?? 0,
@@ -178,6 +180,8 @@ struct StoryExtra: Hashable {
                       placeName: (m["placeName"] as? String) ?? "",
                       placeLink: (m["placeLink"] as? String) ?? "",
                       placeUrl: (m["placeUrl"] as? String) ?? "")
+            info.lowUrl = (m["lowUrl"] as? String) ?? ""
+            return info
         }
         stops = Self.maps(d["stops"]).map { (m: [String: Any]) -> StoryStopInfo in
             StoryStopInfo(cityId: (m["cityId"] as? String) ?? "",

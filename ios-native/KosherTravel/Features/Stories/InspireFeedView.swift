@@ -33,6 +33,19 @@ struct InspireFeedView: View {
         return list
     }
 
+    /// Loads ahead the first photo-or-video of the post after `id`, when it is a video.
+    private func preloadNext(after id: String?) {
+        let list = ids.filter { !gone.contains($0) }
+        guard let id, let i = list.firstIndex(of: id), i + 1 < list.count else { return }
+        let next = list[i + 1]
+        if let m = store.extra(next)?.media.first {
+            if m.isVideo { StoryVideoLoader.shared.preload(m) }
+        } else if let m = postFor(next)?.media.first, m.isVideo {
+            StoryVideoLoader.shared.preload(StoryMediaInfo(type: m.type, url: m.url, thumb: m.thumb, w: 0, h: 0, muted: false,
+                                                           trimStart: nil, trimEnd: nil, placeName: "", placeLink: "", placeUrl: ""))
+        }
+    }
+
     /// A deleted post leaves the feed; the next one shows, or the feed closes when it was the last.
     private func removePage(_ id: String) {
         let left = ids.filter { !gone.contains($0) && $0 != id }
@@ -80,9 +93,15 @@ struct InspireFeedView: View {
         .onAppear {
             if ids.isEmpty { ids = buildIds() }
             if activeId == nil { activeId = startId }
+            preloadNext(after: activeId)
         }
         // only the post on screen may sound; nothing keeps playing once the feed closes
-        .onDisappear { StoryVideoCenter.shared.stopAll() }
+        .onDisappear {
+            StoryVideoCenter.shared.stopAll()
+            StoryVideoLoader.shared.clear()
+        }
+        // the next post's first video starts loading while this one plays (Oct 25 2026: slow start on 5G)
+        .onChange(of: activeId) { _, id in preloadNext(after: id) }
         .task(id: auth.uid ?? "") { await StorySafety.shared.load(uid: auth.uid) }
         .onChange(of: StorySafety.shared.blocked.count) { _, _ in
             // a blocked traveler's posts leave the feed at once (web blockUser)
@@ -154,6 +173,14 @@ struct InspirePostPage: View {
         }
     }
 
+    /// The next slide of this post starts loading while this one shows, when it is a video.
+    private func preloadNextSlide() {
+        let list = media
+        guard page + 1 < list.count else { return }
+        let m = list[page + 1]
+        if m.isVideo { StoryVideoLoader.shared.preload(m) }
+    }
+
     /// The web's inspirePlace(): the tagged place, else the title, else the city.
     private var placeTitle: String {
         let n = post.placeName.trimmingCharacters(in: .whitespaces)
@@ -193,8 +220,15 @@ struct InspirePostPage: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         }
         .clipped()
-        .onChange(of: active) { _, _ in fill = false }
-        .onChange(of: page) { _, _ in fill = false }
+        .onChange(of: active) { _, now in
+            fill = false
+            if now { preloadNextSlide() }
+        }
+        .onChange(of: page) { _, _ in
+            fill = false
+            if active { preloadNextSlide() }
+        }
+        .onAppear { if active { preloadNextSlide() } }
         .task { await store.ensure(post.id) }
         .task(id: articleId) { if !articleId.isEmpty { await store.ensure(articleId) } }
         .task(id: active) {

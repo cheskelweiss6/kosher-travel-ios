@@ -38,23 +38,39 @@ final class StoryVideoSound {
 final class StoryPlayerUIView: UIView {
     override class var layerClass: AnyClass { AVPlayerLayer.self }
     var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
+    /// Called once a real video frame is ready on the layer (never a black layer).
+    var onFrame: (() -> Void)?
+    private var frameObserver: NSKeyValueObservation?
+
+    func watchFrames() {
+        guard frameObserver == nil else { return }
+        frameObserver = playerLayer.observe(\.isReadyForDisplay, options: [.initial, .new]) { [weak self] l, _ in
+            guard l.isReadyForDisplay else { return }
+            DispatchQueue.main.async { self?.onFrame?() }
+        }
+    }
 }
 
 struct StoryPlayerLayer: UIViewRepresentable {
     let player: AVPlayer
     var fill: Bool
+    var onFrame: (() -> Void)? = nil
 
     func makeUIView(context: Context) -> StoryPlayerUIView {
         let v = StoryPlayerUIView()
         v.backgroundColor = .clear
+        v.onFrame = onFrame
         v.playerLayer.player = player
         v.playerLayer.videoGravity = fill ? .resizeAspectFill : .resizeAspect
+        v.watchFrames()
         return v
     }
 
     func updateUIView(_ v: StoryPlayerUIView, context: Context) {
+        v.onFrame = onFrame
         if v.playerLayer.player !== player { v.playerLayer.player = player }
         v.playerLayer.videoGravity = fill ? .resizeAspectFill : .resizeAspect
+        if v.playerLayer.isReadyForDisplay, let f = onFrame { DispatchQueue.main.async { f() } }
     }
 }
 
@@ -89,6 +105,10 @@ struct StoryVideoView: View {
     /// the video failed to load (bad network, missing file): "Couldn't load video, tap to retry"
     @State private var failed = false
     @State private var failObserver: NSObjectProtocol?
+    @State private var stallObserver: NSObjectProtocol?
+    /// a start is under way (the small-copy check on cellular); a newer start or a stop makes an older one void
+    @State private var starting = false
+    @State private var startGen = 0
     /// a frame made from the video itself, when the post's cover picture is missing or all black (Oct 25 2026: a cover
     /// grabbed before the video had painted was saved pure black, and the story showed a black screen)
     @State private var poster: UIImage?
@@ -138,7 +158,7 @@ struct StoryVideoView: View {
                 backdrop ? Color.navy : Color.black
             }
             if let player {
-                StoryPlayerLayer(player: player, fill: fill)
+                StoryPlayerLayer(player: player, fill: fill, onFrame: { frameShown(player) })
                     .opacity(ready ? 1 : 0)
                     .allowsHitTesting(false)
             }
@@ -234,7 +254,7 @@ struct StoryVideoView: View {
         if !media.thumb.isEmpty, let img = await ImagePipeline.shared.load(media.thumb, maxPixel: 64), !StoryVideoView.isBlank(img) {
             return
         }
-        guard !media.url.isEmpty, let u = URL(string: media.url) else { return }
+        guard let u = await StoryVideoLoader.shared.source(for: media) else { return }
         let gen = AVAssetImageGenerator(asset: AVURLAsset(url: u))
         gen.appliesPreferredTrackTransform = true
         gen.maximumSize = CGSize(width: 900, height: 900)
@@ -343,16 +363,35 @@ struct StoryVideoView: View {
     }
 
     private func start() {
-        guard player == nil, live, let url = URL(string: media.url), !media.url.isEmpty else { return }
-        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback)
-        try? AVAudioSession.sharedInstance().setActive(true)
-        let item = AVPlayerItem(url: url)
+        guard player == nil, !starting, live, !media.url.isEmpty else { return }
+        StoryVideoLoader.shared.prepareAudio()
+        // Oct 25 2026 (slow start on 5G): a video loaded ahead (the next slide / next post) is handed over as is
+        if let p = StoryVideoLoader.shared.take(media.url) {
+            attach(p)
+            return
+        }
+        starting = true
+        let gen = startGen
+        let m = media
+        Task { @MainActor in
+            let src = await StoryVideoLoader.shared.source(for: m)
+            guard gen == startGen else { return }
+            starting = false
+            guard player == nil, live, let src else { return }
+            attach(StoryVideoLoader.makePlayer(src, m))
+        }
+    }
+
+    /// Wires a player to this view and plays it at once: a short start buffer, no waiting for the whole clip.
+    private func attach(_ p: AVPlayer) {
+        guard let item = p.currentItem else { return }
+        p.isMuted = media.muted || !sound.on
+        p.actionAtItemEnd = .pause
+        p.automaticallyWaitsToMinimizeStalling = false
+        item.preferredForwardBufferDuration = 2
         if let end = media.trimEnd, end > (media.trimStart ?? 0) {
             item.forwardPlaybackEndTime = CMTime(seconds: end, preferredTimescale: 600)
         }
-        let p = AVPlayer(playerItem: item)
-        p.isMuted = media.muted || !sound.on
-        p.actionAtItemEnd = .pause
         let begin = startTime
         endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { _ in
             p.seek(to: begin, toleranceBefore: .zero, toleranceAfter: .zero)
@@ -374,13 +413,28 @@ struct StoryVideoView: View {
             failed = true
             buffering = false
         }
-        // Oct 25 2026: the video is shown once it is really playing (frames on screen), not at "ready to play", when the
-        // layer can still be black; until then the still and a spinner show
+        // ran out of data during the quick start: from here on the player waits (spinner) and resumes by itself
+        stallObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemPlaybackStalled, object: item, queue: .main) { _ in
+            StoryVideoView.settle(p)
+            p.play()
+        }
+        // the video shows once a real frame is on the layer (frameShown), not at "ready to play" when the layer can
+        // still be black; until then the still and a spinner show
         controlObserver = p.observe(\.timeControlStatus, options: [.initial, .new]) { pl, _ in
             let st = pl.timeControlStatus
             DispatchQueue.main.async {
                 buffering = st == .waitingToPlayAtSpecifiedRate
-                if st == .playing, !ready { withAnimation(Motion.content) { ready = true } }
+                guard st == .playing else { return }
+                Task { @MainActor in
+                    // backup in case the layer never reported its frame
+                    try? await Task.sleep(nanoseconds: 600_000_000)
+                    if player === pl, !ready, pl.timeControlStatus == .playing, pl.currentTime().seconds > begin.seconds + 0.2 {
+                        withAnimation(Motion.content) { ready = true }
+                    }
+                    // a second and a half into playback: back to the system's normal buffering
+                    try? await Task.sleep(nanoseconds: 900_000_000)
+                    if player === pl { StoryVideoView.settle(pl) }
+                }
             }
         }
         if controls {
@@ -400,7 +454,7 @@ struct StoryVideoView: View {
             }
         }
         StoryVideoCenter.shared.claim(p)
-        if begin.seconds > 0 {
+        if begin.seconds > 0, abs(p.currentTime().seconds - begin.seconds) > 0.25 {
             p.seek(to: begin, toleranceBefore: .zero, toleranceAfter: .zero) { _ in p.play() }
         } else {
             p.play()
@@ -408,7 +462,24 @@ struct StoryVideoView: View {
         player = p
     }
 
+    /// A real frame is on screen: show the video over the still.
+    private func frameShown(_ p: AVPlayer) {
+        guard player === p, !ready else { return }
+        withAnimation(Motion.content) { ready = true }
+    }
+
+    /// After the quick start: the system's own buffering again, so a weak signal pauses with the spinner instead of
+    /// stuttering, and the buffer is no longer capped at 2 s.
+    nonisolated static func settle(_ p: AVPlayer) {
+        p.automaticallyWaitsToMinimizeStalling = true
+        p.currentItem?.preferredForwardBufferDuration = 0
+    }
+
     private func stop() {
+        startGen += 1
+        starting = false
+        if let stallObserver { NotificationCenter.default.removeObserver(stallObserver) }
+        stallObserver = nil
         if let p = player, let o = timeObserver { p.removeTimeObserver(o) }
         timeObserver = nil
         controlObserver?.invalidate()
