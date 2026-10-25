@@ -477,7 +477,7 @@ struct PlannerTab: View {
 
     private func serverArticlesRow(_ refs: [PlannerArticleRef]) -> some View {
         let first = refs[0]
-        let label = first.scopeName.isEmpty ? "" : (first.scope == "region" ? " from " : " in ") + first.scopeName
+        let label = first.scopeName.isEmpty ? "" : " in " + first.scopeName
         return VStack(alignment: .leading, spacing: 6) {
             (Text("Articles from travelers").foregroundStyle(Color.textSecondary) + Text(label).foregroundStyle(Color.navy))
                 .font(.caption.weight(.semibold))
