@@ -12,7 +12,7 @@ import FirebaseFirestore
 ///   and for a guest on this phone only. The saved kevarim are the hearts: users/{uid}/userData/preferences bookmarkedKevarim.
 /// - The dates are worked out by the website's tested Hebrew-calendar code (src/lib/yahrzeit/core.ts) and written to
 ///   yahrzeit-dates.json: a copy ships inside the app, and a newer one is read from www.yourkoshertravel.com when there is one.
-/// - Each yahrzeit gets a notification at 9 AM (phone time) N days before and on the day. iOS keeps at most 64 waiting
+/// - Each yahrzeit gets a notification at 9 AM (phone time) N days before and on the day (never on Shabbos: Friday instead). iOS keeps at most 64 waiting
 ///   notifications per app, so the nearest 60 are booked; the rest are booked on a later app open.
 struct YahrzeitPrefs: Equatable {
     var on = false
@@ -190,15 +190,24 @@ final class YahrzeitAlerts {
             let when = Self.dateWords(k)
             for s in k.dates {
                 guard let day = ymd.date(from: s), day < horizon else { continue }
-                for d in Set([daysBefore, 0]) {
-                    guard let alertDay = calendar.date(byAdding: .day, value: -d, to: day),
+                var firedDays = Set<String>()
+                for d in [daysBefore, 0] {
+                    guard var alertDay = calendar.date(byAdding: .day, value: -d, to: day) else { continue }
+                    // never on Shabbos: an alert that would fall on Saturday comes on Friday morning instead
+                    if calendar.component(.weekday, from: alertDay) == 7,
+                       let friday = calendar.date(byAdding: .day, value: -1, to: alertDay) { alertDay = friday }
+                    let shown = calendar.dateComponents([.day], from: calendar.startOfDay(for: alertDay),
+                                                        to: calendar.startOfDay(for: day)).day ?? d
+                    let dayKey = ymd.string(from: alertDay)
+                    guard !firedDays.contains(dayKey),
                           let fire = calendar.date(bySettingHour: alertHour, minute: 0, second: 0, of: alertDay),
                           fire > now else { continue }
-                    let title = d == 0 ? "Yahrzeit today" : (d == 1 ? "Yahrzeit tomorrow" : "Yahrzeit in \(d) days")
+                    firedDays.insert(dayKey)
+                    let title = shown == 0 ? "Yahrzeit today" : (shown == 1 ? "Yahrzeit tomorrow" : "Yahrzeit in \(shown) days")
                     var parts = [k.name]
                     if !when.isEmpty { parts.append(when) }
-                    if d != 0 { parts.append(nice.string(from: day)) }
-                    out.append(YahrzeitAlertPlan(id: "\(idPrefix)\(k.id)-\(s)-\(d)", keverId: k.id, fire: fire,
+                    if shown != 0 { parts.append(nice.string(from: day)) }
+                    out.append(YahrzeitAlertPlan(id: "\(idPrefix)\(k.id)-\(s)-\(shown)", keverId: k.id, fire: fire,
                                                  title: title, body: parts.joined(separator: " \u{00B7} ")))
                 }
             }
