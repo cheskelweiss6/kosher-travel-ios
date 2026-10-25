@@ -205,7 +205,7 @@ struct StoryVideoView: View {
             }
         }
         .clipped()
-        .task(id: media.url) { await checkPoster() }
+        .task(id: "\(media.url)|\(media.thumb)") { await checkPoster() }
         .onGeometryChange(for: Bool.self) { proxy in
             StoryVideoView.halfVisible(proxy.frame(in: .global), in: CGRect(origin: .zero, size: UIScreen.main.bounds.size))
         } action: { visible in
@@ -252,13 +252,15 @@ struct StoryVideoView: View {
     /// The post's cover picture is missing or all black: make one from the video itself.
     private func checkPoster() async {
         if !media.thumb.isEmpty, let img = await ImagePipeline.shared.load(media.thumb, maxPixel: 64), !StoryVideoView.isBlank(img) {
+            // Oct 25 2026: a cover picked in Edit post replaces a frame made earlier from the video
+            if poster != nil { withAnimation(Motion.fade) { poster = nil } }
             return
         }
         guard let u = await StoryVideoLoader.shared.source(for: media) else { return }
         let gen = AVAssetImageGenerator(asset: AVURLAsset(url: u))
         gen.appliesPreferredTrackTransform = true
         gen.maximumSize = CGSize(width: 900, height: 900)
-        let at = CMTime(seconds: max(0.1, media.trimStart ?? 0.1), preferredTimescale: 600)
+        let at = CMTime(seconds: max(0.1, media.coverTime ?? media.trimStart ?? 0.1), preferredTimescale: 600)
         if let r = try? await gen.image(at: at) {
             let img = UIImage(cgImage: r.image)
             withAnimation(Motion.fade) { poster = img }
@@ -746,6 +748,10 @@ struct StoryCoverImage: View {
     var maxPixel: CGFloat = 600
     @State private var frame: UIImage?
 
+    /// Oct 25 2026 (Cheskel's Pompeii post: the cover picked in Edit post did not show on Explore): the check runs again
+    /// whenever the saved cover changes, and a frame made from the video is shown only while that cover is missing or black.
+    private var coverKey: String { "\(post.id)|\(post.cover?.cardImage ?? "")" }
+
     var body: some View {
         RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: maxPixel)
             .overlay {
@@ -757,17 +763,20 @@ struct StoryCoverImage: View {
                 }
             }
             .clipped()
-            .task(id: post.id) { await check() }
+            .task(id: coverKey) { await check() }
     }
 
     private func check() async {
-        guard let video = post.media.first(where: { $0.isVideo }), !video.url.isEmpty else { return }
-        if let hit = StoryFrameCache.shared.cached(video.url) { frame = hit; return }
+        guard let video = post.media.first(where: { $0.isVideo }), !video.url.isEmpty else { frame = nil; return }
         let cover = post.cover?.cardImage ?? ""
         if !cover.isEmpty, let img = await ImagePipeline.shared.load(cover, maxPixel: 64), !StoryVideoView.isBlank(img) {
+            // the saved cover is a real picture: it wins over any frame made earlier
+            frame = nil
             return
         }
-        if let img = await StoryFrameCache.shared.frame(video.url) {
+        let at = video.frameTime
+        if let hit = StoryFrameCache.shared.cached(video.url, at: at) { frame = hit; return }
+        if let img = await StoryFrameCache.shared.frame(video.url, at: at) {
             withAnimation(Motion.fade) { frame = img }
         }
     }
@@ -780,11 +789,17 @@ final class StoryFrameCache {
     private var done: [String: UIImage] = [:]
     private var running: [String: Task<UIImage?, Never>] = [:]
 
-    func cached(_ url: String) -> UIImage? { done[url] }
+    /// One frame per video URL and time (Oct 25 2026: keyed by the time too, so a newly picked cover frame is made again).
+    private func key(_ url: String, _ at: Double?) -> String { at.map { "\(url)#\(Int(($0 * 100).rounded()))" } ?? url }
 
-    func frame(_ url: String) async -> UIImage? {
-        if let hit = done[url] { return hit }
-        if let t = running[url] { return await t.value }
+    func cached(_ url: String, at: Double? = nil) -> UIImage? { done[key(url, at)] }
+
+    func frame(_ url: String, at: Double? = nil) async -> UIImage? {
+        let k = key(url, at)
+        if let hit = done[k] { return hit }
+        if let t = running[k] { return await t.value }
+        // the poster's picked frame (or the start of what plays) first, then the old guesses
+        let times: [Double] = at.map { [max(0.1, $0), 1.0, 0.2] } ?? [1.0, 0.2, 2.5]
         let t = Task<UIImage?, Never> {
             guard let u = URL(string: url) else { return nil }
             let gen = AVAssetImageGenerator(asset: AVURLAsset(url: u))
@@ -793,7 +808,7 @@ final class StoryFrameCache {
             gen.requestedTimeToleranceBefore = CMTime(seconds: 0.5, preferredTimescale: 600)
             gen.requestedTimeToleranceAfter = CMTime(seconds: 0.5, preferredTimescale: 600)
             var fallback: UIImage?
-            for s in [1.0, 0.2, 2.5] {
+            for s in times {
                 if let r = try? await gen.image(at: CMTime(seconds: s, preferredTimescale: 600)) {
                     let img = UIImage(cgImage: r.image)
                     if !StoryVideoView.isBlank(img) { return img }
@@ -802,10 +817,10 @@ final class StoryFrameCache {
             }
             return fallback
         }
-        running[url] = t
+        running[k] = t
         let img = await t.value
-        running[url] = nil
-        if let img { done[url] = img }
+        running[k] = nil
+        if let img { done[k] = img }
         return img
     }
 }

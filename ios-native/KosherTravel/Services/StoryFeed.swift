@@ -20,6 +20,14 @@ final class StoryFeed {
 
     func post(_ id: String) -> StoryPost? { posts.first { $0.id == id } }
 
+    /// Oct 25 2026 (Cheskel: the cover picked in Edit post did not show on Explore): after an edit the post read again
+    /// replaces the copy Explore, the region pages and the planner hold, so its new cover and words show at once.
+    @MainActor
+    func replace(_ post: StoryPost) {
+        guard let i = posts.firstIndex(where: { $0.id == post.id }) else { return }
+        if post.status == "live" { posts[i] = post } else { posts.remove(at: i) }
+    }
+
     func articles(kind: StoryPost.PlaceKind, name: String) -> [StoryPost] {
         articles.filter { $0.matches(kind: kind, name: name) }
     }

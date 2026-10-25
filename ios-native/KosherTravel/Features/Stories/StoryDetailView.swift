@@ -44,7 +44,7 @@ struct StoryDetailView: View {
         if let ex = extra, !ex.media.isEmpty { return ex.media }
         return p.media.map {
             StoryMediaInfo(type: $0.type, url: $0.url, thumb: $0.thumb, w: 0, h: 0, muted: false, trimStart: nil, trimEnd: nil,
-                      placeName: "", placeLink: "", placeUrl: "")
+                      placeName: "", placeLink: "", placeUrl: "", coverTime: $0.coverTime)
         }
     }
 
@@ -111,7 +111,10 @@ struct StoryDetailView: View {
         // Edit: the post editor every post is written in, opened on this post; its X or Save closes it
         .fullScreenCover(item: $editRoute, onDismiss: {
             let id = postId
-            Task { await store.reload(id) }
+            Task { @MainActor in
+                await store.reload(id)
+                if let p = store.post(id) { feed.replace(p) }
+            }
         }) { r in
             NavigationStack { WebScreen(route: r, fullScreen: true) }
         }

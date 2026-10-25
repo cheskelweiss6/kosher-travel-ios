@@ -78,6 +78,8 @@ struct StoryMediaInfo: Hashable {
     var placeUrl: String
     /// a smaller copy of a video for slow connections, when the post carries one (optional; Oct 25 2026)
     var lowUrl: String = ""
+    /// video only (Oct 25 2026): the frame the poster picked as the cover, in seconds of the file (web media.coverTime)
+    var coverTime: Double? = nil
     var isVideo: Bool { type == "video" }
     var still: String { isVideo ? thumb : (url.isEmpty ? thumb : url) }
     var small: String { thumb.isEmpty ? (isVideo ? "" : url) : thumb }
@@ -181,6 +183,7 @@ struct StoryExtra: Hashable {
                       placeLink: (m["placeLink"] as? String) ?? "",
                       placeUrl: (m["placeUrl"] as? String) ?? "")
             info.lowUrl = (m["lowUrl"] as? String) ?? ""
+            info.coverTime = Self.num(m["coverTime"])
             return info
         }
         stops = Self.maps(d["stops"]).map { (m: [String: Any]) -> StoryStopInfo in

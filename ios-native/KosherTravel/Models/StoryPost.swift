@@ -5,7 +5,18 @@ struct StoryMedia: Hashable {
     var type: String      // image | video
     var url: String
     var thumb: String
+    /// video only (Oct 25 2026): the frame the poster picked as the cover and where the kept part starts, in seconds
+    /// of the file (web media.coverTime / trimStart). A card that must make its own frame uses these.
+    var coverTime: Double? = nil
+    var trimStart: Double? = nil
     var isVideo: Bool { type == "video" }
+    /// Where a frame made from this video is taken: the picked cover, else the start of what plays.
+    var frameTime: Double? { coverTime ?? trimStart }
+    static func seconds(_ v: Any?) -> Double? {
+        if let d = v as? Double, d.isFinite, d >= 0 { return d }
+        if let n = v as? NSNumber { let d = n.doubleValue; return d.isFinite && d >= 0 ? d : nil }
+        return nil
+    }
     /// What a card shows: the small cover first, the full file if there is no cover.
     var cardImage: String {
         if !thumb.isEmpty { return thumb }
@@ -112,7 +123,9 @@ struct StoryPost: Identifiable, Hashable {
             guard let m = raw as? [String: Any] else { return nil }
             return StoryMedia(type: (m["type"] as? String) == "video" ? "video" : "image",
                               url: (m["url"] as? String) ?? "",
-                              thumb: (m["thumb"] as? String) ?? "")
+                              thumb: (m["thumb"] as? String) ?? "",
+                              coverTime: StoryMedia.seconds(m["coverTime"]),
+                              trimStart: StoryMedia.seconds(m["trimStart"]))
         }
         stops = ((d["stops"] as? [Any]) ?? []).compactMap { (raw: Any) -> StoryStop? in
             guard let m = raw as? [String: Any] else { return nil }
