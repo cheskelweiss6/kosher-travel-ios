@@ -28,6 +28,7 @@ struct KosherTravelApp: App {
     var body: some Scene {
         WindowGroup {
             RootTabView()
+                .modifier(YahrzeitLifecycle())   // yahrzeit alerts booked on the phone (Features/Yahrzeit)
                 .environment(explore)
                 .environment(feed)
                 .environment(auth)

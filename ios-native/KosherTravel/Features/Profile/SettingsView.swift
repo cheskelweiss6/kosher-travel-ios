@@ -80,6 +80,12 @@ struct ProfileSettingsView: View {
                     let n = store.kosherPrefs?.needs.count ?? 0
                     SettingsRow(icon: "slider.horizontal.3", label: "My kosher preferences", value: n > 0 ? "\(n) saved" : "Not set")
                 }
+                NavigationLink {
+                    YahrzeitSettingsView()
+                } label: {
+                    SettingsRow(icon: "bell", label: "Yahrzeit alerts", value: YahrzeitAlerts.shared.prefs.on ? "On" : "Off")
+                }
+                .accessibilityIdentifier("settings-yahrzeit")
                 // Web: SettingsSheet "Open maps in" (same stored choice as the map sheet's "Remember my choice").
                 Picker(selection: Binding(get: { mapsApp }, set: { mapsApp = $0; MapApp.preferred = MapApp(rawValue: $0) })) {
                     Text("Ask every time").tag("")
