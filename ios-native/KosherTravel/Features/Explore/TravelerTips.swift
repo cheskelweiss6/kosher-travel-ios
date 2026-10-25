@@ -174,11 +174,11 @@ struct TravelerTipsSection: View {
                             .hairline(radius: 16)
                             .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .accessibilityLabel("Tip from \(t.author.isEmpty ? "a traveler" : t.author): \(t.text). Open the post")
                     }
                     if tips.count > 3 {
-                        Button { showAll.toggle() } label: {
+                        Button { withAnimation(Motion.expand) { showAll.toggle() } } label: {
                             Text(showAll ? "Show fewer" : "See all \(tips.count) tips")
                                 .font(.footnote.weight(.bold))
                                 .foregroundStyle(Color.navy)

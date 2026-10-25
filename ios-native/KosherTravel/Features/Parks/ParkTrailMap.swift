@@ -179,7 +179,7 @@ struct ParkTrailMapView: View {
         selected = i
         let routes = resolved
         if routes.indices.contains(i) {
-            withAnimation { position = .camera(MapCamera(centerCoordinate: routes[i].location, distance: 3000)) }
+            withAnimation(Motion.camera) { position = .camera(MapCamera(centerCoordinate: routes[i].location, distance: 3000)) }
         }
     }
 

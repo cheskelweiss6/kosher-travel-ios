@@ -205,6 +205,7 @@ struct CityListingCard: View {
                 .foregroundStyle(on ? Color.white : Color.navy)
                 .background(on ? Color.navy : Color.white, in: Capsule())
                 .overlay(Capsule().strokeBorder(on ? Color.clear : Color.hairline, lineWidth: 1))
+                .animation(Motion.select, value: on)
         }
         .buttonStyle(.plain)
     }

@@ -111,6 +111,7 @@ struct KosherFilterChip: View {
                         .foregroundStyle(on ? Color.navy : Color.white)
                         .background(on ? Color.white : Color.navy, in: Capsule())
                         .overlay(Capsule().strokeBorder(on ? Color.hairline : Color.clear, lineWidth: 1))
+                        .animation(Motion.select, value: on)
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(on ? .isSelected : [])
@@ -199,7 +200,7 @@ struct CityRestaurantsView: View {
             }
         }
         .background(Color.white)
-        .sensoryFeedback(.selection, trigger: tab)
+        .sensoryFeedback(Motion.Haptic.selection, trigger: tab)
         .cityCardReviewsSheet($reviewsFor, onChanged: onReviewsChanged)
     }
 
@@ -290,6 +291,7 @@ struct CityRestaurantsView: View {
                 .foregroundStyle(on ? Color.white : Color.navy)
                 .background(on ? Color.navy : Color.white, in: Capsule())
                 .overlay(Capsule().strokeBorder(on ? Color.clear : Color.hairline, lineWidth: 1))
+                .animation(Motion.select, value: on)
         }
         .buttonStyle(.plain)
     }

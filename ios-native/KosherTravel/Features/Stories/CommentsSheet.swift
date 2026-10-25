@@ -64,7 +64,7 @@ struct CommentsSheet: View {
                 .listStyle(.plain)
                 .refreshable { await load() }
                 .onChange(of: sentCount) { _, _ in
-                    if let last = comments.last { withAnimation { proxy.scrollTo(last.id, anchor: .bottom) } }
+                    if let last = comments.last { withAnimation(Motion.scroll) { proxy.scrollTo(last.id, anchor: .bottom) } }
                 }
             }
             .navigationTitle(comments.isEmpty ? "Comments" : "Comments (\(comments.count))")
@@ -87,7 +87,7 @@ struct CommentsSheet: View {
                         .transition(.opacity)
                 }
             }
-            .animation(.easeOut(duration: 0.2), value: note)
+            .animation(Motion.fade, value: note)
             .task(id: note) {
                 guard note != nil else { return }
                 try? await Task.sleep(for: .seconds(3))
@@ -242,7 +242,7 @@ struct CommentsSheet: View {
             }
         }
         .background(.bar)
-        .sensoryFeedback(.success, trigger: sentCount)
+        .sensoryFeedback(Motion.Haptic.success, trigger: sentCount)
     }
 
     private var canSend: Bool {

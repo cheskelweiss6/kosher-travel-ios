@@ -125,7 +125,7 @@ struct StateParkCard: View {
                 nameLineLimit: style == .section ? 1 : nil
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .accessibilityHint("Opens the park details")
     }
 }
@@ -158,7 +158,7 @@ struct NationalParkCard: View {
                 photoHeight: style == .tribal ? 176 : 160
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .accessibilityHint("Opens the park details")
     }
 }

@@ -54,7 +54,7 @@ struct ParkSheetTabBar: View {
             }
             Rectangle().fill(Color.hairline).frame(height: 1)
         }
-        .sensoryFeedback(.selection, trigger: tab)
+        .sensoryFeedback(Motion.Haptic.selection, trigger: tab)
     }
 }
 
@@ -284,6 +284,7 @@ struct ParkDifficultyTag: View {
                     RoundedRectangle(cornerRadius: 5, style: .continuous).strokeBorder(Color.hairline, lineWidth: 1)
                 }
             }
+            .animation(Motion.select, value: filled)
     }
 }
 
@@ -303,6 +304,7 @@ struct ParkLinkButton: View {
                 .overlay {
                     if !filled { RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.hairline, lineWidth: 1) }
                 }
+                .animation(Motion.select, value: filled)
         }
         .buttonStyle(.plain)
     }

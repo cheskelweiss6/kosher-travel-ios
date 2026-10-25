@@ -31,10 +31,10 @@ struct TPStoryButton<Label: View>: View {
     var body: some View {
         if let onOpenStory {
             Button { onOpenStory(postId) } label: { label() }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
         } else {
             NavigationLink(value: ExploreRoute.story(postId)) { label() }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
         }
     }
 }
@@ -127,7 +127,7 @@ struct TravelerMapButton: View {
             .hairline(radius: 12)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .accessibilityLabel("Open \(name) in Maps")
     }
 }
@@ -151,7 +151,7 @@ struct TravelerBookButton: View {
             .background(Color.navy, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .accessibilityLabel("\(sight.linkVerb) \(sight.name)")
     }
 }
@@ -225,7 +225,7 @@ private struct TPPhotoLoader: View {
             .task(id: url) {
                 if let hit = ImagePipeline.shared.cached(url, maxPixel: maxPixel) { image = hit; return }
                 if let loaded = await ImagePipeline.shared.load(url, maxPixel: maxPixel) {
-                    withAnimation(.easeOut(duration: 0.2)) { image = loaded }
+                    withAnimation(Motion.fade) { image = loaded }
                 } else {
                     failed = true
                 }

@@ -66,7 +66,7 @@ struct ExploreHomeView: View {
             .hairline(radius: 14)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .padding(.horizontal, Theme.pagePadding)
         .accessibilityLabel("Search a country, state or city")
         .accessibilityIdentifier("explore-search")
@@ -122,7 +122,7 @@ struct ExploreHomeView: View {
                         RegionCard(title: "Europe", tag: "Kivrei Tzadikim", asset: "RegionEurope")
                     }
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .scrollTargetLayout()
             }
             .contentMargins(.horizontal, Theme.pagePadding, for: .scrollContent)
@@ -157,7 +157,7 @@ struct ExploreHomeView: View {
                             NavigationLink(value: ExploreRoute.story(post.id)) {
                                 InspirationTile(post: post)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             .containerRelativeFrame(.horizontal) { len, _ in Layout.peekWidth(len, min: 130, spacing: 10) }
                         }
                     }
@@ -211,7 +211,7 @@ struct ExploreHomeView: View {
                             NavigationLink(value: ExploreRoute.story(post.id)) {
                                 ExploreArticleTile(post: post)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
                             .containerRelativeFrame(.horizontal) { len, _ in Layout.peekWidth(len, min: 150, spacing: 12) }
                         }
                     }

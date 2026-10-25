@@ -112,7 +112,7 @@ struct TripBuilderSheet: View {
                 } header: { Text("Where to?") } footer: { Text("Leave it empty and the planner suggests a few places.") }
 
                 Section {
-                    Toggle("Pick dates", isOn: $useDates.animation())
+                    Toggle("Pick dates", isOn: $useDates.animation(Motion.expand))
                     if useDates {
                         DatePicker("Start", selection: $start, in: Calendar.current.startOfDay(for: Date())..., displayedComponents: .date)
                         DatePicker("End", selection: $end, in: start...(Calendar.current.date(byAdding: .day, value: 20, to: start) ?? start),
@@ -189,7 +189,7 @@ struct TripBuilderSheet: View {
                         }
                         .foregroundStyle(Color.navy)
                     }
-                    .sensoryFeedback(.success, trigger: kosherSaved) { _, now in now }
+                    .sensoryFeedback(Motion.Haptic.success, trigger: kosherSaved) { _, now in now }
                 } header: { Text("Kosher needs") } footer: { Text("Saved choices also filter places in the app") }
 
                 Section("Interests") {
@@ -260,7 +260,7 @@ struct TripBuilderSheet: View {
             }
             .contentShape(Rectangle())
         }
-        .sensoryFeedback(.selection, trigger: selected)
+        .sensoryFeedback(Motion.Haptic.selection, trigger: selected)
     }
 
     private func toggle(_ set: inout Set<String>, _ v: String) {
@@ -432,9 +432,10 @@ struct PlannerChipFlow: View {
                     .frame(minHeight: 36)
                     .background(on ? Color.navy : Color.white, in: Capsule())
                     .overlay(Capsule().strokeBorder(on ? Color.clear : Color(red: 203 / 255, green: 213 / 255, blue: 225 / 255), lineWidth: 1))
+                    .animation(Motion.select, value: on)
                 }
                 .buttonStyle(.plain)
-                .sensoryFeedback(.selection, trigger: on)
+                .sensoryFeedback(Motion.Haptic.selection, trigger: on)
                 .accessibilityAddTraits(on ? .isSelected : [])
             }
         }
