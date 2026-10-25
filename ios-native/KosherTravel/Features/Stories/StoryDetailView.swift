@@ -161,7 +161,7 @@ struct StoryDetailView: View {
             }
             .padding(.bottom, 40)
         }
-        // the web's place line (state or country, never "Wy, Wyoming"); one Share only, the iOS share symbol in the action row
+        // the web's place line (state or country, never "Wy, Wyoming"); one Share only, the iOS share symbol in the tag row under the cover (moved Oct 25)
         .navigationTitle(p.regionLine.isEmpty ? (p.isGuide ? "Article" : "Story") : p.regionLine)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -256,7 +256,21 @@ struct StoryDetailView: View {
 
     private func header(_ p: StoryPost, article: Bool) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            TagLabel(text: article ? "Article" : "Inspiration")
+            // Oct 25 2026 (Cheskel, circled screenshot): the one Share button sits here, at the right end of the tag row.
+            HStack(alignment: .center, spacing: 8) {
+                TagLabel(text: article ? "Article" : "Inspiration")
+                Spacer(minLength: 8)
+                ShareLink(item: StoryActions.shareURL(p.id), subject: Text(p.title.isEmpty ? p.cityName : p.title)) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.title3)
+                        .foregroundStyle(Color.navy)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Share")
+            }
+            .padding(.vertical, -10)
             Text(p.title.isEmpty ? p.cityName : p.title)
                 .font(.serifTitle(.title2))
                 .foregroundStyle(Color.navy)
@@ -354,13 +368,8 @@ struct StoryDetailView: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Comments")
 
-            ShareLink(item: StoryActions.shareURL(p.id), subject: Text(p.title.isEmpty ? p.cityName : p.title)) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.title2)
-                    .foregroundStyle(Color.navy)
-                    .frame(minHeight: 44)
-            }
-            .accessibilityLabel("Share")
+            // Oct 25 2026 (Cheskel, circled screenshot): Share moved up to the tag row, right of the Article/Inspiration tag.
+            // Still one Share only on this screen.
 
             Spacer(minLength: 0)
 
