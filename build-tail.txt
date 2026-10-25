@@ -1,0 +1,60 @@
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryLinkGroups.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryOwnerTools.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Models/StoryPost.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryRegion.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StorySafety.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideo.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideoLoader.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+/Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideoLoader.swift:124:17: error: expression is 'async' but is not marked with 'await'
+                p.seek(to: CMTime(seconds: start, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                await 
+/Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideoLoader.swift:124:17: note: call is 'async'
+                p.seek(to: CMTime(seconds: start, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+                ^
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Design/Theme.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/TravelTime/TravelOrigin.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Explore/TravelRegions.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NationalParkSheet.swift, NotificationsView.swift, ParkAPI.swift, ParkCards.swift, ParkModels.swift, ParkReviews.swift, ParkSheetParts.swift, ParkStore.swift, ParkTabs.swift, ParkTrailMap.swift, PlaceDetailView.swift, PlaceModels.swift, PlaceServices.swift, PlaceSheetLocationPhotos.swift, PlaceSheetSupport.swift, PlannerAPI.swift, PlannerActionBar.swift, PlannerActions.swift, PlannerFilters.swift, PlannerHistoryView.swift, PlannerLinks.swift, PlannerMarkdown.swift (in target 'KosherTravel' from project 'KosherTravel')
+
+SwiftCompile normal x86_64 Compiling\ StateParkSheet.swift,\ StateView.swift,\ StoriesComponents.swift,\ StoriesStore.swift,\ StoriesTab.swift,\ StoryActions.swift,\ StoryCards.swift,\ StoryDetailView.swift,\ StoryExtra.swift,\ StoryFeed.swift,\ StoryLinkArticle.swift,\ StoryLinkGroups.swift,\ StoryOwnerTools.swift,\ StoryPost.swift,\ StoryRegion.swift,\ StorySafety.swift,\ StoryVideo.swift,\ StoryVideoLoader.swift,\ Theme.swift,\ TravelOrigin.swift,\ TravelRegions.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Parks/StateParkSheet.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Explore/StateView.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoriesComponents.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoriesStore.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoriesTab.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryActions.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Explore/StoryCards.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryDetailView.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryExtra.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Services/StoryFeed.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryLinkArticle.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryLinkGroups.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryOwnerTools.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Models/StoryPost.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryRegion.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StorySafety.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideo.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideoLoader.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Design/Theme.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/TravelTime/TravelOrigin.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Explore/TravelRegions.swift (in target 'KosherTravel' from project 'KosherTravel')
+
+** BUILD FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ StateParkSheet.swift,\ StateView.swift,\ StoriesComponents.swift,\ StoriesStore.swift,\ StoriesTab.swift,\ StoryActions.swift,\ StoryCards.swift,\ StoryDetailView.swift,\ StoryExtra.swift,\ StoryFeed.swift,\ StoryLinkArticle.swift,\ StoryLinkGroups.swift,\ StoryOwnerTools.swift,\ StoryPost.swift,\ StoryRegion.swift,\ StorySafety.swift,\ StoryVideo.swift,\ StoryVideoLoader.swift,\ Theme.swift,\ TravelOrigin.swift,\ TravelRegions.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Parks/StateParkSheet.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Explore/StateView.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoriesComponents.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoriesStore.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoriesTab.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryActions.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Explore/StoryCards.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryDetailView.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryExtra.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Services/StoryFeed.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryLinkArticle.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryLinkGroups.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryOwnerTools.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Models/StoryPost.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryRegion.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StorySafety.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideo.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideoLoader.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Design/Theme.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/TravelTime/TravelOrigin.swift /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Explore/TravelRegions.swift (in target 'KosherTravel' from project 'KosherTravel')
+	SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideoLoader.swift (in target 'KosherTravel' from project 'KosherTravel')
+	Building project KosherTravel with scheme KosherTravel and configuration Debug
+(3 failures)

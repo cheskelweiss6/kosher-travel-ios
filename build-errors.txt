@@ -1,0 +1,12 @@
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideoLoader.swift (in target 'KosherTravel' from project 'KosherTravel')
+    cd /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native
+    
+/Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideoLoader.swift:124:17: error: expression is 'async' but is not marked with 'await'
+                p.seek(to: CMTime(seconds: start, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                await 
+/Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Features/Stories/StoryVideoLoader.swift:124:17: note: call is 'async'
+                p.seek(to: CMTime(seconds: start, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+                ^
+
+SwiftCompile normal arm64 /Users/runner/work/kosher-travel-ios/kosher-travel-ios/ios-native/KosherTravel/Design/Theme.swift (in target 'KosherTravel' from project 'KosherTravel')
