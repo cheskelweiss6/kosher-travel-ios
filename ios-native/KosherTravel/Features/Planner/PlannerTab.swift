@@ -532,7 +532,7 @@ struct PlannerTab: View {
                     ForEach(a.posts) { p in
                         NavigationLink(value: ExploreRoute.story(p.id)) {
                             HStack(spacing: 0) {
-                                RemoteImage(url: p.cover?.cardImage ?? "", maxPixel: 240)
+                                StoryCoverImage(post: p, maxPixel: 240)
                                     .frame(width: 72, height: 72)
                                     .clipped()
                                 VStack(alignment: .leading, spacing: 4) {

@@ -94,7 +94,7 @@ struct StoryArticleCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 1000)
+            StoryCoverImage(post: post, maxPixel: 1000)
                 .aspectRatio(16 / 10, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
                 .overlay(alignment: .topTrailing) {
@@ -149,7 +149,7 @@ struct StoryInspirationTile: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 700)
+            StoryCoverImage(post: post, maxPixel: 700)
                 .aspectRatio(3 / 4, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .overlay(alignment: .topTrailing) {

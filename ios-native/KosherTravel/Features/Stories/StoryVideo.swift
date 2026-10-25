@@ -592,3 +592,77 @@ struct ZoomableRemoteImage: View {
         }
     }
 }
+
+
+/// A post's card picture (Get Inspired tiles, Explore article tiles, Stories cards, lists).
+/// Oct 25 2026 (Cheskel's Pompeii story: its saved cover JPEG is pure black, so the tile in Get Inspired was a black
+/// square): when the post has a video and its cover is missing, fails to load, or is all black, the card shows a frame
+/// from the video itself (about 1 s in), made once per video and cached for the session.
+struct StoryCoverImage: View {
+    let post: StoryPost
+    var maxPixel: CGFloat = 600
+    @State private var frame: UIImage?
+
+    var body: some View {
+        RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: maxPixel)
+            .overlay {
+                if let frame {
+                    Image(uiImage: frame)
+                        .resizable()
+                        .scaledToFill()
+                        .transition(.opacity)
+                }
+            }
+            .clipped()
+            .task(id: post.id) { await check() }
+    }
+
+    private func check() async {
+        guard let video = post.media.first(where: { $0.isVideo }), !video.url.isEmpty else { return }
+        if let hit = StoryFrameCache.shared.cached(video.url) { frame = hit; return }
+        let cover = post.cover?.cardImage ?? ""
+        if !cover.isEmpty, let img = await ImagePipeline.shared.load(cover, maxPixel: 64), !StoryVideoView.isBlank(img) {
+            return
+        }
+        if let img = await StoryFrameCache.shared.frame(video.url) {
+            withAnimation(Motion.fade) { frame = img }
+        }
+    }
+}
+
+/// Frames made from story videos for their cards: one per video URL, kept for the session.
+@MainActor
+final class StoryFrameCache {
+    static let shared = StoryFrameCache()
+    private var done: [String: UIImage] = [:]
+    private var running: [String: Task<UIImage?, Never>] = [:]
+
+    func cached(_ url: String) -> UIImage? { done[url] }
+
+    func frame(_ url: String) async -> UIImage? {
+        if let hit = done[url] { return hit }
+        if let t = running[url] { return await t.value }
+        let t = Task<UIImage?, Never> {
+            guard let u = URL(string: url) else { return nil }
+            let gen = AVAssetImageGenerator(asset: AVURLAsset(url: u))
+            gen.appliesPreferredTrackTransform = true
+            gen.maximumSize = CGSize(width: 700, height: 700)
+            gen.requestedTimeToleranceBefore = CMTime(seconds: 0.5, preferredTimescale: 600)
+            gen.requestedTimeToleranceAfter = CMTime(seconds: 0.5, preferredTimescale: 600)
+            var fallback: UIImage?
+            for s in [1.0, 0.2, 2.5] {
+                if let r = try? await gen.image(at: CMTime(seconds: s, preferredTimescale: 600)) {
+                    let img = UIImage(cgImage: r.image)
+                    if !StoryVideoView.isBlank(img) { return img }
+                    if fallback == nil { fallback = img }
+                }
+            }
+            return fallback
+        }
+        running[url] = t
+        let img = await t.value
+        running[url] = nil
+        if let img { done[url] = img }
+        return img
+    }
+}

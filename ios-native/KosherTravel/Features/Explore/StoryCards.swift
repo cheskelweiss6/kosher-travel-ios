@@ -5,7 +5,7 @@ struct InspirationTile: View {
     let post: StoryPost
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 600)
+            StoryCoverImage(post: post, maxPixel: 600)
                 .aspectRatio(3 / 4, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .overlay(alignment: .topTrailing) {
@@ -38,7 +38,7 @@ struct ArticleRow: View {
     @ScaledMetric(relativeTo: .subheadline) private var thumb: CGFloat = 72
     var body: some View {
         HStack(spacing: 12) {
-            RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 300)
+            StoryCoverImage(post: post, maxPixel: 300)
                 .frame(width: thumb, height: thumb)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .hairline(radius: 12)
@@ -68,7 +68,7 @@ struct ArticleCard: View {
     let post: StoryPost
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 700)
+            StoryCoverImage(post: post, maxPixel: 700)
                 .aspectRatio(16 / 10, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             VStack(alignment: .leading, spacing: 2) {
@@ -187,7 +187,7 @@ struct CompactArticleCard: View {
     let post: StoryPost
     var body: some View {
         HStack(spacing: 0) {
-            RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 240)
+            StoryCoverImage(post: post, maxPixel: 240)
                 .frame(width: 72, height: 72)
                 .clipped()
             VStack(alignment: .leading, spacing: 2) {

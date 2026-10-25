@@ -87,7 +87,7 @@ struct StoryLinkArticleSheet: View {
     private func row(_ a: StoryPost, showAuthor: Bool) -> some View {
         Button { pick(a.id) } label: {
             HStack(spacing: 12) {
-                RemoteImage(url: a.cover?.cardImage ?? "", maxPixel: 200)
+                StoryCoverImage(post: a, maxPixel: 200)
                     .frame(width: 52, height: 52)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 VStack(alignment: .leading, spacing: 2) {

@@ -231,7 +231,7 @@ struct ExploreArticleTile: View {
     let post: StoryPost
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            RemoteImage(url: post.cover?.cardImage ?? "", maxPixel: 600)
+            StoryCoverImage(post: post, maxPixel: 600)
                 .aspectRatio(3 / 4, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .hairline(radius: 14)
