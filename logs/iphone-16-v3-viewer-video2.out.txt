@@ -1,0 +1,2 @@
+[KT] launch route=tab:stories/post:kxVZ5VNaRYmOpDU0Dqfg/viewer:6
+[KT] stories feed docs=12
