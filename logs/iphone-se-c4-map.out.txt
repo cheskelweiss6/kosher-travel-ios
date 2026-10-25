@@ -1,0 +1,4 @@
+[KT] launch route=area:us:new-york-city/map
+[KT] feed source=firestore docs=10 firebase=true
+[KT] stories feed docs=10
+[KT] city new-york-city: traveler places=0 reviewed places=0
