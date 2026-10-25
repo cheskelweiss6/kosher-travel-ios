@@ -80,7 +80,11 @@ struct InspireFeedView: View {
         }
         .background(Color.navy.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        // Oct 25 2026 (Cheskel's video): a solid navy top bar, so a photo's blurred backdrop never shows through it as a
+        // dark smudge behind "Get Inspired" and Back
+        .toolbarBackground(Color.navy, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -362,8 +366,11 @@ struct InspirePostPage: View {
                             .frame(width: i == min(page, 11) ? 18 : 6, height: 6)
                     }
                 }
-                .padding(.top, topInset + 52)
-                .shadow(color: .black.opacity(0.4), radius: 2)
+                // on a dark pill so the dots stay visible on a bright sky or white sand (Oct 25 2026)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(Color.black.opacity(0.32), in: Capsule())
+                .padding(.top, topInset + 50)
                 .accessibilityHidden(true)
                 .allowsHitTesting(false)
             }
@@ -393,7 +400,10 @@ struct InspirePostPage: View {
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 40, height: 40)
-                .glassRounded(20)
+                // a dark round button, not glass: on a bright photo the glass turned white and the white icon vanished
+                // (Cheskel's video, Oct 25 2026: the Fit button showed as a blank white circle)
+                .background(Color.black.opacity(0.45), in: Circle())
+                .overlay(Circle().stroke(Color.white.opacity(0.25), lineWidth: 0.5))
                 .frame(width: 44, height: 44)
                 .contentShape(Rectangle())
         }
@@ -416,7 +426,7 @@ struct InspirePostPage: View {
                 Label(cityLine, systemImage: "mappin")
                     .labelStyle(StoryTightLabelStyle())
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.9))
+                    .foregroundStyle(.white)
                     .lineLimit(1)
             }
             Text(placeTitle)
@@ -453,9 +463,10 @@ struct InspirePostPage: View {
                 .accessibilityLabel("Read the full article")
             }
         }
-        // white words straight on the photo, readable on bright sand or snow too (web SHADOW: two soft shadows)
-        .shadow(color: .black.opacity(0.6), radius: 3, y: 1)
-        .shadow(color: .black.opacity(0.35), radius: 12)
+        // white words straight on the photo, readable on bright sand or snow too (web SHADOW: two soft shadows);
+        // Oct 25 2026: darker and tighter, "Page, Arizona" washed out on a bright road
+        .shadow(color: .black.opacity(0.8), radius: 1.5, y: 1)
+        .shadow(color: .black.opacity(0.5), radius: 10)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -563,7 +574,9 @@ struct InspirePostPage: View {
             }
             moreMenu
         }
-        .shadow(color: .black.opacity(0.6), radius: 2, y: 1)
+        // Oct 25 2026: the rail's white icons and labels (Links, Shop, Ask AI) washed out on bright photos
+        .shadow(color: .black.opacity(0.8), radius: 1.5, y: 1)
+        .shadow(color: .black.opacity(0.45), radius: 8)
     }
 
     /// ••• : a menu right at the button (not a sheet at the top of the screen). The poster and the admin get Edit and
