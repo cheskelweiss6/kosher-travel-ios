@@ -1,0 +1,4 @@
+[KT] launch route=area:us:new-york-city/hub:chabad#native
+[KT] stories feed docs=13
+[KT] feed source=firestore docs=13 firebase=true
+[KT] city new-york-city: traveler places=0 reviewed places=0
