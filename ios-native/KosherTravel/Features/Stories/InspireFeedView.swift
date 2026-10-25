@@ -124,6 +124,7 @@ struct InspirePostPage: View {
     @State private var confirmDelete = false
     @State private var deleting = false
     @State private var editRoute: WebRoute?
+    @State private var linkingArticle = false
     /// Every photo / video opens whole (fit) over a blurred copy; the Fit button fills the screen (web InspireFeed).
     @State private var fill = false
     @State private var ratios: [Int: Double] = [:]
@@ -223,6 +224,11 @@ struct InspirePostPage: View {
         }
         .sheet(isPresented: $showReport) {
             StoryReportSheet(post: post, ownerUid: ownerUid, thumb: extra?.media.first?.thumb ?? "")
+        }
+        .sheet(isPresented: $linkingArticle) {
+            StoryLinkArticleSheet(postId: post.id, current: articleId, myUid: auth.uid ?? "")
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
         }
         .storyBlockConfirm(isPresented: $confirmBlock, name: post.authorName.isEmpty ? "this traveler" : post.authorName) {
             await blockOwner()
@@ -532,6 +538,14 @@ struct InspirePostPage: View {
     private var moreMenu: some View {
         if !mine || canManage {
             Menu {
+                // Oct 25 2026: the poster can link the post to an article (web "Link to my article")
+                if mine {
+                    Button {
+                        linkingArticle = true
+                    } label: {
+                        Label(articleId.isEmpty ? "Link to my article" : "Change linked article", systemImage: "link")
+                    }
+                }
                 if canManage {
                     StoryOwnerMenuItems(article: false) {
                         StoryVideoCenter.shared.stopAll()

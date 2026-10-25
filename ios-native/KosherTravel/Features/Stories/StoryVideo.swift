@@ -61,11 +61,16 @@ struct StoryPlayerLayer: UIViewRepresentable {
 /// One video of a post. Its still shows until the first frame is ready, then it plays in place, looping the poster's
 /// trimmed part, with the poster's sound setting. `active` false pauses and tears the player down at once (another
 /// page or slide is on screen), so a video never keeps sounding off screen.
+/// `controls` (the full-screen viewer, Cheskel Oct 25 2026: "if it's loading it should come up that it's loading ...
+/// I couldn't know if it's a photo or a video"): a spinner while it loads or buffers, tap to pause/play, and a bar with
+/// play/pause, progress and the time left. `backdrop` false shows the still whole on black (no blurred copy behind).
 struct StoryVideoView: View {
     let media: StoryMediaInfo
     var autoplay = false
     var active = true
     var fill = true
+    var controls = false
+    var backdrop = true
     var onRatio: ((Double) -> Void)? = nil
 
     @State private var player: AVPlayer?
@@ -75,6 +80,18 @@ struct StoryVideoView: View {
     @State private var wanted = false
     /// at least half of the video is on the screen (Cheskel, Oct 23 2026: "inspiration video, even I scroll to the next post")
     @State private var onScreen = true
+    @State private var buffering = false
+    @State private var userPaused = false
+    @State private var progress: Double = 0
+    @State private var remaining: Double = 0
+    @State private var timeObserver: Any?
+    @State private var controlObserver: NSKeyValueObservation?
+    /// the video failed to load (bad network, missing file): "Couldn't load video, tap to retry"
+    @State private var failed = false
+    @State private var failObserver: NSObjectProtocol?
+    /// a frame made from the video itself, when the post's cover picture is missing or all black (Oct 25 2026: a cover
+    /// grabbed before the video had painted was saved pure black, and the story showed a black screen)
+    @State private var poster: UIImage?
     @Environment(\.scenePhase) private var scenePhase
     private var sound: StoryVideoSound { .shared }
 
@@ -90,24 +107,35 @@ struct StoryVideoView: View {
     }
 
     init(media: StoryMediaInfo, autoplay: Bool = false, active: Bool = true, fill: Bool = true,
-         onRatio: ((Double) -> Void)? = nil) {
+         controls: Bool = false, backdrop: Bool = true, onRatio: ((Double) -> Void)? = nil) {
         self.media = media
         self.autoplay = autoplay
         self.active = active
         self.fill = fill
+        self.controls = controls
+        self.backdrop = backdrop
         self.onRatio = onRatio
     }
 
     var body: some View {
         ZStack {
-            if !media.thumb.isEmpty {
+            if let poster {
+                ZStack {
+                    backdrop ? Color.navy : Color.black
+                    Image(uiImage: poster)
+                        .resizable()
+                        .aspectRatio(contentMode: fill ? .fill : .fit)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
+                }
+            } else if !media.thumb.isEmpty {
                 if fill {
                     RemoteImage(url: media.thumb, maxPixel: 1400)
                 } else {
-                    StoryFitImage(url: media.thumb, maxPixel: 1400)
+                    StoryFitImage(url: media.thumb, maxPixel: 1400, backdrop: backdrop)
                 }
             } else {
-                Color.navy
+                backdrop ? Color.navy : Color.black
             }
             if let player {
                 StoryPlayerLayer(player: player, fill: fill)
@@ -126,8 +154,38 @@ struct StoryVideoView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Play video")
             }
+            if controls {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture { togglePlay() }
+                controlsOverlay
+            } else if waiting {
+                spinner
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .allowsHitTesting(false)
+            }
+            if failed {
+                Button { retry() } label: {
+                    VStack(spacing: 10) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 26, weight: .semibold))
+                        Text("Couldn't load video, tap to retry")
+                            .font(.subheadline.weight(.semibold))
+                            .multilineTextAlignment(.center)
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .background(Color.black.opacity(0.55), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Couldn't load video. Tap to retry")
+            }
         }
         .clipped()
+        .task(id: media.url) { await checkPoster() }
         .onGeometryChange(for: Bool.self) { proxy in
             StoryVideoView.halfVisible(proxy.frame(in: .global), in: CGRect(origin: .zero, size: UIScreen.main.bounds.size))
         } action: { visible in
@@ -144,6 +202,139 @@ struct StoryVideoView: View {
         }
         .onChange(of: sound.on) { _, on in
             player?.isMuted = media.muted || !on
+        }
+    }
+
+    /// Loading: the player is being made, the first frame is not ready, or playback is waiting for more data.
+    private var waiting: Bool {
+        guard !userPaused, !failed else { return false }
+        if player == nil { return (autoplay || wanted) && live && !media.url.isEmpty }
+        return !ready || buffering
+    }
+
+    private var spinner: some View {
+        ProgressView()
+            .controlSize(.large)
+            .tint(.white)
+            .frame(width: 72, height: 72)
+            .background(.black.opacity(0.4), in: Circle())
+            .accessibilityLabel("Loading video")
+            .transition(.opacity)
+    }
+
+    private func retry() {
+        stop()
+        failed = false
+        wanted = true
+        start()
+    }
+
+    /// The post's cover picture is missing or all black: make one from the video itself.
+    private func checkPoster() async {
+        if !media.thumb.isEmpty, let img = await ImagePipeline.shared.load(media.thumb, maxPixel: 64), !StoryVideoView.isBlank(img) {
+            return
+        }
+        guard !media.url.isEmpty, let u = URL(string: media.url) else { return }
+        let gen = AVAssetImageGenerator(asset: AVURLAsset(url: u))
+        gen.appliesPreferredTrackTransform = true
+        gen.maximumSize = CGSize(width: 900, height: 900)
+        let at = CMTime(seconds: max(0.1, media.trimStart ?? 0.1), preferredTimescale: 600)
+        if let r = try? await gen.image(at: at) {
+            let img = UIImage(cgImage: r.image)
+            withAnimation(Motion.fade) { poster = img }
+        }
+    }
+
+    /// Every pixel (on a 16 x 16 copy) is black or nearly.
+    nonisolated static func isBlank(_ img: UIImage) -> Bool {
+        guard let cg = img.cgImage else { return false }
+        var px = [UInt8](repeating: 0, count: 4 * 16 * 16)
+        let drawn: Bool = px.withUnsafeMutableBytes { buf -> Bool in
+            guard let ctx = CGContext(data: buf.baseAddress, width: 16, height: 16, bitsPerComponent: 8, bytesPerRow: 64,
+                                      space: CGColorSpaceCreateDeviceRGB(),
+                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
+            ctx.draw(cg, in: CGRect(x: 0, y: 0, width: 16, height: 16))
+            return true
+        }
+        guard drawn else { return false }
+        var top: UInt8 = 0
+        for i in stride(from: 0, to: px.count, by: 4) { top = max(top, px[i], px[i + 1], px[i + 2]) }
+        return top < 6
+    }
+
+    private var controlsOverlay: some View {
+        ZStack {
+            if waiting {
+                spinner
+            } else if userPaused {
+                Image(systemName: "play.fill")
+                    .font(.system(size: 30, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 72, height: 72)
+                    .background(.black.opacity(0.45), in: Circle())
+                    .transition(.opacity)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .allowsHitTesting(false)
+        .animation(Motion.fade, value: waiting)
+        .overlay(alignment: .bottom) { controlBar }
+    }
+
+    private var controlBar: some View {
+        HStack(spacing: 10) {
+            Button { togglePlay() } label: {
+                Image(systemName: userPaused ? "play.fill" : "pause.fill")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(userPaused ? "Play video" : "Pause video")
+            GeometryReader { g in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.white.opacity(0.3))
+                    Capsule().fill(Color.white)
+                        .frame(width: CGFloat(max(0, min(1, progress))) * g.size.width)
+                }
+                .frame(height: 4)
+                .frame(maxHeight: .infinity)
+            }
+            .frame(height: 44)
+            .accessibilityHidden(true)
+            Text(remaining > 0 ? StoryVideoView.clock(remaining) : " ")
+                .font(.caption.monospacedDigit().weight(.semibold))
+                .foregroundStyle(.white)
+                .frame(minWidth: 36, alignment: .trailing)
+        }
+        .padding(.leading, 4)
+        .padding(.trailing, 14)
+        .background(Color.black.opacity(0.45), in: Capsule())
+        .padding(.horizontal, 16)
+        .padding(.bottom, 104)
+    }
+
+    nonisolated static func clock(_ s: Double) -> String {
+        guard s.isFinite, s >= 0 else { return "" }
+        let t = Int(s.rounded(.up))
+        return String(format: "%d:%02d", t / 60, t % 60)
+    }
+
+    private func togglePlay() {
+        if let p = player {
+            if userPaused {
+                userPaused = false
+                StoryVideoCenter.shared.claim(p)
+                p.play()
+            } else {
+                userPaused = true
+                p.pause()
+            }
+        } else {
+            userPaused = false
+            wanted = true
+            start()
         }
     }
 
@@ -169,11 +360,43 @@ struct StoryVideoView: View {
         }
         let report = onRatio
         statusObserver = item.observe(\.status, options: [.initial, .new]) { it, _ in
+            if it.status == .failed {
+                DispatchQueue.main.async { failed = true; buffering = false }
+                return
+            }
             guard it.status == .readyToPlay else { return }
             let size = it.presentationSize
             DispatchQueue.main.async {
-                withAnimation(Motion.content) { ready = true }
                 if size.width > 0, size.height > 0 { report?(Double(size.width / size.height)) }
+            }
+        }
+        failObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: item, queue: .main) { _ in
+            failed = true
+            buffering = false
+        }
+        // Oct 25 2026: the video is shown once it is really playing (frames on screen), not at "ready to play", when the
+        // layer can still be black; until then the still and a spinner show
+        controlObserver = p.observe(\.timeControlStatus, options: [.initial, .new]) { pl, _ in
+            let st = pl.timeControlStatus
+            DispatchQueue.main.async {
+                buffering = st == .waitingToPlayAtSpecifiedRate
+                if st == .playing, !ready { withAnimation(Motion.content) { ready = true } }
+            }
+        }
+        if controls {
+            let lo = max(0, media.trimStart ?? 0)
+            let hi = media.trimEnd
+            timeObserver = p.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { t in
+                let full = p.currentItem?.duration.seconds ?? 0
+                let total = (hi ?? 0) > lo ? (hi ?? 0) : full
+                let now = t.seconds
+                guard total.isFinite, now.isFinite, total > lo else { return }
+                let frac = (now - lo) / (total - lo)
+                let left = max(0, total - now)
+                DispatchQueue.main.async {
+                    progress = frac
+                    remaining = left
+                }
             }
         }
         StoryVideoCenter.shared.claim(p)
@@ -186,6 +409,17 @@ struct StoryVideoView: View {
     }
 
     private func stop() {
+        if let p = player, let o = timeObserver { p.removeTimeObserver(o) }
+        timeObserver = nil
+        controlObserver?.invalidate()
+        controlObserver = nil
+        if let failObserver { NotificationCenter.default.removeObserver(failObserver) }
+        failObserver = nil
+        failed = false
+        buffering = false
+        userPaused = false
+        progress = 0
+        remaining = 0
         if let p = player {
             p.pause()
             p.isMuted = true
@@ -207,21 +441,25 @@ struct StoryFitImage: View {
     let url: String
     var maxPixel: CGFloat = 1600
     var fill = false
+    /// false: the photo alone on black (the full-screen viewer), no blurred copy behind it
+    var backdrop = true
     var onRatio: ((Double) -> Void)? = nil
     @State private var image: UIImage?
 
     var body: some View {
         ZStack {
-            Color.navy
+            backdrop ? Color.navy : Color.black
             if let image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                    .blur(radius: fill ? 0 : 22)
-                    .opacity(fill ? 0 : 1)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipped()
-                    .accessibilityHidden(true)
+                if backdrop {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .blur(radius: fill ? 0 : 22)
+                        .opacity(fill ? 0 : 1)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
+                        .accessibilityHidden(true)
+                }
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: fill ? .fill : .fit)
@@ -289,8 +527,10 @@ struct StoryMediaViewer: View {
     @ViewBuilder
     private func page(_ m: StoryMediaInfo, active: Bool) -> some View {
         if m.isVideo {
-            StoryVideoView(media: m, autoplay: true, active: active, fill: false)
-                .aspectRatio(CGFloat(m.w > 0 && m.h > 0 ? m.w / m.h : 9.0 / 16.0), contentMode: .fit)
+            // Oct 25 2026: the whole screen is the video's frame and the video itself is fitted inside it (black bars),
+            // so it keeps its real shape. Posts carry no width/height for most videos, and the old 9:16 guess squeezed
+            // every landscape video into a tall box.
+            StoryVideoView(media: m, autoplay: true, active: active, fill: false, controls: true, backdrop: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ZoomableRemoteImage(url: m.url.isEmpty ? m.thumb : m.url)

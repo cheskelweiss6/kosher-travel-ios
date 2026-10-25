@@ -38,7 +38,13 @@ enum StoryRegion {
 extension StoryPost {
     /// The web's cardRegion(): the post's state / country (an article with stops in several: "Arizona, Utah"), or ""
     /// when it would only repeat the title or the city.
-    var regionLine: String {
+    var regionLine: String { regionText(hiding: [title, cityName]) }
+
+    /// Oct 25 2026 (Cheskel: "La Fortuna doesn't say the country"): a card that shows the CITY as its name hides the
+    /// line only when it repeats that name. The La Fortuna post is titled "Costa Rica", so the title rule hid "Costa Rica".
+    func cardRegionLine(shown: String) -> String { regionText(hiding: [shown]) }
+
+    private func regionText(hiding names: [String]) -> String {
         let subs = isGuide && !stops.isEmpty ? stops.map(\.citySub) : [citySub]
         var seen: Set<String> = []
         var out: [String] = []
@@ -48,7 +54,7 @@ extension StoryPost {
         }
         let line = out.prefix(3).joined(separator: ", ")
         if line.isEmpty { return "" }
-        if out.count == 1 && (StoryRegion.norm(line) == StoryRegion.norm(title) || StoryRegion.norm(line) == StoryRegion.norm(cityName)) { return "" }
+        if out.count == 1 && names.contains(where: { StoryRegion.norm($0) == StoryRegion.norm(line) }) { return "" }
         return line
     }
 }

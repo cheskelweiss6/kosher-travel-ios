@@ -72,6 +72,9 @@ struct StoryDetailView: View {
             loading = false
             if commentCount == nil { commentCount = await CommentsService.count(postId) }
             if let r = LaunchRoute.current, r.hasSuffix("post:\(postId)/comments"), post != nil { showComments = true }
+            // QA: tab:stories/post:<id>/viewer:<n> opens the full-screen viewer on item n
+            if let r = LaunchRoute.current, let at = r.range(of: "post:\(postId)/viewer:"), post != nil,
+               let k = Int(r[at.upperBound...]) { viewer = ViewerStart(index: k) }
         }
         .task(id: auth.uid) {
             await store.syncAccount(uid: auth.uid)
