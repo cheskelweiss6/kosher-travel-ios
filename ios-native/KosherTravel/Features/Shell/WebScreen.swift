@@ -27,13 +27,17 @@ struct WebScreen: View {
     @State private var safari: IdentifiedURL?
     @State private var push: ShellPush?
     @State private var signIn: SignInSheet.Mode?
+    /// Back inside the page: Europe → Poland → Kraków are levels of one page, so Back and the edge swipe step back
+    /// one level there first, and leave the screen only from the level it opened on.
+    @State private var webNav = ShellWebNav()
+    @State private var webCanGoBack = false
 
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
             if let authScript {
                 ShellWebView(route: route, authScript: authScript, reloadToken: reloadToken, fullScreen: fullScreen,
-                             onEvent: handle)
+                             nav: webNav, onEvent: handle)
                     .ignoresSafeArea(edges: fullScreen ? .all : [])
                     .opacity(failed == nil ? 1 : 0)
                     .accessibilityHidden(failed != nil)
@@ -57,6 +61,17 @@ struct WebScreen: View {
         .navigationTitle(pageTitle ?? route.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(fullScreen ? .hidden : .automatic, for: .navigationBar)
+        // While the page is on an inner level, the bar's Back steps the page back (the system Back would leave the
+        // whole screen); on the level the screen opened on, the system Back and swipe-back are untouched.
+        .navigationBarBackButtonHidden(webCanGoBack && !fullScreen)
+        .toolbar {
+            if webCanGoBack && !fullScreen {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { webNav.back(otherwise: { dismiss() }) } label: { WebBackLabel() }
+                        .accessibilityLabel("Back")
+                }
+            }
+        }
         .sheet(item: $safari) { item in
             SafariSheet(url: item.url).ignoresSafeArea()
         }
@@ -128,11 +143,29 @@ struct WebScreen: View {
             push = .traveler(uid: uid, name: name, photo: photo)
         case .title(let t):
             pageTitle = t
+        case .webBack(let has):
+            webCanGoBack = has
         case .link(let t):
             switch t {
             case .safari(let u), .ownSite(let u): safari = IdentifiedURL(url: u)
             case .system(let u): LinkOpener.openSystem(u)
             case .story(let id): push = .story(id, comments: false)
+            }
+        }
+    }
+}
+
+/// The bar's Back while an embedded page is on an inner level: drawn like the system Back (navy chevron; the bar
+/// gives it the standard 44pt tap area).
+private struct WebBackLabel: View {
+    var body: some View {
+        if #available(iOS 26.0, *) {
+            Image(systemName: "chevron.backward")
+                .font(.system(size: 17, weight: .semibold))
+        } else {
+            HStack(spacing: 5) {
+                Image(systemName: "chevron.backward").font(.system(size: 17, weight: .semibold))
+                Text("Back")
             }
         }
     }

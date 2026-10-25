@@ -69,6 +69,34 @@ enum Motion {
     /// Content replacing a spinner or placeholder.
     static var reveal: AnyTransition { .opacity }
 
+    // MARK: Back inside an embedded page
+    /// The left-edge swipe on a screen that shows the live website (WebScreen): it steps the page back one level
+    /// (Kraków → Poland → Europe) and only the screen's first level leaves the screen with the system swipe-back.
+    enum EdgeBack {
+        /// How far (points) the finger must travel for the swipe to go back.
+        static let commit: CGFloat = 70
+        /// A quick flick goes back after this distance at this speed (points / second).
+        static let flickDistance: CGFloat = 30
+        static let flickSpeed: CGFloat = 500
+        /// The furthest the back arrow travels in from the edge (points).
+        static let maxTravel: CGFloat = 90
+        /// How much of the finger's travel the page itself follows (a hint of movement). None with Reduce Motion.
+        static let pageFollow: CGFloat = 0.2
+        /// The back arrow's size (points).
+        static let tipSize: CGFloat = 40
+    }
+
+    /// UIKit counterpart of `move` for the few UIKit-drawn moments (the edge-swipe arrow settling back).
+    /// Reduce Motion: a short plain fade timing with no spring.
+    static func uiSettle(_ changes: @escaping () -> Void) {
+        if reduceMotion {
+            UIView.animate(withDuration: quick, delay: 0, options: [.beginFromCurrentState, .allowUserInteraction], animations: changes)
+        } else {
+            UIView.animate(withDuration: standard, delay: 0, usingSpringWithDamping: 0.86, initialSpringVelocity: 0,
+                           options: [.beginFromCurrentState, .allowUserInteraction], animations: changes)
+        }
+    }
+
     // MARK: Haptics (restrained: never on every tap)
     /// The only haptics the app plays, and when:
     enum Haptic {
