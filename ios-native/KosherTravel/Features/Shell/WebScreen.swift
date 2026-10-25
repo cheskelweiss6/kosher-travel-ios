@@ -40,6 +40,7 @@ struct WebScreen: View {
             }
             if failed != nil {
                 ShellErrorView(retry: retry)
+                    .transition(Motion.reveal)
             } else if loading {
                 ProgressView()
                     .controlSize(.large)
@@ -47,8 +48,12 @@ struct WebScreen: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.white)
                     .accessibilityLabel("Loading")
+                    .transition(Motion.reveal)
             }
         }
+        // The page shows the moment it is ready; the spinner just fades away over it (no wait added).
+        .animation(Motion.content, value: loading)
+        .animation(Motion.content, value: failed)
         .navigationTitle(pageTitle ?? route.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(fullScreen ? .hidden : .automatic, for: .navigationBar)

@@ -233,6 +233,7 @@ struct ZmanimPressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background(configuration.isPressed ? Color.surface : Color.clear, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
+            .animation(Motion.press, value: configuration.isPressed)
     }
 }
 
@@ -452,7 +453,7 @@ struct ZmanimFullCard: View {
             .padding(.top, 2)
 
             Button {
-                withAnimation(.easeOut(duration: 0.2)) { all.toggle() }
+                withAnimation(Motion.expand) { all.toggle() }
             } label: {
                 HStack(spacing: 6) {
                     Text(all ? "Show fewer" : "Show all zmanim").zFont(14, .semibold)
@@ -753,10 +754,11 @@ struct ZmanimChoice<T: Hashable>: View {
                         .frame(minHeight: 44)
                         .background(on ? Color.navy : Color.white, in: Capsule())
                         .overlay(Capsule().strokeBorder(on ? Color.clear : ZmanimColor.slate300, lineWidth: 1))
+                        .animation(Motion.select, value: on)
                         .contentShape(Capsule())
                     }
                     .buttonStyle(.plain)
-                    .sensoryFeedback(.selection, trigger: on)
+                    .sensoryFeedback(Motion.Haptic.selection, trigger: on)
                     .accessibilityAddTraits(on ? [.isSelected] : [])
                 }
             }

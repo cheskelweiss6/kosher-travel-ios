@@ -67,7 +67,7 @@ struct ComposeChooserSheet: View {
         .presentationDetents([.height(340)])
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(32)
-        .sensoryFeedback(.impact(weight: .light), trigger: tapped)
+        .sensoryFeedback(Motion.Haptic.tap, trigger: tapped)
         .fullScreenCover(item: $route, onDismiss: afterComposer) { r in
             NavigationStack { WebScreen(route: r, fullScreen: true) }
         }
@@ -138,8 +138,8 @@ private struct ComposeKindCard: View {
 private struct ComposePressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.97 : 1)
-            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed && !Motion.reduceMotion ? Motion.pressScale : 1)
+            .animation(Motion.press, value: configuration.isPressed)
     }
 }
 

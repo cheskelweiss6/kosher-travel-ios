@@ -107,6 +107,7 @@ struct CityThingsToDoView: View {
                                     .foregroundStyle(active == c ? Color.white : Color.navy)
                                     .background(active == c ? Color.navy : Color.white, in: Capsule())
                                     .overlay(Capsule().strokeBorder(active == c ? Color.clear : Color.hairline, lineWidth: 1))
+                                    .animation(Motion.select, value: active == c)
                             }
                             .buttonStyle(.plain)
                         }

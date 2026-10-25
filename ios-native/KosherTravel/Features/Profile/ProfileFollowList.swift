@@ -102,12 +102,13 @@ struct ProfileFollowList: View {
                     .frame(minHeight: 34)
                     .background(on ? Color.white : Color.navy, in: Capsule())
                     .overlay(Capsule().strokeBorder(on ? Color.hairline : Color.navy, lineWidth: 1))
+                    .animation(Motion.select, value: on)
                     .frame(minHeight: 44)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(busy.contains(p.uid))
-            .sensoryFeedback(.selection, trigger: on)
+            .sensoryFeedback(Motion.Haptic.selection, trigger: on)
             .accessibilityLabel(on ? "Unfollow \(p.name)" : "Follow \(p.name)")
         }
     }

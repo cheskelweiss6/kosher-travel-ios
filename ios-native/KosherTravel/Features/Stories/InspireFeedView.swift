@@ -285,7 +285,7 @@ struct InspirePostPage: View {
                             if ratios[i] == nil { ratios[i] = r }
                         }
                         .contentShape(Rectangle())
-                        .onTapGesture { if differs(i) { withAnimation(.easeOut(duration: 0.2)) { fill.toggle() } } }
+                        .onTapGesture { if differs(i) { withAnimation(Motion.move) { fill.toggle() } } }
                         .accessibilityLabel(m.placeName.isEmpty ? "Photo \(i + 1)" : m.placeName)
                     }
                 }
@@ -338,7 +338,7 @@ struct InspirePostPage: View {
                 if differs(page) {
                     glassIcon(fill ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right",
                               a11y: fill ? "Show the whole \(cur?.isVideo == true ? "video" : "photo")" : "Fill the screen") {
-                        withAnimation(.easeOut(duration: 0.2)) { fill.toggle() }
+                        withAnimation(Motion.move) { fill.toggle() }
                     }
                 }
             }
@@ -487,7 +487,7 @@ struct InspirePostPage: View {
                 }
                 .symbolEffect(.bounce, value: liked)
             }
-            .sensoryFeedback(.impact(weight: .light), trigger: liked)
+            .sensoryFeedback(Motion.Haptic.tap, trigger: liked)
 
             railButton(label: (commentCount ?? 0) > 0 ? "\(commentCount ?? 0)" : "Comment", a11y: "Comments", compact: compact) {
                 showComments = true

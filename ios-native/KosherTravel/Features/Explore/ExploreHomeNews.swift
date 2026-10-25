@@ -163,7 +163,7 @@ struct ExploreWhatsNew: View {
                     }
                     .padding(.horizontal, Theme.pagePadding)
                 }
-                .sensoryFeedback(.selection, trigger: filter)
+                .sensoryFeedback(Motion.Haptic.selection, trigger: filter)
             }
 
             Group {

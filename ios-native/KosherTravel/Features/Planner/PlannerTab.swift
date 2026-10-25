@@ -92,9 +92,9 @@ struct PlannerTab: View {
         .task { await feed.loadIfNeeded() }
         .onAppear(perform: applyLaunchRoute)
         .onChange(of: ShellRouter.shared.plannerPrompt) { _, _ in takeShellPrompt() }
-        .sensoryFeedback(.impact(weight: .light), trigger: store.sendCount)
-        .sensoryFeedback(.success, trigger: store.answerCount)
-        .sensoryFeedback(.error, trigger: store.errorText) { _, new in new != nil }
+        .sensoryFeedback(Motion.Haptic.tap, trigger: store.sendCount)
+        .sensoryFeedback(Motion.Haptic.success, trigger: store.answerCount)
+        .sensoryFeedback(Motion.Haptic.error, trigger: store.errorText) { _, new in new != nil }
     }
 
     /// A question handed over by another screen (an embedded page's "Plan with AI"), sent once.
@@ -240,7 +240,7 @@ struct PlannerTab: View {
     private func scroll(_ proxy: ScrollViewProxy, to id: String, anchor: UnitPoint) {
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 50_000_000)
-            withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo(id, anchor: anchor) }
+            withAnimation(Motion.scroll) { proxy.scrollTo(id, anchor: anchor) }
         }
     }
 
@@ -307,7 +307,7 @@ struct PlannerTab: View {
                 .hairline(radius: 16)
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .padding(.top, 20)
 
             Text("Or ask")
@@ -500,7 +500,7 @@ struct PlannerTab: View {
                             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                             .hairline(radius: 16)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -559,7 +559,7 @@ struct PlannerTab: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .hairline(radius: 12)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.pressable)
                         .accessibilityLabel("\(p.title) by \(p.authorName). Opens the article.")
                     }
                 }
@@ -582,7 +582,7 @@ struct PlannerTab: View {
                             .background(Color.white, in: Capsule())
                             .overlay(Capsule().strokeBorder(Color.navy.opacity(0.35), lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
             .padding(.horizontal, 16)
@@ -686,7 +686,9 @@ struct BubbleShape: Shape {
 /// Three dots while the planner thinks.
 struct TypingDots: View {
     var body: some View {
-        TimelineView(.animation) { ctx in
+        // 30 redraws a second is plenty for a soft pulse (was every display frame, up to 120 on ProMotion).
+        // Reduce Motion: the pulse is an opacity change, not movement, so it stays.
+        TimelineView(.animation(minimumInterval: Motion.pulseInterval)) { ctx in
             let t = ctx.date.timeIntervalSinceReferenceDate
             HStack(spacing: 5) {
                 ForEach(0..<3, id: \.self) { i in

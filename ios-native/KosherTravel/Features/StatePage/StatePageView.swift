@@ -139,7 +139,7 @@ struct StatePageView: View {
 
     private func select(_ tabId: String, _ proxy: ScrollViewProxy) {
         tab = tabId
-        withAnimation { proxy.scrollTo("tabs", anchor: .top) }
+        withAnimation(Motion.scroll) { proxy.scrollTo("tabs", anchor: .top) }
     }
 
     private func open(_ l: SPListing, _ category: PlaceCategory, _ index: Int) {

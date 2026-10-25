@@ -99,7 +99,7 @@ struct AreaView: View {
         }
         .onChange(of: scrollToGuides) { _, go in
             guard go else { return }
-            withAnimation(.smooth) { proxy.scrollTo("city-tour-guides-section", anchor: .top) }
+            withAnimation(Motion.scroll) { proxy.scrollTo("city-tour-guides-section", anchor: .top) }
             scrollToGuides = false
         }
         }
@@ -206,7 +206,7 @@ struct AreaView: View {
                     .clipped()
                     .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .accessibilityLabel(hub.title)
             VStack(alignment: .leading, spacing: 10) {
                 Button { scrollToGuides = true } label: {
@@ -287,7 +287,7 @@ struct AreaView: View {
             .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color.hairline, lineWidth: 1))
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
         .accessibilityLabel(hub.title)
     }
 

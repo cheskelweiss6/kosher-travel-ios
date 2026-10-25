@@ -86,7 +86,7 @@ struct PlannerHistoryView: View {
             } message: { _ in
                 Text("This conversation will be permanently deleted.")
             }
-            .sensoryFeedback(.success, trigger: deleted)
+            .sensoryFeedback(Motion.Haptic.success, trigger: deleted)
         }
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)

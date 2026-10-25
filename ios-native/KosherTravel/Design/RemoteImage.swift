@@ -150,11 +150,11 @@ struct RemoteImage: View {
                 for source in list {
                     if let hit = ImagePipeline.shared.cached(source, maxPixel: maxPixel) { image = hit; return }
                     if let loaded = await ImagePipeline.shared.load(source, maxPixel: maxPixel) {
-                        withAnimation(.easeOut(duration: 0.2)) { image = loaded }
+                        withAnimation(Motion.fade) { image = loaded }
                         return
                     }
                 }
-                withAnimation(.easeOut(duration: 0.2)) { failed = true }
+                withAnimation(Motion.fade) { failed = true }
             }
     }
 }

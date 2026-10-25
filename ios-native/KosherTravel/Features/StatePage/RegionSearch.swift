@@ -772,7 +772,7 @@ struct RegionSearchResults: View {
             .hairline(radius: 16)
             if rows.count > Self.perGroup {
                 Button(isOpen ? "Show less" : "Show all \(rows.count)") {
-                    withAnimation(.easeOut(duration: 0.2)) { if isOpen { open.remove(g) } else { open.insert(g) } }
+                    withAnimation(Motion.expand) { if isOpen { open.remove(g) } else { open.insert(g) } }
                 }
                 .font(.footnote.weight(.bold)).foregroundStyle(Color.navy).frame(minHeight: 44)
             }

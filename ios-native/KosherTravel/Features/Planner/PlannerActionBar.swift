@@ -72,8 +72,8 @@ struct PlannerActionBar: View {
             .padding(.vertical, 2)
         }
         .padding(.horizontal, -16)
-        .sensoryFeedback(.success, trigger: copied) { _, now in now }
-        .sensoryFeedback(.impact(weight: .light), trigger: made)
+        .sensoryFeedback(Motion.Haptic.success, trigger: copied) { _, now in now }
+        .sensoryFeedback(Motion.Haptic.tap, trigger: made)
         .sheet(item: $pdf) { file in
             PlannerPDFPreview(file: file)
         }
@@ -651,7 +651,7 @@ struct PlannerMapsSheet: View {
                     Button("Done") { dismiss() }
                 }
             }
-            .sensoryFeedback(.success, trigger: copied) { _, now in now }
+            .sensoryFeedback(Motion.Haptic.success, trigger: copied) { _, now in now }
         }
         .presentationDetents([.medium, .large])
     }
