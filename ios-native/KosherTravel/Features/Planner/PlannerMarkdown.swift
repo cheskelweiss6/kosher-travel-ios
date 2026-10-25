@@ -32,14 +32,14 @@ struct PlannerMarkdown: View {
                     .foregroundStyle(Color.navy)
                     .padding(.top, first ? 0 : 10)
             }
-        case .bullet(let text, let nested):
+        case .bullet(let text, let level):
             HStack(alignment: .firstTextBaseline, spacing: 9) {
-                Text("\u{2022}")
+                Text(level >= 2 ? "\u{25E6}" : "\u{2022}")
                     .foregroundStyle(Color.textTertiary)
                 Text(PlannerInline.attributed(text))
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.leading, nested ? 18 : 0)
+            .padding(.leading, CGFloat(level) * 18)
             .padding(.vertical, 1)
         case .numbered(let n, let text):
             HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -88,7 +88,7 @@ struct PlannerMarkdown: View {
 enum PlannerBlocks {
     enum Block: Hashable {
         case heading(Int, String)
-        case bullet(String, Bool)
+        case bullet(String, Int)   // text, nesting level (0 top, 1 two spaces in, 2 four or more: a kever's phone line)
         case numbered(String, String)
         case card(String, String, String)
         case rule
@@ -129,7 +129,8 @@ enum PlannerBlocks {
                 continue
             }
             if let m = match(line, #"^(\s*)[-*•]\s+(.*)$"#), !t.hasPrefix("**") {
-                out.append(.bullet(m[2], m[1].count >= 2))
+                let indent = m[1].replacingOccurrences(of: "\t", with: "  ").count
+                out.append(.bullet(m[2], indent >= 4 ? 2 : (indent >= 2 ? 1 : 0)))
                 continue
             }
             if match(t, #"^(-{3,}|\*{3,}|_{3,})$"#) != nil {
@@ -145,7 +146,7 @@ enum PlannerBlocks {
 /// Inline markdown: **bold**, *italic*, [text](url), bare links and phone numbers become tappable.
 enum PlannerInline {
     private static let linkRE = try? NSRegularExpression(pattern:
-        #"\[([^\]\n]{1,200})\]\((https?://[^\s)]+)\)|(https?://[^\s<>"'`]+)|((?:\+\d{1,3}[\s.-]?)?\(?\d{1,4}\)?[\s.-]\d{3,4}[\s.-]\d{3,4}(?:[\s.-]\d{2,4})?)"#)
+        #"\[([^\]\n]{1,200})\]\(((?:https?://|tel:|mailto:|sms:)[^\s)]+)\)|(https?://[^\s<>"'`]+)|((?:\+\d{1,3}[\s.-]?)?\(?\d{1,4}\)?[\s.-]\d{3,4}[\s.-]\d{3,4}(?:[\s.-]\d{2,4})?)"#)
 
     private static func escapeLabel(_ s: String) -> String {
         s.replacingOccurrences(of: "\\", with: "\\\\")
@@ -154,7 +155,9 @@ enum PlannerInline {
             .replacingOccurrences(of: "*", with: "")
     }
 
-    /// Rewrites bare links and phone numbers to markdown links; markdown links are kept.
+    /// Rewrites bare links and phone numbers to markdown links; markdown links are kept (https, and the kever routes'
+    /// caretaker numbers "[+48 604 536 914](tel:+48604536914)": before Oct 24 2026 the number inside the brackets was
+    /// linked a second time and the line showed "[…](tel:…)" as text).
     static func linkify(_ raw: String) -> String {
         guard let re = linkRE else { return raw }
         let ns = raw as NSString

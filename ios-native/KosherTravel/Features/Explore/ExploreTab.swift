@@ -13,7 +13,7 @@ struct ExploreTab: View {
         .onAppear(perform: applyLaunchRoute)
     }
 
-    /// QA screenshots open a screen directly: usa, caribbean, state:<id>, country:<id>, area:<key>.
+    /// QA screenshots open a screen directly: usa, caribbean, state:<id>, country:<id>, area:<key>, europe, kivrei.
     private func applyLaunchRoute() {
         guard path.isEmpty, let full = LaunchRoute.current else { return }
         let r = full.hasSuffix("#native") ? String(full.dropLast(7)) : full
@@ -23,5 +23,7 @@ struct ExploreTab: View {
         else if r.hasPrefix("state:") { path = [.unitedStates, .state(String(r.dropFirst(6)))] }
         else if r.hasPrefix("country:") { path = [.caribbean, .country(String(r.dropFirst(8)))] }
         else if r.hasPrefix("area:") { path = [.area(String(r.dropFirst(5)))] }
+        else if r == "europe" { path = [.web(.europe)] }
+        else if r == "kivrei" { path = [.web(.kivrei)] }
     }
 }

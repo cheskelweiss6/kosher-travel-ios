@@ -290,12 +290,12 @@ enum PlannerPDF {
                 } else {
                     add(inline(t), para(after: 5))
                 }
-            case .bullet(let text, let nested):
-                let indent: CGFloat = nested ? 28 : 14
+            case .bullet(let text, let level):
+                let indent: CGFloat = 14 + CGFloat(level) * 14
                 let a = NSMutableAttributedString(string: "•\t", attributes: [.font: font(11.5), .foregroundColor: grey])
                 a.append(inline(text))
                 let p = para(after: 3, indent: indent)
-                p.firstLineHeadIndent = nested ? 14 : 0
+                p.firstLineHeadIndent = CGFloat(level) * 14
                 add(a, p)
             case .numbered(let n, let text):
                 let a = NSMutableAttributedString(string: "\(n).\t", attributes: [.font: font(11.5), .foregroundColor: grey])
