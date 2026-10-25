@@ -21,6 +21,7 @@ struct PlannerTab: View {
 
     static let demoQuestion = "Kosher restaurants in Miami Beach"
     static let starters = [
+        "A 7-day kivrei tzadikim trip in Poland & Hungary",   // web PlannerChat STARTERS (Europe public, Oct 24 2026)
         "Kosher restaurants in Miami Beach",
         "A Shabbos-friendly hotel near a shul in Orlando",
         "Where can I find a minyan in Cancun?",
@@ -628,6 +629,11 @@ struct PlannerTab: View {
             PlannerMaps.open(url)
             return .handled
         }
+        // phone, WhatsApp (wa.me), mail: the system app, like links on the embedded screens (LinkOpener)
+        if case .system(let u)? = LinkOpener.target(for: url) {
+            LinkOpener.openSystem(u)
+            return .handled
+        }
         if let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" {
             safari = IdentifiedURL(url: PlannerLinks.affiliate(url))
             return .handled
@@ -650,6 +656,15 @@ struct PlannerTab: View {
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 150_000_000)
                 s.send(Self.demoQuestion)
+            }
+        case "kever":
+            // the kivrei tzadikim starter (Europe routes): checks the caretaker tap-to-call lines render as links
+            store.newChat()
+            store.revealsAnswers = false
+            let s = store
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 150_000_000)
+                s.send(Self.starters[0])
             }
         case "builder": showBuilder = true
         case "history": showHistory = true

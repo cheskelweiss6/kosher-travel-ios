@@ -77,10 +77,9 @@ struct ExploreHomeView: View {
     private var moreRows: some View {
         VStack(spacing: 0) {
             moreRow("building.columns", "Kivrei Tzadikim", .kivrei)
-            if auth.isAdmin {
-                Divider().overlay(Color.hairline)
-                moreRow("globe.europe.africa", "Europe", .europe)
-            }
+            // Europe is public since Oct 24 2026 (website src/europeLaunch.ts EUROPE_PUBLIC = true, Cheskel's "Go")
+            Divider().overlay(Color.hairline)
+            moreRow("globe.europe.africa", "Europe", .europe)
         }
         .padding(.horizontal, 14)
         .hairline(radius: 14)
@@ -117,6 +116,10 @@ struct ExploreHomeView: View {
                     }
                     NavigationLink(value: ExploreRoute.mexicoCentralAmerica) {
                         RegionCard(title: "Mexico & Central America", tag: "8 Countries", asset: "RegionCentralAmerica")
+                    }
+                    // web: the fourth region card (public since Oct 24 2026); the Europe page is the live site's for now
+                    NavigationLink(value: ExploreRoute.web(.europe)) {
+                        RegionCard(title: "Europe", tag: "Kivrei Tzadikim", asset: "RegionEurope")
                     }
                 }
                 .buttonStyle(.plain)
