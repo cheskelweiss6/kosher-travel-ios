@@ -148,6 +148,7 @@ struct InspirePostPage: View {
     @State private var confirmDelete = false
     @State private var deleting = false
     @State private var editRoute: WebRoute?
+    @State private var mediaEpoch = 0
     @State private var linkingArticle = false
     /// Every photo / video opens whole (fit) over a blurred copy; the Fit button fills the screen (web InspireFeed).
     @State private var fill = false
@@ -209,7 +210,8 @@ struct InspirePostPage: View {
     var body: some View {
         ZStack {
             Color.navy
-            mediaPager
+            // Oct 25 2026: a new identity after Edit post closes, so the post's video players are made fresh and start
+            mediaPager.id(mediaEpoch)
             // words: bottom left, narrower than the screen so they never run under the rail
             words
                 .padding(.leading, 16)
@@ -293,6 +295,7 @@ struct InspirePostPage: View {
             Task { @MainActor in
                 await store.reload(id)
                 if let p = store.post(id) { feed.replace(p) }
+                mediaEpoch += 1
             }
         }) { r in
             NavigationStack { WebScreen(route: r, fullScreen: true) }
