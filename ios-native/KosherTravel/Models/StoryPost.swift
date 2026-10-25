@@ -18,6 +18,8 @@ struct StoryStop: Hashable {
     var cityName: String
     var citySub: String
     var text: String
+    /// The last part of each tagged place's area ("Pompei, Campania, Italy" -> "Italy"), for country pages.
+    var placeCountries: [String] = []
 }
 
 struct StoryDay: Hashable {
@@ -114,8 +116,15 @@ struct StoryPost: Identifiable, Hashable {
         }
         stops = ((d["stops"] as? [Any]) ?? []).compactMap { (raw: Any) -> StoryStop? in
             guard let m = raw as? [String: Any] else { return nil }
+            let countries: [String] = ((m["places"] as? [Any]) ?? []).compactMap { (rawPlace: Any) -> String? in
+                guard let pl = rawPlace as? [String: Any], let geo = pl["geo"] as? [String: Any],
+                      let area = geo["area"] as? String else { return nil }
+                let last = area.split(separator: ",").last.map { String($0).trimmingCharacters(in: .whitespaces) } ?? ""
+                return last.isEmpty ? nil : last
+            }
             return StoryStop(cityId: (m["cityId"] as? String) ?? "", cityName: (m["cityName"] as? String) ?? "",
-                             citySub: (m["citySub"] as? String) ?? "", text: (m["text"] as? String) ?? "")
+                             citySub: (m["citySub"] as? String) ?? "", text: (m["text"] as? String) ?? "",
+                             placeCountries: countries)
         }
         days = ((d["days"] as? [Any]) ?? []).compactMap { (raw: Any) -> StoryDay? in
             guard let m = raw as? [String: Any] else { return nil }
@@ -146,7 +155,12 @@ struct StoryPost: Identifiable, Hashable {
             case .state:
                 return parts.first == target && (parts.count > 1 && parts[1].contains("united states"))
             case .country:
-                return parts.contains(target) || (target == "united states" && parts.contains("united states"))
+                if parts.contains(target) || (target == "united states" && parts.contains("united states")) { return true }
+                // Oct 25 2026 (Cheskel: Italy said "No articles" next to his Venice & Pompeii trip): a stop can be the
+                // country itself (cityName "Italy", cityId "geo-italy", no citySub), and tagged places carry their own
+                // area ("Pompei, Campania, Italy"). Either one puts the article on that country's page (same as the web).
+                if Self.norm(st.cityName) == target { return true }
+                return st.placeCountries.contains { Self.norm($0) == target }
             }
         }
     }
