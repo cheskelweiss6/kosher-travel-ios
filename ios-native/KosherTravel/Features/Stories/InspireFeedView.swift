@@ -136,6 +136,8 @@ struct InspirePostPage: View {
 
     @Environment(AuthStore.self) private var auth
     @Environment(\.openURL) private var openURL
+    /// Explore's list of posts: after Edit post the post read again replaces its copy there too (Oct 25 2026)
+    @Environment(StoryFeed.self) private var feed
     private var store: StoriesStore { .shared }
 
     @State private var page = 0
