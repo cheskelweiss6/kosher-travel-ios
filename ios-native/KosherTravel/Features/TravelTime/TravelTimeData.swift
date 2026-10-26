@@ -96,7 +96,6 @@ enum TTData {
         ("isla mujeres|mexico", 21.231, -86.731),
         ("isla navidad|mexico", 19.182, -104.675),
         ("jekyll island|united states|georgia", 31.07, -81.423),
-        ("jerusalem|israel", 31.769, 35.216),
         ("joshua tree|united states|california", 34.135, -116.313),
         ("jost van dyke|british virgin islands", 18.449, -64.744),
         ("key largo|united states|florida", 25.087, -80.447),
@@ -234,7 +233,6 @@ enum TTData {
 
     /// COUNTRY_COORDS.
     static let countryCoords: [String: (Double, Double)] = [
-        "israel": (31.78, 35.22),
         "south africa": (-33.92, 18.42),
         "bermuda": (32.3, -64.78),
         "puerto rico": (18.45, -66.07),
@@ -244,7 +242,6 @@ enum TTData {
     /// Destinations for the origin search, in the website's order.
     static let searchDests: [TTDest] = [
         TTDest(id: "ocho-rios", name: "Ocho Rios", country: "Jamaica", state: "Saint Ann"),
-        TTDest(id: "jerusalem", name: "Jerusalem", country: "Israel", state: ""),
         TTDest(id: "miami", name: "Miami", country: "United States", state: "Florida"),
         TTDest(id: "paris", name: "Paris", country: "France", state: ""),
         TTDest(id: "san-jose", name: "San José", country: "Costa Rica", state: ""),

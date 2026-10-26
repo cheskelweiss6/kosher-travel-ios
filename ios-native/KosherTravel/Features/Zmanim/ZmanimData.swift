@@ -266,7 +266,6 @@ skagway|59.6226|-135.4094|25
 sitka|57.4086|-135.4596|44
 dc-washington|38.8898|-77.0403|37
 ocho-rios|18.4081|-77.1011|24
-jerusalem|31.7788|35.2258|52
 san-jose|9.9327|-84.0797|13
 manuel-antonio|9.4086|-84.1548|13
 la-fortuna|10.4717|-84.6444|13
@@ -670,7 +669,6 @@ skagway|Skagway|Alaska, United States|59.6226|-135.4094
 sitka|Sitka|Alaska, United States|57.4086|-135.4596
 dc-washington|Washington|Washington DC, United States|38.8898|-77.0403
 ocho-rios|Ocho Rios|Saint Ann, Jamaica|18.4081|-77.1011
-jerusalem|Jerusalem|Israel|31.7788|35.2258
 san-jose|San José|Costa Rica|9.9327|-84.0797
 manuel-antonio|Manuel Antonio|Costa Rica|9.4086|-84.1548
 la-fortuna|La Fortuna|Costa Rica|10.4717|-84.6444
