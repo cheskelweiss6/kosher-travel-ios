@@ -219,7 +219,7 @@ extension BellNote {
             note("1", "comment", "Yossi K.", title: "Shabbos in Miami Beach", text: "Which shul did you daven at?", ago: 4),
             note("2", "like", "Malky S.", title: "Shabbos in Miami Beach", ago: 25, others: 3),
             note("3", "follow", "Dovid R.", ago: 90),
-            note("4", "yahrzeit", "", place: "Rebbe Elimelech of Lizensk", text: "is tomorrow, 21 Adar", ago: 180, read: true),
+            note("4", "yahrzeit", "", text: "is tomorrow, 21 Adar", place: "Rebbe Elimelech of Lizensk", ago: 180, read: true),
             note("5", "removed", "", title: "My trip to Cancun", text: "photo not allowed", type: "post", ago: 600, read: true),
             note("6", "review", "Chaya L.", text: "Great food, very clean", place: "Kosher Delight Warsaw", rating: 5, ago: 1500, read: true),
         ]
