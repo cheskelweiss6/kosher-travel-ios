@@ -4,6 +4,7 @@
 import { PREMIUM_STATES, PREMIUM_CITIES } from '../../src/usData';
 import { PREMIUM_CARIBBEAN, CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS } from '../../src/caribbeanData';
 import { DB_DESTINATIONS } from '../../src/database';
+import { CANADA_DESTINATIONS } from '../../src/canadaDestinations';
 import { getCityHeroImage, DEFAULT_TRAVEL_HERO } from '../../src/cityHeroPhotos';
 import thingsToDoUpdates from '../../src/thingsToDoUpdates.json';
 import * as fs from 'fs';
@@ -91,7 +92,9 @@ const attraction = (a: any) => venue({ ...a, photo: attractionPhoto(a) });
 // and the rest of Mexico & Central America were exported twice, the second copy an empty stub).
 const APP_DESTINATIONS: any[] = (() => {
   const seen = new Set<string>();
-  return [...CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS, ...DB_DESTINATIONS.filter((d: any) => d.region === 'North America' || d.region === 'Caribbean' || d.region === 'Central America')]
+  return [...CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS, ...DB_DESTINATIONS.filter((d: any) => d.region === 'North America' || d.region === 'Caribbean' || d.region === 'Central America'),
+    // Canada (Oct 29 2026: Montreal, Toronto; src/canadaDestinations.ts): the region a person sees is 'Canada' (TravelRegions)
+    ...CANADA_DESTINATIONS]
     .filter((d: any) => { const id = str(d?.id); if (!id || seen.has(id)) return false; seen.add(id); return true; });
 })();
 

@@ -3,10 +3,12 @@
 enum CityCardPhotoData {
     static let overrides: [String: [String]] = [
         "hotel|fort-de-france|hotel bakoua les trois-ilets": ["https://kosher-travel-img.sites.tab.bot/venues/les-trois-ilets-martinique.webp"],
+        "hotel|guatemala city|hyatt centric guatemala city": ["https://kosher-travel-img.sites.tab.bot/wm/07bab3fb9dc10b5b.webp"],
         "hotel|managua|hyatt place managua": ["https://kosher-travel-img.sites.tab.bot/wm/1633ac203a664b00.webp"],
         "hotel|managua|real intercontinental metrocentro managua": ["https://kosher-travel-img.sites.tab.bot/wm/1633ac203a664b00.webp"],
         "hotel|tegucigalpa|hyatt place tegucigalpa": ["https://kosher-travel-img.sites.tab.bot/wm/6c69b64455ef8874.webp"],
         "hotel|tegucigalpa|intercontinental tegucigalpa": ["https://kosher-travel-img.sites.tab.bot/wm/6c69b64455ef8874.webp"],
         "restaurant|santa fe|manhattan avenue deli": ["https://kosher-travel-img.sites.tab.bot/venues/manhattan-avenue-deli-santa-fe.webp", ""],
+        "synagogue|tegucigalpa|sinagoga shevet ajim (comunidad hebrea de tegucigalpa)": ["https://kosher-travel-img.sites.tab.bot/wm/6c69b64455ef8874.webp"],
     ]
 }

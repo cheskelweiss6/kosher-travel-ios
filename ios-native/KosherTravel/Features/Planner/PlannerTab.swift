@@ -49,6 +49,11 @@ struct PlannerTab: View {
                 .navigationTitle("AI Planner")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbar }
+                // Cheskel's video (Oct 29): the bar's buttons sat over the featured city photos. A solid bar, so the
+                // content scrolls under it and never shows through (iOS 26: a hard top edge instead of the soft fade).
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarBackground(Color(.systemBackground), for: .navigationBar)
+                .modifier(HardTopEdge())
                 .confirmationDialog("Start a new chat?", isPresented: $confirmNewChat, titleVisibility: .visible) {
                     Button("New chat") { store.newChat() }
                     Button("Cancel", role: .cancel) {}
@@ -901,5 +906,17 @@ struct PlannerComposer: View {
         draft = ""
         focused = false   // the answer and the tab bar show again after sending
         store.send(text)
+    }
+}
+
+
+/// iOS 26: the top scroll edge is hard (solid) under the planner's bar, so photos never show through the buttons.
+private struct HardTopEdge: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content.scrollEdgeEffectStyle(.hard, for: .top)
+        } else {
+            content
+        }
     }
 }

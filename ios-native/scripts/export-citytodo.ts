@@ -13,6 +13,7 @@ import { deps } from './export-statepages-deps';
 import * as F from './export-citytodo.gen';
 import { CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS } from '../../src/caribbeanData';
 import { DB_DESTINATIONS } from '../../src/database';
+import { CANADA_DESTINATIONS } from '../../src/canadaDestinations';
 import { getEnrichedAttractions, newThingsReady, getCuratedAttractionPhoto } from '../../src/attractionsDatabase';
 import { resolveLocationPhotos } from '../../src/locationPhotos';
 import { isValidImageUrl, getHotelFallbackPhoto } from '../../src/cityHeroPhotos';
@@ -84,8 +85,11 @@ function webGallery(name: string, city: string, category: string, fallbackPhoto:
 
   // The keys the app uses (export-data.ts: cities = PREMIUM_CITIES, destinations = these lists)
   const keyed: [string, any][] = [];
-  for (const c of PREMIUM_CITIES as any[]) keyed.push(['us:' + str(c.id), byId.get(c.id) || F.convertUSCityToDestination(c)]);
-  const appDestsAll = [...CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS, ...DB_DESTINATIONS.filter((d: any) => d.region === 'North America' || d.region === 'Caribbean' || d.region === 'Central America')];
+  // A US city's own record only (Oct 29 2026: 'manchester' is also Manchester UK in the world list; the UK one's
+  // Things to Do showed on Manchester NH). The website's US city page builds its destination from the US city.
+  const usOwn = (d: any) => d && (!str(d.country) || /^(united states|usa|us)$/i.test(str(d.country)));
+  for (const c of PREMIUM_CITIES as any[]) { const d = byId.get(c.id); keyed.push(['us:' + str(c.id), usOwn(d) ? d : F.convertUSCityToDestination(c)]); }
+  const appDestsAll = [...CARIBBEAN_MEXICO_CENTRAL_AMERICA_DESTINATIONS, ...DB_DESTINATIONS.filter((d: any) => d.region === 'North America' || d.region === 'Caribbean' || d.region === 'Central America'), ...CANADA_DESTINATIONS];
   // one per id, the first winning (same list as export-data.ts APP_DESTINATIONS)
   const seenDest = new Set<string>();
   const appDests = appDestsAll.filter((d: any) => { const id = str(d?.id); if (!id || seenDest.has(id)) return false; seenDest.add(id); return true; });
