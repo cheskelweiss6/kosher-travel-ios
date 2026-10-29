@@ -71,6 +71,10 @@ struct BellNote: Identifiable, Hashable {
     let rating: Int?
     var ids: [String]
     var others: Int
+    /// V2-FULL-1029 (web KtNotification): what a report / removal note is about (post, article, comment, review,
+    /// profile) and, for a yahrzeit note, the kever's id.
+    var targetType: String = ""
+    var targetId: String = ""
 }
 
 struct BellSwitches: Equatable {
@@ -323,7 +327,7 @@ final class ProfileStore {
                 let kind = (x["kind"] as? String) ?? ""
                 return BellNote(
                     id: doc.documentID,
-                    kind: ["follow", "like", "review", "report"].contains(kind) ? kind : "comment",
+                    kind: ["follow", "like", "review", "report", "yahrzeit", "removed"].contains(kind) ? kind : "comment",
                     actorUid: (x["actorUid"] as? String) ?? "",
                     actorName: ((x["actorName"] as? String) ?? "").isEmpty ? "Traveler" : ((x["actorName"] as? String) ?? ""),
                     actorPhoto: (x["actorPhoto"] as? String) ?? "",
@@ -336,7 +340,9 @@ final class ProfileStore {
                     placeName: (x["placeName"] as? String) ?? "",
                     rating: (x["rating"] as? NSNumber)?.intValue,
                     ids: [doc.documentID],
-                    others: 0)
+                    others: 0,
+                    targetType: (x["targetType"] as? String) ?? "",
+                    targetId: (x["targetId"] as? String) ?? "")
             }
             let ok = error == nil
             if let error { print("[KT] notifications read failed: \(error.localizedDescription)") }

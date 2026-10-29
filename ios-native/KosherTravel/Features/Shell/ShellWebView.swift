@@ -134,7 +134,16 @@ struct ShellWebView: UIViewRepresentable {
             case "signin": onEvent(.signIn(str("mode") == "signup" ? .signUp : .signIn))
             case "tab":
                 if (body["inPage"] as? Bool) == true { onEvent(.inPageTab(str("tab"))) }
-                else { onEvent(.tab(str("tab"), prompt: body["prompt"] as? String)) }
+                else {
+                    // V2-FULL-1029: a Stories request (Share from a city page, a post) rides along to the Stories tab
+                    if str("tab") == "stories", let intent = body["intent"] as? [String: Any],
+                       JSONSerialization.isValidJSONObject(intent),
+                       let data = try? JSONSerialization.data(withJSONObject: intent),
+                       let json = String(data: data, encoding: .utf8) {
+                        ShellRouter.shared.storiesRequest = json
+                    }
+                    onEvent(.tab(str("tab"), prompt: body["prompt"] as? String))
+                }
             case "title": if !str("title").isEmpty { onEvent(.title(str("title"))) }
             case "navback":
                 let has = (body["back"] as? Bool) ?? false

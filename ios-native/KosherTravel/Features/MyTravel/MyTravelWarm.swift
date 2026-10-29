@@ -16,6 +16,10 @@ import Observation
 @Observable
 final class WarmWebPage {
     static let myTravel = WarmWebPage(route: .myTravelWarm)
+    /// The Explore tab (V2-FULL-1029): the website's Explore home, regions, countries, states, cities and listings.
+    static let explore = WarmWebPage(route: .exploreTab)
+    /// The Stories tab (V2-FULL-1029): the website's Stories (Get Inspired, Articles, posts, travelers, Share, admin tools).
+    static let stories = WarmWebPage(route: .storiesTab)
 
     let route: WebRoute
     /// The page has opened its screen (the site posts "ready"); before that the tab shows a placeholder.
@@ -54,6 +58,8 @@ final class WarmWebPage {
     @ObservationIgnored private var pageTab = "mytravel"
     /// A question (and/or a city to plan) for the page's planner, sent once the page can take it.
     @ObservationIgnored private var pendingAsk: (prompt: String?, city: String?)?
+    /// Scripts for the page that wait until it has opened (V2-FULL-1029: a Stories request from another tab).
+    @ObservationIgnored private var pendingJS: [String] = []
 
     init(route: WebRoute) { self.route = route }
 
@@ -131,6 +137,7 @@ final class WarmWebPage {
         case .ready:
             ready = true
             detectPlanner()
+            flushJS()
         case .loaded:
             // An older website build that never says "ready" is still shown after a moment.
             let gen = generation
@@ -139,6 +146,7 @@ final class WarmWebPage {
                 guard let self, gen == self.generation, !self.ready else { return }
                 self.ready = true
                 self.detectPlanner()
+                self.flushJS()
             }
         case .failed(let msg):
             failed = msg
@@ -176,6 +184,19 @@ final class WarmWebPage {
     func ask(prompt: String?, city: String?) {
         pendingAsk = (prompt, city)
         syncTab()
+    }
+
+    /// Run a script in the page once it has opened (now, when it already has).
+    func run(js: String) {
+        pendingJS.append(js)
+        flushJS()
+    }
+
+    private func flushJS() {
+        guard ready, let wv = webView, !pendingJS.isEmpty else { return }
+        let all = pendingJS
+        pendingJS = []
+        for js in all { wv.evaluateJavaScript(js) { _, _ in } }
     }
 
     private func detectPlanner() {
@@ -302,6 +323,8 @@ struct WarmWebHost: UIViewRepresentable {
 struct WarmWebScreen: View {
     let page: WarmWebPage
     var tab: AppTab = .myTravel
+    /// A bar title that does not follow the page (Stories: "" — the page shows its own heading).
+    var fixedTitle: String? = nil
 
     @Environment(AuthStore.self) private var auth
     @State private var safari: IdentifiedURL?
@@ -325,7 +348,7 @@ struct WarmWebScreen: View {
             }
         }
         .animation(Motion.content, value: page.ready)
-        .navigationTitle(page.title ?? page.route.title)
+        .navigationTitle(fixedTitle ?? page.title ?? page.route.title)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $safari) { item in
             SafariSheet(url: item.url).ignoresSafeArea()

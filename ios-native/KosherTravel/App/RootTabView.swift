@@ -57,10 +57,20 @@ struct RootTabView: View {
             try? await Task.sleep(nanoseconds: 400_000_000)   // after the first screen is up
             await WarmWebPage.myTravel.warm(uid: auth.uid)
         }
-        // The Stories feed too, so its first open shows posts instead of placeholders.
-        .task {
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
-            await StoriesStore.shared.loadIfNeeded()
+        // V2-FULL-1029: the Explore tab (the website's Explore page) loads first, right away; the Stories page a moment
+        // later, behind the app's screen, so its first open shows posts instead of a placeholder.
+        .task(id: auth.ready ? (auth.uid ?? "-") : "?") {
+            guard auth.ready else { return }
+            await WarmWebPage.explore.warm(uid: auth.uid)
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
+            await WarmWebPage.stories.warm(uid: auth.uid)
+        }
+        // A Stories request from another tab's page (Share from a city, a post): the Stories page opens it.
+        .onChange(of: router.storiesRequest) { _, json in
+            guard let json, !json.isEmpty else { return }
+            router.storiesRequest = nil
+            Task { await WarmWebPage.stories.warm(uid: auth.uid) }
+            WarmWebPage.stories.run(js: "(function(){try{return !!(window.__ktShellStories && window.__ktShellStories(" + json + "));}catch(e){return false;}})()")
         }
         .onAppear {
             router.auth = auth

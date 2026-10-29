@@ -23,6 +23,9 @@ final class ShellRouter {
     var notice: ShellNotice?
     /// A shared link to open over the current tab.
     var deepLink: DeepLinkTarget?
+    /// V2-FULL-1029: what another tab's page asked the Stories tab to open (the website's stories request as JSON: the
+    /// composer for a city, a post, a traveler). RootTabView hands it to the Stories page and clears it.
+    var storiesRequest: String?
     /// The Profile page, opened from the header's avatar / settings button (web: the header button, not a tab;
     /// the web's tab bar has 4 tabs: Explore, AI Planner, My Travel, Stories).
     var showProfile = false

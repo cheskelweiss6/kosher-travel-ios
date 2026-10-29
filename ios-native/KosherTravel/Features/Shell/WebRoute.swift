@@ -64,6 +64,16 @@ struct WebRoute: Hashable, Identifiable {
     static let myTravelWarm = WebRoute(screen: "mytravel", params: ["planner": "1"], title: "My Travel")
     static let travelMap = WebRoute(screen: "travelmap", title: "Travel Map")
 
+    // MARK: Tabs that are the live website (V2-FULL-1029)
+    /// Cheskel, Oct 29 2026: "Make sure that the app is fully comparable with the website, everything is exactly the same."
+    /// The Explore and Stories tabs show the website's own Explore and Stories pages (kept warm, MyTravelWarm.swift), so
+    /// every region, city, listing, post and admin tool is the website's, and each website update reaches the app at once.
+    /// The website's src/ktShell.ts (shellTabPage) lets these pages open posts on top of themselves and hand Stories /
+    /// My Travel / AI Planner / Profile to the app's tab bar.
+    static let exploreTab = WebRoute(screen: "explore", title: "Explore")
+    /// No bar title: the page shows its own "Stories" heading (no double header).
+    static let storiesTab = WebRoute(screen: "stories", title: "")
+
     // MARK: Stories
     static let inspire = WebRoute(screen: "inspire", title: "Get Inspired")
     static func compose(as kind: String? = nil, city: String? = nil, region: String? = nil) -> WebRoute {

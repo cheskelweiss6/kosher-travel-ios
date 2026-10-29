@@ -2,7 +2,9 @@ import SwiftUI
 import FirebaseFirestore
 
 /// Stories tab: the live traveler feed (Articles / Inspiration, All / Following, tags), like the web's Stories tab.
-struct StoriesTab: View {
+/// The native Stories tab (Oct 23–25 2026). Not shown since V2-FULL-1029: the Stories tab is the website's own Stories
+/// page (StoriesWebTab.swift), kept here for the native rebuild.
+struct NativeStoriesTab: View {
     @Environment(AuthStore.self) private var auth
     private var store: StoriesStore { .shared }
     @State private var path: [StoriesRoute] = []

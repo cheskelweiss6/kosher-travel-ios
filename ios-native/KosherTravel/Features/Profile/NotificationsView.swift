@@ -11,6 +11,7 @@ struct NotificationsView: View {
     @State private var openPost: String?
     @State private var openPerson: BellNote?
     @State private var pendingDelete: BellNote?
+    @State private var openKivrei = false
 
     var body: some View {
         Group {
@@ -20,7 +21,7 @@ struct NotificationsView: View {
                                            description: Text("Check your connection."))
                 } else if list.isEmpty {
                     ContentUnavailableView("No notifications yet", systemImage: "bell",
-                                           description: Text("When someone likes or comments on your post, or follows you, it shows up here."))
+                                           description: Text("When someone likes or comments on your post, or follows you, it shows up here."))   // the website's words
                 } else {
                     List {
                         ForEach(list) { n in
@@ -63,6 +64,9 @@ struct NotificationsView: View {
         .navigationDestination(item: $openPerson) { n in
             TravelerView(uid: n.actorUid, name: n.actorName, photo: n.actorPhoto)
         }
+        .navigationDestination(isPresented: $openKivrei) {
+            WebScreen(route: .kivrei)
+        }
         .task(id: auth.uid) { await store.bind(uid: auth.uid) }
         .accessibilityIdentifier("notifications-page")
         // every delete asks first (Cheskel, Oct 23 2026)
@@ -85,6 +89,12 @@ struct NotificationsView: View {
             if !n.actorUid.isEmpty { openPerson = n }
         case "review":
             break
+        case "yahrzeit":
+            // web: the kever's card; here the website's Kivrei Tzadikim page (it has the card, the heart and the alert)
+            openKivrei = true
+        case "removed":
+            // web: a removed comment opens its post; a removed post / article / review is gone
+            if n.targetType == "comment" && !n.postId.isEmpty { openPost = n.postId }
         default:
             // StoryDetailView loads the post itself and says honestly when it was removed.
             if !n.postId.isEmpty { openPost = n.postId }
@@ -113,7 +123,7 @@ struct BellNoteRow: View {
                     .foregroundStyle(Color.textSecondary)
             }
             Spacer(minLength: 0)
-            if n.kind != "follow" && n.kind != "review" && !n.postThumb.isEmpty {
+            if !["follow", "review", "yahrzeit", "removed"].contains(n.kind) && !n.postThumb.isEmpty {
                 RemoteImage(url: n.postThumb, maxPixel: 160)
                     .frame(width: 44, height: 44)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -130,6 +140,8 @@ struct BellNoteRow: View {
         case "like": return "heart"
         case "review": return "star"
         case "report": return "flag"
+        case "yahrzeit": return "flame"
+        case "removed": return "trash"
         default: return "bubble.left"
         }
     }
@@ -147,7 +159,21 @@ struct BellNoteRow: View {
             let stars = (n.rating ?? 0) > 0 ? Text(" \u{00B7} \(n.rating ?? 0) star\((n.rating ?? 0) == 1 ? "" : "s")") : Text("")
             return name + Text(" reviewed ") + Text(n.placeName.isEmpty ? "a place" : n.placeName).fontWeight(.semibold) + stars + quote
         case "report":
-            return name + Text(" reported a comment on ") + Text(n.postTitle).fontWeight(.semibold) + quote
+            // the website's words (NotificationsSheet.tsx)
+            switch n.targetType {
+            case "post": return name + Text(" reported the post ") + Text(n.postTitle).fontWeight(.semibold) + quote
+            case "profile": return name + Text(" reported a profile") + quote
+            case "review": return name + Text(" reported a review") + quote
+            default: return name + Text(" reported a comment on ") + Text(n.postTitle).fontWeight(.semibold) + quote
+            }
+        case "removed":
+            let what = ["article", "comment", "review"].contains(n.targetType) ? n.targetType : "post"
+            let title = n.postTitle.isEmpty || n.postTitle == "your post" ? Text("") : Text(" ") + Text(n.postTitle).fontWeight(.semibold)
+            let why = n.text.isEmpty ? Text("") : Text(": \(n.text)")
+            return Text("Kosher Travel").fontWeight(.semibold) + Text(" removed your \(what)") + title + why
+        case "yahrzeit":
+            let who = n.placeName.isEmpty ? n.postTitle : n.placeName
+            return Text("Yahrzeit of ") + Text(who).fontWeight(.semibold) + Text(n.text.isEmpty ? "" : " " + n.text)
         default:
             return name + Text(" commented on ") + Text(n.postTitle).fontWeight(.semibold) + quote
         }

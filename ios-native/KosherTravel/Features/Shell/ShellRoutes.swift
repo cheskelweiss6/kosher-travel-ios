@@ -5,11 +5,11 @@ import SwiftUI
 /// every detail (Cheskel's parity rule); until then the shell shows the live screen, so nothing is missing.
 enum ShellRoutes {
     /// State pages: native since Oct 23 2026 (every tab, in-page search, travelers' articles and tips).
-    static var nativeStatePage: Bool { true }
+    static var nativeStatePage: Bool { false }   // V2-FULL-1029: the website's page (it is newer)
     /// Caribbean / Central America country pages: native since Oct 23 2026.
-    static var nativeCountryPage: Bool { true }
+    static var nativeCountryPage: Bool { false }   // V2-FULL-1029: the website's page (it is newer)
     /// City pages: native since Oct 23 2026 (HYBRID-SHELL-4): the hub, every sub-page and the website's hero header.
-    static var nativeCityPage: Bool { true }
+    static var nativeCityPage: Bool { false }   // V2-FULL-1029: the website's page (it is newer)
     /// QA: a launch route ending in "#native" shows the native rebuild of a still-embedded screen.
     static var previewNative: Bool { LaunchRoute.current?.hasSuffix("#native") == true }
 }
