@@ -137,6 +137,8 @@ struct WebScreen: View {
             signIn = mode
         case .tab(let name, let prompt):
             ShellRouter.shared.open(tab: name, prompt: prompt)
+        case .inPageTab(let name):
+            ShellRouter.shared.open(tab: name)
         case .story(let id, let comments):
             push = .story(id, comments: comments)
         case .traveler(let uid, let name, let photo):

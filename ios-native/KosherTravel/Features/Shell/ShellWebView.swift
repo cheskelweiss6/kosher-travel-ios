@@ -10,6 +10,9 @@ enum ShellEvent {
     case close                       // leave this embedded screen (its own Back / X / Close)
     case signIn(SignInSheet.Mode)    // the page needs a signed-in user: show the native sign-in sheet
     case tab(String, prompt: String?) // go to a native tab (AI Planner, Profile…), optionally with a planner question
+    /// The warm My Travel page (website from Oct 29 2026, params planner=1) moved itself between its AI Planner and
+    /// My Travel screens (a "Plan a trip" or "View trip" tap): show the native tab that holds it now.
+    case inPageTab(String)
     case story(String, comments: Bool)
     case traveler(uid: String, name: String, photo: String)
     case title(String)
@@ -129,7 +132,9 @@ struct ShellWebView: UIViewRepresentable {
             case "ready": onEvent(.ready)
             case "close": onEvent(.close)
             case "signin": onEvent(.signIn(str("mode") == "signup" ? .signUp : .signIn))
-            case "tab": onEvent(.tab(str("tab"), prompt: body["prompt"] as? String))
+            case "tab":
+                if (body["inPage"] as? Bool) == true { onEvent(.inPageTab(str("tab"))) }
+                else { onEvent(.tab(str("tab"), prompt: body["prompt"] as? String)) }
             case "title": if !str("title").isEmpty { onEvent(.title(str("title"))) }
             case "navback":
                 let has = (body["back"] as? Bool) ?? false

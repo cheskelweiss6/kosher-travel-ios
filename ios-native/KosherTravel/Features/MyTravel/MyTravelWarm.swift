@@ -15,7 +15,7 @@ import Observation
 @MainActor
 @Observable
 final class WarmWebPage {
-    static let myTravel = WarmWebPage(route: .myTravel)
+    static let myTravel = WarmWebPage(route: .myTravelWarm)
 
     let route: WebRoute
     /// The page has opened its screen (the site posts "ready"); before that the tab shows a placeholder.
@@ -32,13 +32,28 @@ final class WarmWebPage {
     @ObservationIgnored private var started = false
     @ObservationIgnored private var loadedUid = ""
     @ObservationIgnored private var generation = 0
-    /// The on-screen tab's handler for what the page asks (push a post, open a link, sign in…).
-    @ObservationIgnored var handler: ((ShellEvent) -> Void)?
-    @ObservationIgnored var visible = false {
-        didSet { if visible, let mode = pendingSignIn { pendingSignIn = nil; handler?(.signIn(mode)) } }
-    }
+    /// The tabs showing this page (My Travel, and the AI Planner when the website has the in-page planner), each with
+    /// its handler for what the page asks (push a post, open a link, sign in…). Pushes, links and tab switches only come
+    /// from a tap, so they go to the tab on screen.
+    @ObservationIgnored private var handlers: [AppTab: (ShellEvent) -> Void] = [:]
+    @ObservationIgnored private var visibleTabs: Set<AppTab> = []
+    /// The native tab whose container holds the web view now (observed: each tab's host attaches it when it is theirs).
+    private(set) var shownTab: AppTab?
+    /// The page is on screen in some tab.
+    var visible: Bool { !visibleTabs.isEmpty }
+    private var handler: ((ShellEvent) -> Void)? { shownTab.flatMap { handlers[$0] } }
     /// A sign-in request the page sent while it was not on screen; shown when the tab appears.
     @ObservationIgnored private var pendingSignIn: SignInSheet.Mode?
+
+    /// Whether the loaded website has the in-page AI Planner (window.__ktShellTab, website from Oct 29 2026): nil until
+    /// the page has opened once. False keeps the native planner chat in the AI Planner tab.
+    private(set) var inPagePlanner: Bool?
+    /// True for a moment while the page changes screen for a tab switch (the tab covers the old screen meanwhile).
+    private(set) var switching = false
+    /// The page's own screen, as last set or reported: "mytravel" or "planner".
+    @ObservationIgnored private var pageTab = "mytravel"
+    /// A question (and/or a city to plan) for the page's planner, sent once the page can take it.
+    @ObservationIgnored private var pendingAsk: (prompt: String?, city: String?)?
 
     init(route: WebRoute) { self.route = route }
 
@@ -72,6 +87,8 @@ final class WarmWebPage {
                                        forMainFrameOnly: true))
         started = true
         loadedUid = uid
+        pageTab = "mytravel"
+        switching = false
         ready = false
         failed = nil
         wv.load(URLRequest(url: route.url))
@@ -113,13 +130,15 @@ final class WarmWebPage {
         switch e {
         case .ready:
             ready = true
+            detectPlanner()
         case .loaded:
             // An older website build that never says "ready" is still shown after a moment.
             let gen = generation
             Task { @MainActor [weak self] in
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
-                guard let self, gen == self.generation else { return }
+                guard let self, gen == self.generation, !self.ready else { return }
                 self.ready = true
+                self.detectPlanner()
             }
         case .failed(let msg):
             failed = msg
@@ -127,9 +146,86 @@ final class WarmWebPage {
             title = t
         case .signIn(let mode):
             if visible, let handler { handler(e) } else { pendingSignIn = mode }
+        case .inPageTab(let name):
+            // the page moved itself (Plan a trip / View trip); the tab that shows it follows
+            pageTab = name == "planner" ? "planner" : "mytravel"
+            if visible { handler?(e) }
         default:
             // Pushes, links and tab switches only come from a tap, so only while the tab is on screen.
             if visible { handler?(e) }
+        }
+    }
+
+    // MARK: the two tabs (My Travel, AI Planner)
+
+    /// A tab showing this page appeared: the web view moves into its container and the page shows that tab's screen.
+    func appear(tab: AppTab, handler: @escaping (ShellEvent) -> Void) {
+        handlers[tab] = handler
+        visibleTabs.insert(tab)
+        shownTab = tab
+        if let mode = pendingSignIn { pendingSignIn = nil; handler(.signIn(mode)) }
+        syncTab()
+    }
+
+    func disappear(tab: AppTab) {
+        visibleTabs.remove(tab)
+        if shownTab == tab, let other = visibleTabs.first { shownTab = other }
+    }
+
+    /// Ask the page's planner (Explore's "Ask AI", a city's Plan Trip). Sent when the page is ready and in the planner tab.
+    func ask(prompt: String?, city: String?) {
+        pendingAsk = (prompt, city)
+        syncTab()
+    }
+
+    private func detectPlanner() {
+        guard let wv = webView else { return }
+        let gen = generation
+        wv.evaluateJavaScript("typeof window.__ktShellTab === 'function'") { [weak self] result, _ in
+            let has = (result as? Bool) ?? false
+            Task { @MainActor [weak self] in
+                guard let self, gen == self.generation else { return }
+                self.inPagePlanner = has
+                self.syncTab()
+            }
+        }
+    }
+
+    /// Make the page show the screen of the tab it is in (and send a waiting question to its planner).
+    private func syncTab() {
+        guard ready, inPagePlanner == true, let tab = shownTab, let wv = webView else { return }
+        let want = tab == .planner ? "planner" : "mytravel"
+        let ask = want == "planner" ? pendingAsk : nil
+        guard want != pageTab || ask != nil else { return }
+        if ask != nil { pendingAsk = nil }
+        let changing = want != pageTab
+        pageTab = want
+        if changing {
+            title = nil
+            switching = true
+        }
+        var promptJS = "null", cityJS = "null"
+        if let q = ask?.prompt, !q.isEmpty { promptJS = WebSession.jsString(q) }
+        if let c = ask?.city, !c.isEmpty { cityJS = WebSession.jsString(c) }
+        let tabJS = WebSession.jsString(want)
+        let js = "(function(){try{return !!(window.__ktShellTab && window.__ktShellTab(" + tabJS + "," + promptJS + "," + cityJS
+            + "));}catch(e){return false;}})()"
+        let gen = generation
+        wv.evaluateJavaScript(js) { [weak self] _, _ in
+            Task { @MainActor [weak self] in
+                // one frame for the page to draw the new screen before the cover lifts
+                try? await Task.sleep(nanoseconds: 120_000_000)
+                guard let self, gen == self.generation else { return }
+                self.switching = false
+            }
+        }
+        if changing {
+            // never leave the cover up (a page that did not answer)
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(nanoseconds: 1_200_000_000)
+                guard let self, gen == self.generation else { return }
+                self.switching = false
+            }
         }
     }
 
@@ -169,11 +265,14 @@ final class WarmWebPage {
     }
 }
 
-/// The on-screen spot for a warm page's web view.
+/// The on-screen spot for a warm page's web view. Two tabs can show the same page (My Travel and the AI Planner); only
+/// the host of the tab on screen holds the web view.
 struct WarmWebHost: UIViewRepresentable {
     let page: WarmWebPage
     /// page.loads, read here so a new web view is re-attached.
     let loads: Int
+    /// This host's tab is the one showing the page now.
+    let active: Bool
 
     func makeCoordinator() -> Holder { Holder(page: page) }
 
@@ -181,11 +280,11 @@ struct WarmWebHost: UIViewRepresentable {
         let v = UIView()
         v.backgroundColor = .white
         v.clipsToBounds = true
-        page.attach(to: v)
+        if active { page.attach(to: v) }
         return v
     }
 
-    func updateUIView(_ v: UIView, context: Context) { page.attach(to: v) }
+    func updateUIView(_ v: UIView, context: Context) { if active { page.attach(to: v) } }
 
     static func dismantleUIView(_ v: UIView, coordinator: Holder) {
         coordinator.page.detach(from: v)
@@ -197,10 +296,12 @@ struct WarmWebHost: UIViewRepresentable {
     }
 }
 
-/// An embedded tab that stays loaded (My Travel): shows the warm page at once; a quiet placeholder only while the
-/// very first load after launch is still running; the error screen with Retry when it failed.
+/// An embedded tab that stays loaded (My Travel, and the AI Planner on the same page): shows the warm page at once; a
+/// quiet placeholder only while the very first load after launch is still running; the error screen with Retry when it
+/// failed.
 struct WarmWebScreen: View {
     let page: WarmWebPage
+    var tab: AppTab = .myTravel
 
     @Environment(AuthStore.self) private var auth
     @State private var safari: IdentifiedURL?
@@ -210,9 +311,12 @@ struct WarmWebScreen: View {
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
-            WarmWebHost(page: page, loads: page.loads)
+            WarmWebHost(page: page, loads: page.loads, active: page.shownTab == tab)
                 .opacity(page.failed == nil ? 1 : 0)
                 .accessibilityHidden(page.failed != nil)
+            if page.switching && page.shownTab == tab {
+                Color.white.allowsHitTesting(false)
+            }
             if page.failed != nil {
                 ShellErrorView(retry: { page.retry(uid: auth.uid) })
             } else if !page.ready {
@@ -237,10 +341,14 @@ struct WarmWebScreen: View {
             }
         }
         .onAppear {
-            page.handler = handle
-            page.visible = true
+            page.appear(tab: tab, handler: handle)
+            takeAsk()
         }
-        .onDisappear { page.visible = false }
+        .onDisappear { page.disappear(tab: tab) }
+        // Explore's "Ask AI" and a city's Plan Trip hand the planner a question (ShellRouter): the page's planner asks it.
+        .onChange(of: ShellRouter.shared.plannerPrompt) { _, _ in takeAsk() }
+        .onChange(of: ShellRouter.shared.plannerTripCity) { _, _ in takeAsk() }
+        .onChange(of: page.inPagePlanner) { _, _ in takeAsk() }
         // Normally already loaded by RootTabView; this covers a tap before that finished, and account changes.
         .task(id: auth.ready ? (auth.uid ?? "-") : "?") {
             guard auth.ready else { return }
@@ -248,10 +356,21 @@ struct WarmWebScreen: View {
         }
     }
 
+    private func takeAsk() {
+        guard tab == .planner, page.inPagePlanner == true else { return }
+        let r = ShellRouter.shared
+        let q = r.plannerPrompt, c = r.plannerTripCity
+        guard (q?.isEmpty == false) || (c?.isEmpty == false) else { return }
+        r.plannerPrompt = nil
+        r.plannerTripCity = nil
+        page.ask(prompt: q, city: c)
+    }
+
     private func handle(_ e: ShellEvent) {
         switch e {
         case .signIn(let mode): signIn = mode
         case .tab(let name, let prompt): ShellRouter.shared.open(tab: name, prompt: prompt)
+        case .inPageTab(let name): ShellRouter.shared.open(tab: name)
         case .story(let id, let comments): push = .story(id, comments: comments)
         case .traveler(let uid, let name, let photo): push = .traveler(uid: uid, name: name, photo: photo)
         case .link(let t):

@@ -6,7 +6,7 @@ import SwiftUI
 struct MyTravelTab: View {
     var body: some View {
         NavigationStack {
-            WarmWebScreen(page: .myTravel)
+            WarmWebScreen(page: .myTravel, tab: .myTravel)
                 .toolbar {
                     // Web: the header's account corner sits on every tab.
                     ToolbarItem(placement: .topBarTrailing) { AccountToolbarButtons() }

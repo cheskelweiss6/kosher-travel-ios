@@ -64,7 +64,9 @@ targets:
         # Asked only when a screen needs it (photo upload, "use my location" for zmanim and travel times).
         NSCameraUsageDescription: Take photos and videos for the trips you share.
         NSPhotoLibraryUsageDescription: Choose photos and videos from your library to share your trip.
-        NSMicrophoneUsageDescription: Record sound with the videos you share.
+        NSMicrophoneUsageDescription: Record sound with the videos you share, and ask the AI Planner by voice.
+        # The AI Planner (the website's chat in the app since Oct 29 2026) has a mic button that uses speech recognition.
+        NSSpeechRecognitionUsageDescription: Turn what you say into your question for the AI Planner.
         NSLocationWhenInUseUsageDescription: Show zmanim, nearby kosher places and travel times for where you are.
         CFBundleURLTypes:
           - CFBundleURLName: google-sign-in

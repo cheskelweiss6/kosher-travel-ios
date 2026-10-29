@@ -58,6 +58,10 @@ struct WebRoute: Hashable, Identifiable {
 
     // MARK: My Travel
     static let myTravel = WebRoute(screen: "mytravel", title: "My Travel")
+    /// The warm page behind the My Travel and AI Planner tabs (MyTravelWarm.swift). planner=1: this app build shows the
+    /// website's own AI Planner in that page, so the page keeps its planner instead of handing it back to a native one
+    /// (website src/App.tsx, window.__ktShellTab; Oct 29 2026). Shared-link screens use myTravel (no planner=1).
+    static let myTravelWarm = WebRoute(screen: "mytravel", params: ["planner": "1"], title: "My Travel")
     static let travelMap = WebRoute(screen: "travelmap", title: "Travel Map")
 
     // MARK: Stories

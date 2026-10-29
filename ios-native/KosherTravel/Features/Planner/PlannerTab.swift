@@ -1,8 +1,30 @@
 import SwiftUI
 import UIKit
 
-/// AI Planner: chat with the Kosher Travel planner (web: components/planner/PlannerChat.tsx + the planner logic in App.tsx).
+/// AI Planner tab (Cheskel, Oct 29 2026, build 295: "you should have all the same upgrades… look how it shows up on the
+/// AI"). The tab is the website's own AI chat (day cards, place photos, suggested places, Save to My Travel…), shown
+/// in the same warm page as My Travel (MyTravelWarm.swift): one page, one sign-in, and a trip saved in the chat is in
+/// My Travel at once. The page's planner has its own top bar (history, new chat, account), so the native bar is hidden
+/// here (pushed screens keep theirs). A website build without that support (no window.__ktShellTab), or a page that
+/// could not load before it was known, keeps the native chat below.
 struct PlannerTab: View {
+    private var page: WarmWebPage { .myTravel }
+
+    var body: some View {
+        if page.inPagePlanner == false || (page.inPagePlanner == nil && page.failed != nil) {
+            NativePlannerTab()
+        } else {
+            NavigationStack {
+                WarmWebScreen(page: page, tab: .planner)
+                    .toolbar(.hidden, for: .navigationBar)
+            }
+        }
+    }
+}
+
+/// AI Planner: chat with the Kosher Travel planner (web: components/planner/PlannerChat.tsx + the planner logic in App.tsx).
+/// The fallback for website builds without the in-page planner (see PlannerTab).
+struct NativePlannerTab: View {
     @Environment(ExploreStore.self) private var explore
     @Environment(StoryFeed.self) private var feed
     @Environment(AuthStore.self) private var auth
