@@ -108,6 +108,9 @@ struct ShellWebView: UIViewRepresentable {
         if nav != nil {
             ucc.addUserScript(WKUserScript(source: WebSession.backScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
         }
+        if route.screen == "news" {
+            ucc.addUserScript(WKUserScript(source: WebSession.newsScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
+        }
     }
 
     // MARK: - Coordinator

@@ -18,7 +18,17 @@ struct PlannerTab: View {
                 WarmWebScreen(page: page, tab: .planner)
                     .toolbar(.hidden, for: .navigationBar)
             }
+            .onAppear(perform: applyLaunchAsk)
         }
+    }
+
+    /// QA screenshots: "tab:planner/ask-kever" sends the website chat's first starter (the kivrei tzadikim route,
+    /// answered from the app's own data, no AI call) so the shot shows a sent question and its answer.
+    @MainActor private static var asked = false
+    private func applyLaunchAsk() {
+        guard !Self.asked, LaunchRoute.current == "tab:planner/ask-kever" else { return }
+        Self.asked = true
+        ShellRouter.shared.plannerPrompt = NativePlannerTab.starters[0]
     }
 }
 

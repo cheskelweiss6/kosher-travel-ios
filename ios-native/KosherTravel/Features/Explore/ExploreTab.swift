@@ -43,5 +43,6 @@ struct ExploreTab: View {
         else if r == "kivrei" { path = [.web(.kivrei)] }
         else if r == "search" { path = [.web(.exploreSearch)] }
         else if r == "news" { path = [.web(.news)] }
+        else if r == "news-detail" { path = [.web(.newsFirst)] }
     }
 }

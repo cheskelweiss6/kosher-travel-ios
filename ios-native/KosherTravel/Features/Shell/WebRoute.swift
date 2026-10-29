@@ -55,6 +55,8 @@ struct WebRoute: Hashable, Identifiable {
     static let kivrei = WebRoute(screen: "kivrei", title: "Kivrei Tzadikim")
     static let europe = WebRoute(screen: "europe", title: "Europe")
     static let news = WebRoute(screen: "news", title: "What's New")
+    /// QA screenshots only: the news list with its first story opened (WebSession.newsScript).
+    static let newsFirst = WebRoute(screen: "news", params: ["open": "first"], title: "What's New")
 
     // MARK: My Travel
     static let myTravel = WebRoute(screen: "mytravel", title: "My Travel")

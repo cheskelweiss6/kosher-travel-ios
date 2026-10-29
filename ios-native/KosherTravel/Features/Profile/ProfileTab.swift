@@ -549,7 +549,8 @@ struct ProfileTab: View {
     private func openLaunchRoute() {
         guard !routed, let route = LaunchRoute.current, route.hasPrefix("tab:profile/") else { return }
         routed = true
-        let screen = String(route.dropFirst("tab:profile/".count))
+        // "#qa" (screenshots only, LaunchRoute.qaPreview): the signed-out simulator still opens the bell
+        let screen = String(route.dropFirst("tab:profile/".count)).replacingOccurrences(of: "#qa", with: "")
         Task { @MainActor in
             // let the tab switch settle before presenting
             try? await Task.sleep(for: .milliseconds(700))
@@ -559,7 +560,7 @@ struct ProfileTab: View {
             case "reset": signIn = .reset
             case "settings": path = [.settings]
             case "contact": path = [.contact]
-            case "bell": if auth.isSignedIn { path = [.notifications] }
+            case "bell": if auth.isSignedIn || LaunchRoute.qaPreview { path = [.notifications] }
             default: break
             }
         }

@@ -120,7 +120,7 @@ struct ProfileSettingsView: View {
                     SettingsRow(icon: "text.bubble", label: "Contact us", value: nil)
                 }
                 // V2-FULL-1029: the website's App guide and tour (SettingsSheet.tsx), shown on the Explore tab page
-                if auth.isSignedIn && WarmWebPage.explore.hasOnboarding {
+                if (auth.isSignedIn || LaunchRoute.qaPreview) && WarmWebPage.explore.hasOnboarding {
                     Button { openOnboarding("guide") } label: {
                         SettingsRow(icon: "book", label: "App guide", value: "Features and getting started")
                     }

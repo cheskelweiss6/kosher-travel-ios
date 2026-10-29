@@ -15,7 +15,7 @@ struct NotificationsView: View {
 
     var body: some View {
         Group {
-            if let list = store.shownNotifs {
+            if let list = LaunchRoute.qaPreview ? BellNote.qaSamples : store.shownNotifs {
                 if !store.notifsOK && list.isEmpty {
                     ContentUnavailableView("Couldn't load your notifications", systemImage: "wifi.exclamationmark",
                                            description: Text("Check your connection."))
@@ -202,5 +202,26 @@ struct ProfileAvatar: View {
         .clipShape(Circle())
         .overlay(Circle().strokeBorder(Color.hairline, lineWidth: 1))
         .accessibilityHidden(true)
+    }
+}
+
+extension BellNote {
+    /// Screenshot runs only (LaunchRoute.qaPreview): one note of each kind, in the website's words.
+    static var qaSamples: [BellNote] {
+        let now = Date().timeIntervalSince1970 * 1000
+        func note(_ id: String, _ kind: String, _ name: String, title: String = "", text: String = "", place: String = "",
+                  rating: Int? = nil, type: String = "", ago: Double, read: Bool = false, others: Int = 0) -> BellNote {
+            BellNote(id: id, kind: kind, actorUid: "qa-\(id)", actorName: name, actorPhoto: "", postId: "", postTitle: title,
+                     postThumb: "", text: text, createdAtMs: now - ago * 60_000, read: read, placeName: place, rating: rating,
+                     ids: [id], others: others, targetType: type, targetId: "")
+        }
+        return [
+            note("1", "comment", "Yossi K.", title: "Shabbos in Miami Beach", text: "Which shul did you daven at?", ago: 4),
+            note("2", "like", "Malky S.", title: "Shabbos in Miami Beach", ago: 25, others: 3),
+            note("3", "follow", "Dovid R.", ago: 90),
+            note("4", "yahrzeit", "", place: "Rebbe Elimelech of Lizensk", text: "is tomorrow, 21 Adar", ago: 180, read: true),
+            note("5", "removed", "", title: "My trip to Cancun", text: "photo not allowed", type: "post", ago: 600, read: true),
+            note("6", "review", "Chaya L.", text: "Great food, very clean", place: "Kosher Delight Warsaw", rating: 5, ago: 1500, read: true),
+        ]
     }
 }

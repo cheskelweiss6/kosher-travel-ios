@@ -96,4 +96,8 @@ enum LaunchRoute {
         let r = UserDefaults.standard.string(forKey: "ktRoute")
         return (r?.isEmpty ?? true) ? nil : r
     }
+    /// Screenshot runs only (`-ktRoute tab:profile/settings#qa`): the CI simulator is signed out, so screens that need an
+    /// account (the bell list, Settings > App guide / Replay the tour) show what a signed-in account sees, with sample
+    /// notifications. Never set outside a simctl launch.
+    static var qaPreview: Bool { current?.hasSuffix("#qa") == true }
 }

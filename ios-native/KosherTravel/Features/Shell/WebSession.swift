@@ -153,6 +153,32 @@ enum WebSession {
         }catch(e){}})();
         """
 
+    /// What's New (root QA, Oct 29 2026: the screen showed the Explore home instead of the news). The website's news
+    /// list is its own full screen over the Explore page ("See all" under What's New); this opens it, and hides that
+    /// screen's own top bar because the app's bar already says "What's New" with its Back (no double header). A story
+    /// opens the publisher's article, as on the website (window.open -> in-app Safari). `open: first` (QA screenshots
+    /// only) opens the first story. Our own origin only.
+    static let newsScript = """
+        (function(){try{
+        var h=location.hostname; if(h!=='www.yourkoshertravel.com'&&h!=='yourkoshertravel.com')return;
+        if(window.__ktNewsList)return; window.__ktNewsList=1;
+        var openFirst=!!(window.__KT_SHELL__&&window.__KT_SHELL__.open==='first');
+        var css='html.kt-shell [role=dialog][aria-label="What\\u2019s New"] > [data-kt-bar], html.kt-shell [role=dialog][aria-label="What\\'s New"] > [data-kt-bar]{display:none!important}';
+        function addCss(){var s=document.createElement('style');s.textContent=css;(document.head||document.documentElement).appendChild(s);}
+        function dlg(){return document.querySelector('[role=dialog][aria-label="What\\'s New"], [role=dialog][aria-label="What\\u2019s New"]');}
+        var n=0;
+        function go(){
+        var d=dlg();
+        if(d){ if(openFirst){ setTimeout(function(){var b=d.querySelector('[data-testid=news-featured] > button, [data-testid=news-row] > button'); if(b)b.click();},1500);} return; }
+        var b=document.querySelector('[data-testid=news-seeall]');
+        if(b){b.click();}
+        if(++n<120)setTimeout(go,250);
+        }
+        function start(){addCss();go();}
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+        }catch(e){}})();
+        """
+
     /// The user script that tells the page it is inside the app and which screen to open.
     static func shellScript(_ route: WebRoute, fullScreen: Bool = false) -> String {
         let base = baseShellScript(route, fullScreen: fullScreen)
