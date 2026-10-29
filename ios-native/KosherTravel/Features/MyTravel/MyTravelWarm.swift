@@ -199,9 +199,19 @@ final class WarmWebPage {
         for js in all { wv.evaluateJavaScript(js) { _, _ in } }
     }
 
+    /// The Explore page can show the website's App guide / tour (window.__ktShellOnboarding, V2-FULL-1029).
+    private(set) var hasOnboarding = false
+
     private func detectPlanner() {
         guard let wv = webView else { return }
         let gen = generation
+        wv.evaluateJavaScript("typeof window.__ktShellOnboarding === 'function'") { [weak self] result, _ in
+            let has = (result as? Bool) ?? false
+            Task { @MainActor [weak self] in
+                guard let self, gen == self.generation else { return }
+                self.hasOnboarding = has
+            }
+        }
         wv.evaluateJavaScript("typeof window.__ktShellTab === 'function'") { [weak self] result, _ in
             let has = (result as? Bool) ?? false
             Task { @MainActor [weak self] in

@@ -25,6 +25,13 @@ struct ProfileSettingsView: View {
         return b.isEmpty ? v : "\(v) (\(b))"
     }
     private var googleManaged: Bool { auth.signInKind != "password" }
+
+    /// Close Profile, go to Explore, and let the website's page show the guide or the tour there.
+    private func openOnboarding(_ what: String) {
+        ShellRouter.shared.showProfile = false
+        ShellRouter.shared.selectedTab = .explore
+        WarmWebPage.explore.run(js: "window.__ktShellOnboarding && window.__ktShellOnboarding('\(what)')")
+    }
     private var managedBy: String { auth.signInKind == "apple" ? "Managed by Apple" : "Managed by Google" }
 
     var body: some View {
@@ -111,6 +118,17 @@ struct ProfileSettingsView: View {
                     ContactView()
                 } label: {
                     SettingsRow(icon: "text.bubble", label: "Contact us", value: nil)
+                }
+                // V2-FULL-1029: the website's App guide and tour (SettingsSheet.tsx), shown on the Explore tab page
+                if auth.isSignedIn && WarmWebPage.explore.hasOnboarding {
+                    Button { openOnboarding("guide") } label: {
+                        SettingsRow(icon: "book", label: "App guide", value: "Features and getting started")
+                    }
+                    .accessibilityIdentifier("set-guide")
+                    Button { openOnboarding("tour") } label: {
+                        SettingsRow(icon: "arrow.counterclockwise", label: "Replay the tour", value: nil)
+                    }
+                    .accessibilityIdentifier("set-tour")
                 }
                 SettingsRow(icon: "info.circle", label: "About", value: "Version \(version)")
             } header: {
