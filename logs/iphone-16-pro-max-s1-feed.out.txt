@@ -1,0 +1,2 @@
+[KT] launch route=tab:stories
+[KT] stories feed docs=15

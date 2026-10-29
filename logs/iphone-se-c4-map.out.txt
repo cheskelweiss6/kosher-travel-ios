@@ -1,0 +1,6 @@
+[KT] launch route=area:us:new-york-city/map
+[KT] feed source=firestore docs=15 firebase=true
+[KT] place query places via sdk failed: Error Domain=FIRFirestoreErrorDomain Code=14 "Failed to get documents from server. (However, these documents may exist in the local cache. Run again without setting source to FirestoreSourceServer to retrieve the cached documents.)" UserInfo={NSLocalizedDescription=Failed to get documents from server. (However, these documents may exist in the local cache. Run again without setting source to FirestoreSourceServer to retrieve the cached documents.)}
+[KT] place query placeReviews via sdk failed: Error Domain=FIRFirestoreErrorDomain Code=14 "Failed to get documents from server. (However, these documents may exist in the local cache. Run again without setting source to FirestoreSourceServer to retrieve the cached documents.)" UserInfo={NSLocalizedDescription=Failed to get documents from server. (However, these documents may exist in the local cache. Run again without setting source to FirestoreSourceServer to retrieve the cached documents.)}
+[KT] stories feed docs=15
+[KT] city new-york-city: traveler places=0 reviewed places=0

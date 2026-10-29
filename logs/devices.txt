@@ -1,0 +1,2 @@
+iphone-se|iPhone SE (3rd generation)|com.apple.CoreSimulator.SimRuntime.iOS-26-5|com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation|iOS 26.5
+iphone-16-pro-max|iPhone 16 Pro Max|com.apple.CoreSimulator.SimRuntime.iOS-26-5|com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro-Max|iOS 26.5
