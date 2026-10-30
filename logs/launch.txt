@@ -1,0 +1,42 @@
+com.yourkoshertravel.app: 19580
+--- iphone-se after 8 s:
+19580	0	UIKitApplication:com.yourkoshertravel.app[24e0][rb-legacy]
+com.yourkoshertravel.app: 20513
+com.yourkoshertravel.app: 21364
+com.yourkoshertravel.app: 21783
+com.yourkoshertravel.app: 22738
+com.yourkoshertravel.app: 23224
+com.yourkoshertravel.app: 23684
+com.yourkoshertravel.app: 23994
+com.yourkoshertravel.app: 25307
+com.yourkoshertravel.app: 25684
+com.yourkoshertravel.app: 26379
+com.yourkoshertravel.app: 26863
+com.yourkoshertravel.app: 27446
+com.yourkoshertravel.app: 27844
+com.yourkoshertravel.app: 28316
+com.yourkoshertravel.app: 28499
+com.yourkoshertravel.app: 29246
+com.yourkoshertravel.app: 30622
+com.yourkoshertravel.app: 31186
+com.yourkoshertravel.app: 37082
+--- iphone-16 after 8 s:
+37082	0	UIKitApplication:com.yourkoshertravel.app[4b4b][rb-legacy]
+com.yourkoshertravel.app: 37906
+com.yourkoshertravel.app: 38838
+com.yourkoshertravel.app: 39572
+com.yourkoshertravel.app: 40394
+com.yourkoshertravel.app: 40942
+com.yourkoshertravel.app: 42184
+com.yourkoshertravel.app: 42749
+com.yourkoshertravel.app: 43255
+com.yourkoshertravel.app: 43713
+com.yourkoshertravel.app: 44249
+com.yourkoshertravel.app: 44657
+com.yourkoshertravel.app: 44908
+com.yourkoshertravel.app: 45428
+com.yourkoshertravel.app: 45889
+com.yourkoshertravel.app: 46322
+com.yourkoshertravel.app: 46629
+com.yourkoshertravel.app: 47039
+com.yourkoshertravel.app: 49138

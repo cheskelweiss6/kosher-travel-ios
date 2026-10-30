@@ -1,0 +1,2 @@
+[KT] launch route=tab:profile
+[KT] feed source=firestore docs=15 firebase=true

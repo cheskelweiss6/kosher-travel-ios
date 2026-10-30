@@ -1,0 +1,19 @@
+   8 [KT] feed source=firestore docs=15 firebase=true
+   2 [KT] launch route=area:dest:montreal
+   2 [KT] launch route=area:us:miami
+   2 [KT] launch route=country:aruba
+   2 [KT] launch route=europe
+   4 [KT] launch route=home
+   2 [KT] launch route=kivrei
+   2 [KT] launch route=news
+   2 [KT] launch route=news-detail
+   2 [KT] launch route=search
+   2 [KT] launch route=state:new-york
+   2 [KT] launch route=tab:mytravel
+   2 [KT] launch route=tab:planner
+   2 [KT] launch route=tab:planner/ask-kever
+   2 [KT] launch route=tab:profile
+   2 [KT] launch route=tab:profile/bell#qa
+   2 [KT] launch route=tab:profile/settings#qa
+   2 [KT] launch route=tab:profile/signin
+   2 [KT] launch route=tab:stories
